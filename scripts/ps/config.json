@@ -1,0 +1,13 @@
+{
+  "_comment": "Edit ALL_CAPS values before running any script. Do not share this file — it contains your environment details.",
+  "domain": "YOURDOMAIN",
+  "dc": "DC=YOURDOMAIN,DC=LOCAL",
+  "adminOU": "OU=IT,DC=YOURDOMAIN,DC=LOCAL",
+  "usersOU": "OU=Users,DC=YOURDOMAIN,DC=LOCAL",
+  "defaultGroups": ["Domain Users", "Remote Desktop Users"],
+  "defaultTempPassword": "CHANGE_THIS_TempP@ss1!",
+  "logPath": "C:\\IT-Automation\\Logs",
+  "diskAlertThresholdPercent": 20,
+  "drivesToMonitor": ["C", "D"],
+  "maxLogAgeDays": 90
+}

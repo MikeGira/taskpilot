@@ -1,0 +1,12 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Ignore placeholder values in example and documentation files"
+paths = [
+  ".env.example",
+  "*.example",
+  "setup-guide.md",
+  "README.md",
+  "CLAUDE.md",
+]

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<!--
+  TaskPilot — Windows Task Scheduler Import Template
+
+  Import with:
+    schtasks /create /xml "C:\IT-Automation\scheduler.xml" /tn "TaskPilot-HealthCheck"
+
+  Or via GUI: Task Scheduler → Action → Import Task...
+
+  Adjust the Path values to match your actual install location.
+-->
+<Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+  <RegistrationInfo>
+    <Description>TaskPilot daily health check — CPU, RAM, disk usage</Description>
+    <Author>TaskPilot</Author>
+  </RegistrationInfo>
+  <Triggers>
+    <CalendarTrigger>
+      <StartBoundary>2024-01-01T07:00:00</StartBoundary>
+      <Enabled>true</Enabled>
+      <ScheduleByDay>
+        <DaysInterval>1</DaysInterval>
+      </ScheduleByDay>
+    </CalendarTrigger>
+  </Triggers>
+  <Principals>
+    <Principal id="Author">
+      <RunLevel>HighestAvailable</RunLevel>
+    </Principal>
+  </Principals>
+  <Settings>
+    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
+    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>
+    <AllowHardTerminate>true</AllowHardTerminate>
+    <StartWhenAvailable>true</StartWhenAvailable>
+    <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>
+    <ExecutionTimeLimit>PT30M</ExecutionTimeLimit>
+    <Enabled>true</Enabled>
+    <Hidden>false</Hidden>
+  </Settings>
+  <Actions Context="Author">
+    <Exec>
+      <Command>powershell.exe</Command>
+      <Arguments>-NonInteractive -ExecutionPolicy Bypass -File "C:\IT-Automation\health-check.ps1"</Arguments>
+      <WorkingDirectory>C:\IT-Automation</WorkingDirectory>
+    </Exec>
+  </Actions>
+</Task>
