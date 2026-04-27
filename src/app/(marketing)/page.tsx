@@ -9,10 +9,10 @@ import {
   Zap,
   Clock,
   Download,
-  ChevronDown,
+  Wand2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { NewsletterForm } from '@/components/landing/newsletter-form';
@@ -159,13 +159,21 @@ export default function HomePage({
                   <ArrowRight className="h-5 w-5" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="xl" className="w-full sm:w-auto">
-                <Link href="#includes">
-                  See what&apos;s inside
-                  <ChevronDown className="h-5 w-5" />
+              <Button
+                asChild
+                size="xl"
+                className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 shadow-xl shadow-violet-500/20 text-white border-0"
+              >
+                <Link href="/generate">
+                  <Wand2 className="h-5 w-5" />
+                  Generate a Script — Free
                 </Link>
               </Button>
             </div>
+            <p className="mt-4 text-sm text-[#6B7280]">
+              <Link href="/generate" className="text-violet-400 hover:underline">Try the AI script generator</Link>
+              {' '}— pick your OS and environment, describe your task, get a working script in seconds.
+            </p>
 
             <p className="mt-6 text-sm text-[#6B7280]">
               Instant download · Works on Windows Server 2016+ · One-time purchase

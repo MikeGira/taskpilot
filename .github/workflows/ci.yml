@@ -62,6 +62,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder
           NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_placeholder
+          ANTHROPIC_API_KEY: sk-ant-placeholder
 
   # ── 4. Smoke test production (push to main only) ────────────────────────────
   smoke-test:

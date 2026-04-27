@@ -2,7 +2,7 @@
 
 ## What this is
 IT helpdesk automation business. Sells PowerShell automation scripts ($19 starter kit).
-Future: AI-powered script generator SaaS.
+Also has a free AI script generator at `/generate` — users pick OS + environment, describe a task, and get a production-ready script. Powered by claude-sonnet-4-6.
 
 ## Stack
 | Layer | Technology | Notes |
@@ -16,6 +16,7 @@ Future: AI-powered script generator SaaS.
 | Email | Resend | Custom HTML templates in src/emails/ |
 | Hosting | Vercel | Auto-deploy from GitHub main branch |
 | CI/CD | GitHub Actions | Gitleaks + CodeQL + build check + smoke test |
+| AI Generation | Anthropic claude-sonnet-4-6 | Direct fetch (no SDK), server-side only |
 
 ## Commands
 ```bash
@@ -39,7 +40,20 @@ RESEND_API_KEY
 RESEND_FROM_EMAIL
 UNSUB_HMAC_SECRET
 ADMIN_EMAIL
+ANTHROPIC_API_KEY
 ```
+
+## AI Script Generator (/generate)
+
+- **Page**: `src/app/generate/page.tsx` (Server Component wrapper)
+- **Wizard**: `src/components/generator/generator-wizard.tsx` (Client Component, all state here)
+- **API**: `src/app/api/generate/route.ts` — calls Anthropic directly via fetch, returns `GenerateResult` JSON
+- **Rate limit**: 10 generations/hour per IP (in-memory)
+- **Flow**: OS → Environment (+ optional cloud providers) → Task description → AI generates or asks one clarifying question → result with script, explanation, config notes
+- **Model**: `claude-sonnet-4-6` — quality over speed; 4096 max_tokens
+- **Security**: API key server-side only; user input sanitized via Zod before reaching the prompt; user text isolated in the user message, never interpolated into system prompt
+- **Clarification loop**: If Claude returns `needsClarification: true`, wizard shows the question and re-submits with the answer as a second turn
+- **Download**: Client-side Blob download — no server involvement needed for the file itself
 
 ## Key architectural decisions
 
