@@ -31,6 +31,15 @@ const config: Config = {
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.4s ease-out',
+        'beam': 'beam 5s ease-in-out infinite',
+        'glow-pulse': 'glow-pulse 4s ease-in-out infinite',
+        'float-up': 'float-up 4s ease-in-out infinite',
+        'cursor-blink': 'cursor-blink 1s step-end infinite',
+        'fade-in-up': 'fade-in-up 0.6s ease-out both',
+        'shimmer': 'shimmer-move 2.5s linear infinite',
+        'gradient-x': 'gradient-x 6s ease infinite',
+        'spin-slow': 'spin-slow 12s linear infinite',
+        'ping-slow': 'ping-slow 2s cubic-bezier(0,0,0.2,1) infinite',
       },
       keyframes: {
         fadeIn: {

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
+import { ChatWidget } from '@/components/assistant/chat-widget';
 import './globals.css';
 
 const inter = Inter({
@@ -27,17 +28,15 @@ export const metadata: Metadata = {
     title: 'TaskPilot — IT Helpdesk Automation',
     description: 'Put your IT on autopilot. 7 ready-to-deploy scripts for $19.',
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans bg-[#000000] text-[#F9FAFB] antialiased`}>
+      <body className={`${inter.variable} font-sans bg-black text-white antialiased`}>
         {children}
+        <ChatWidget />
         <Analytics />
       </body>
     </html>
