@@ -70,7 +70,7 @@ export default async function AnalyticsPage() {
           { label: 'Needs Work', value: String(negative), color: 'text-amber-400' },
           { label: 'Satisfaction', value: `${positiveRate}%`, color: positiveRate >= 70 ? 'text-emerald-400' : 'text-amber-400' },
         ].map((s) => (
-          <div key={s.label} className="rounded-xl border border-white/8 bg-[#111827] p-4">
+          <div key={s.label} className="rounded-xl border border-white/8 bg-[#0D0D0D] p-4">
             <p className="text-xs text-[#6B7280] mb-1">{s.label}</p>
             <p className={`text-2xl font-bold ${s.color || 'text-[#F9FAFB]'}`}>{s.value}</p>
           </div>
@@ -102,14 +102,14 @@ export default async function AnalyticsPage() {
           Recent Feedback {total > 0 && <span className="text-[#4B5563] font-normal">(last {recent.length})</span>}
         </h2>
         {recent.length === 0 ? (
-          <div className="rounded-xl border border-white/8 bg-[#111827] p-8 text-center">
+          <div className="rounded-xl border border-white/8 bg-[#0D0D0D] p-8 text-center">
             <p className="text-sm text-[#6B7280]">No feedback submitted yet.</p>
             <p className="text-xs text-[#4B5563] mt-1">Ratings will appear here after users try the script generator.</p>
           </div>
         ) : (
           <div className="space-y-2">
             {recent.map((f, i) => (
-              <div key={i} className="rounded-lg border border-white/6 bg-[#111827] px-4 py-3 flex items-start gap-3">
+              <div key={i} className="rounded-lg border border-white/6 bg-[#0D0D0D] px-4 py-3 flex items-start gap-3">
                 <span className="text-base shrink-0 mt-0.5">{f.rating === 1 ? '👍' : '👎'}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-1.5 mb-1">
@@ -154,7 +154,7 @@ function BreakdownCard({
   );
 
   return (
-    <div className="rounded-xl border border-white/8 bg-[#111827] p-4">
+    <div className="rounded-xl border border-white/8 bg-[#0D0D0D] p-4">
       <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">{title}</p>
       {entries.length === 0 ? (
         <p className="text-xs text-[#374151]">No data yet</p>

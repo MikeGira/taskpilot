@@ -8,7 +8,7 @@ export const metadata = { title: 'Purchase Complete' };
 
 export default function CheckoutSuccessPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#0B0F1A]">
+    <div className="min-h-screen flex flex-col bg-[#000000]">
       <Navbar />
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">

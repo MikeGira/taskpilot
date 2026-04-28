@@ -23,22 +23,22 @@ const SCRIPTS = [
     icon: ShieldCheck,
     name: 'Password Reset Automation',
     desc: 'Reset AD passwords with one command. Logs every action with timestamp.',
-    color: 'text-sky-400',
-    bg: 'bg-sky-400/10',
+    color: 'text-emerald-400',
+    bg: 'bg-emerald-400/10',
   },
   {
     icon: HardDrive,
     name: 'Disk Cleanup + Alerts',
     desc: 'Auto-clears temp files and alerts when drives fall below your threshold.',
-    color: 'text-cyan-400',
-    bg: 'bg-cyan-400/10',
+    color: 'text-emerald-400',
+    bg: 'bg-emerald-400/10',
   },
   {
     icon: Users,
     name: 'New User Onboarding',
     desc: 'Create AD users, assign groups, and set temp passwords in seconds.',
-    color: 'text-violet-400',
-    bg: 'bg-violet-400/10',
+    color: 'text-emerald-400',
+    bg: 'bg-emerald-400/10',
   },
   {
     icon: Activity,
@@ -131,19 +131,19 @@ export default function HomePage({
 
       <main className="flex-1">
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden bg-[#0B0F1A]">
+        <section className="relative overflow-hidden bg-[#000000]">
           <div className="absolute inset-0 bg-grid-pattern opacity-100 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-radial from-sky-500/8 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-radial from-emerald-500/8 via-transparent to-transparent pointer-events-none" />
 
           <div className="relative mx-auto max-w-4xl px-4 sm:px-6 pt-24 pb-20 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/8 px-4 py-1.5 text-xs font-medium text-sky-400 mb-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/8 px-4 py-1.5 text-xs font-medium text-emerald-400 mb-8">
               <Zap className="h-3 w-3" />
               Built by an IT pro with 10+ years in the field
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#F9FAFB] text-balance leading-[1.1] mb-6">
               Stop doing IT busywork.{' '}
-              <span className="text-sky-400">Start automating it.</span>
+              <span className="text-emerald-400">Start automating it.</span>
             </h1>
 
             <p className="text-lg sm:text-xl text-[#9CA3AF] max-w-2xl mx-auto mb-10 text-balance">
@@ -153,7 +153,7 @@ export default function HomePage({
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button asChild size="xl" className="w-full sm:w-auto shadow-xl shadow-sky-500/25">
+              <Button asChild size="xl" className="w-full sm:w-auto shadow-xl shadow-emerald-500/25">
                 <Link href="/checkout">
                   Get the Kit — $19
                   <ArrowRight className="h-5 w-5" />
@@ -162,7 +162,7 @@ export default function HomePage({
               <Button
                 asChild
                 size="xl"
-                className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 shadow-xl shadow-violet-500/20 text-white border-0"
+                className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 shadow-xl shadow-emerald-500/20 text-white border-0"
               >
                 <Link href="/generate">
                   <Wand2 className="h-5 w-5" />
@@ -171,7 +171,7 @@ export default function HomePage({
               </Button>
             </div>
             <p className="mt-4 text-sm text-[#6B7280]">
-              <Link href="/generate" className="text-violet-400 hover:underline">Try the AI script generator</Link>
+              <Link href="/generate" className="text-emerald-400 hover:underline">Try the AI script generator</Link>
               {' '}— pick your OS and environment, describe your task, get a working script in seconds.
             </p>
 
@@ -222,7 +222,7 @@ export default function HomePage({
                 { num: '03', title: 'Run or Schedule', desc: 'Execute manually or import scheduler.xml into Task Scheduler. Done.' },
               ].map((step) => (
                 <div key={step.num} className="flex flex-col items-center text-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-sky-500/30 bg-sky-500/8 text-sky-400 font-bold text-lg mb-5">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/8 text-emerald-400 font-bold text-lg mb-5">
                     {step.num}
                   </div>
                   <h3 className="font-semibold text-[#F9FAFB] mb-2">{step.title}</h3>
@@ -280,7 +280,7 @@ export default function HomePage({
             </h2>
             <p className="text-[#9CA3AF] mb-10">One price. Everything included. No subscription.</p>
 
-            <Card className="p-8 border-sky-500/20 bg-gradient-to-b from-sky-500/5 to-transparent">
+            <Card className="p-8 border-emerald-500/20 bg-gradient-to-b from-emerald-500/5 to-transparent">
               <div className="mb-6">
                 <div className="text-5xl font-extrabold text-[#F9FAFB] mb-1">$19</div>
                 <div className="text-sm text-[#6B7280]">one-time · instant download</div>
@@ -300,7 +300,7 @@ export default function HomePage({
                   </li>
                 ))}
               </ul>
-              <Button asChild size="lg" className="w-full shadow-lg shadow-sky-500/20">
+              <Button asChild size="lg" className="w-full shadow-lg shadow-emerald-500/20">
                 <Link href="/checkout">
                   Buy Now — $19
                   <ArrowRight className="h-4 w-4" />
@@ -333,7 +333,7 @@ export default function HomePage({
         {/* ── Newsletter ───────────────────────────────────────────────────── */}
         <section className="py-20 border-t border-white/6 bg-[#0D1221]">
           <div className="mx-auto max-w-xl px-4 sm:px-6 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/8 px-4 py-1.5 text-xs font-medium text-cyan-400 mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/8 px-4 py-1.5 text-xs font-medium text-emerald-400 mb-6">
               Free weekly tips
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-[#F9FAFB] mb-4">

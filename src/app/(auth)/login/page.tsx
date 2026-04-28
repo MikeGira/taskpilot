@@ -39,15 +39,15 @@ export default function LoginPage({
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#0B0F1A] px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#000000] px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500/15 border border-sky-500/30">
-              <Terminal className="h-5 w-5 text-sky-400" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15 border border-emerald-500/30">
+              <Terminal className="h-5 w-5 text-emerald-400" />
             </div>
             <span className="font-bold text-xl text-[#F9FAFB]">
-              Task<span className="text-sky-400">Pilot</span>
+              Task<span className="text-emerald-400">Pilot</span>
             </span>
           </Link>
           <h1 className="text-2xl font-bold text-[#F9FAFB]">Sign in to TaskPilot</h1>
@@ -74,7 +74,7 @@ export default function LoginPage({
               Didn&apos;t get it? Check your spam folder or{' '}
               <button
                 onClick={() => { setStatus('idle'); setEmail(''); }}
-                className="text-sky-400 hover:underline"
+                className="text-emerald-400 hover:underline"
               >
                 try again
               </button>.
@@ -82,7 +82,7 @@ export default function LoginPage({
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="rounded-xl border border-white/8 bg-[#111827] p-6 space-y-4">
+            <div className="rounded-xl border border-white/8 bg-[#0D0D0D] p-6 space-y-4">
               <div className="space-y-1.5">
                 <label htmlFor="email" className="text-sm font-medium text-[#9CA3AF]">
                   Email address
@@ -108,7 +108,7 @@ export default function LoginPage({
             </div>
             <p className="text-center text-xs text-[#4B5563]">
               Don&apos;t have an account?{' '}
-              <Link href="/checkout" className="text-sky-400 hover:underline">
+              <Link href="/checkout" className="text-emerald-400 hover:underline">
                 Buy the kit first
               </Link>{' '}
               and your account is created automatically.

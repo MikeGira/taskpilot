@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0B0F1A;
-  --surface: #111827;
-  --accent: #06B6D4;
-  --cta: #0EA5E9;
-  --cta-hover: #0284C7;
-  --success: #10B981;
+  --bg: #000000;
+  --surface: #0D0D0D;
+  --accent: #3ECF8E;
+  --cta: #3ECF8E;
+  --cta-hover: #2DB97D;
+  --success: #3ECF8E;
   --text-primary: #F9FAFB;
   --text-secondary: #9CA3AF;
   --border: rgba(255, 255, 255, 0.08);
@@ -24,7 +24,7 @@
     font-feature-settings: 'ss01', 'cv01';
   }
   ::selection {
-    background-color: rgba(6, 182, 212, 0.3);
+    background-color: rgba(62, 207, 142, 0.25);
     color: #fff;
   }
 }

@@ -83,11 +83,11 @@ export function ContactForm() {
             id="budget"
             value={form.budget}
             onChange={set('budget')}
-            className="flex h-10 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-[#F9FAFB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+            className="flex h-10 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-[#F9FAFB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
           >
-            <option value="" className="bg-[#111827]">Select budget...</option>
+            <option value="" className="bg-[#0D0D0D]">Select budget...</option>
             {BUDGETS.map((b) => (
-              <option key={b.value} value={b.value} className="bg-[#111827]">{b.label}</option>
+              <option key={b.value} value={b.value} className="bg-[#0D0D0D]">{b.label}</option>
             ))}
           </select>
         </div>

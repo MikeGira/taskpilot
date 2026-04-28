@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git push)",
+      "Bash(npm run dev)",
+      "Bash(npm run build)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run lint)",
+      "Bash(mkdir*)",
+      "Bash(ls*)"
+    ]
+  }
+}

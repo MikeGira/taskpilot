@@ -5,7 +5,7 @@ export const metadata = { title: 'Terms of Service' };
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#0B0F1A]">
+    <div className="min-h-screen flex flex-col bg-[#000000]">
       <Navbar />
       <main className="flex-1 mx-auto max-w-3xl px-4 sm:px-6 py-16">
         <div className="prose prose-invert prose-sm max-w-none">
@@ -76,7 +76,7 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold text-[#F9FAFB] mb-3">8. Contact</h2>
             <p className="text-sm text-[#9CA3AF] leading-relaxed">
               Questions:{' '}
-              <a href="mailto:hello@taskpilot.dev" className="text-sky-400">hello@taskpilot.dev</a>
+              <a href="mailto:hello@taskpilot.dev" className="text-emerald-400">hello@taskpilot.dev</a>
             </p>
           </section>
         </div>

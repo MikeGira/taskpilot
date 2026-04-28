@@ -12,12 +12,12 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          bg: '#0B0F1A',
-          surface: '#111827',
-          accent: '#06B6D4',
-          cta: '#0EA5E9',
-          'cta-hover': '#0284C7',
-          success: '#10B981',
+          bg: '#000000',
+          surface: '#0D0D0D',
+          accent: '#3ECF8E',
+          cta: '#3ECF8E',
+          'cta-hover': '#2DB97D',
+          success: '#3ECF8E',
         },
       },
       borderColor: {

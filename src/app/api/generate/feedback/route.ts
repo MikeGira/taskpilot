@@ -83,8 +83,8 @@ function buildEmail({
 
   return `<!DOCTYPE html>
 <html><head><meta charset="utf-8"/></head>
-<body style="font-family:system-ui,sans-serif;background:#0B0F1A;color:#F9FAFB;padding:32px;max-width:560px;margin:0 auto">
-  <div style="background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px">
+<body style="font-family:system-ui,sans-serif;background:#000000;color:#F9FAFB;padding:32px;max-width:560px;margin:0 auto">
+  <div style="background:#0D0D0D;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px">
     <p style="margin:0 0 4px;font-size:12px;color:#6B7280;text-transform:uppercase;letter-spacing:.05em">TaskPilot · Script Generator</p>
     <h2 style="margin:0 0 20px;font-size:18px">New Feedback ${emoji}</h2>
     <div style="background:${color}18;border:1px solid ${color}40;border-radius:8px;padding:12px 16px;margin-bottom:20px">
@@ -102,7 +102,7 @@ function buildEmail({
            <p style="margin:0;font-size:14px;color:#D1D5DB;line-height:1.5">${comment}</p>
          </div>`
       : `<p style="font-size:13px;color:#6B7280;margin-bottom:20px;font-style:italic">No comment provided.</p>`}
-    <a href="${siteUrl}/dashboard/analytics" style="display:inline-block;background:#0ea5e9;color:#fff;font-size:13px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px">View Analytics →</a>
+    <a href="${siteUrl}/dashboard/analytics" style="display:inline-block;background:#3ECF8E;color:#000;font-size:13px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px">View Analytics →</a>
   </div>
 </body></html>`;
 }
