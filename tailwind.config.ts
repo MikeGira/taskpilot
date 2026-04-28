@@ -14,9 +14,9 @@ const config: Config = {
         brand: {
           bg: '#000000',
           surface: '#0D0D0D',
-          accent: '#ef4444',
-          cta: '#ef4444',
-          'cta-hover': '#dc2626',
+          accent: '#ffffff',
+          cta: '#ffffff',
+          'cta-hover': '#e4e4e4',
           success: '#10b981',
         },
       },

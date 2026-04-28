@@ -102,7 +102,7 @@ function buildEmail({
            <p style="margin:0;font-size:14px;color:#D1D5DB;line-height:1.5">${comment}</p>
          </div>`
       : `<p style="font-size:13px;color:#6B7280;margin-bottom:20px;font-style:italic">No comment provided.</p>`}
-    <a href="${siteUrl}/dashboard/analytics" style="display:inline-block;background:#ef4444;color:#000;font-size:13px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px">View Analytics →</a>
+    <a href="${siteUrl}/dashboard/analytics" style="display:inline-block;background:#ffffff;color:#000;font-size:13px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px">View Analytics →</a>
   </div>
 </body></html>`;
 }

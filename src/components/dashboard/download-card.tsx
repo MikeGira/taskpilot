@@ -47,7 +47,7 @@ export function DownloadCard({ purchase }: DownloadCardProps) {
           <p className="text-xs text-[#4B5563] mt-1">
             Purchased {new Date(purchase.created_at as string).toLocaleDateString()}
           </p>
-          {errorMsg && <p className="text-xs text-red-400 mt-1">{errorMsg}</p>}
+          {errorMsg && <p className="text-xs text-white mt-1">{errorMsg}</p>}
         </div>
         <Button
           onClick={handleDownload}

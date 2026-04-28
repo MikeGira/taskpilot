@@ -50,11 +50,11 @@ export function ContactForm() {
 
   if (status === 'success') {
     return (
-      <div className="flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/8 px-6 py-5 text-red-400">
+      <div className="flex items-center gap-3 rounded-lg border border-white/12 bg-white/5 px-6 py-5 text-white">
         <CheckCircle2 className="h-6 w-6 shrink-0" />
         <div>
           <p className="font-semibold">Message received!</p>
-          <p className="text-sm text-red-400/80 mt-0.5">I&apos;ll reply within one business day.</p>
+          <p className="text-sm text-white/80 mt-0.5">I&apos;ll reply within one business day.</p>
         </div>
       </div>
     );
@@ -83,7 +83,7 @@ export function ContactForm() {
             id="budget"
             value={form.budget}
             onChange={set('budget')}
-            className="flex h-10 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-[#F9FAFB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+            className="flex h-10 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-[#F9FAFB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
           >
             <option value="" className="bg-[#0D0D0D]">Select budget...</option>
             {BUDGETS.map((b) => (
@@ -111,7 +111,7 @@ export function ContactForm() {
         By submitting, you agree to our{' '}
         <a href="/privacy" className="text-[#6B7280] hover:text-[#9CA3AF] underline">privacy policy</a>.
       </p>
-      {errorMsg && <p className="text-sm text-red-400">{errorMsg}</p>}
+      {errorMsg && <p className="text-sm text-white">{errorMsg}</p>}
       <Button type="submit" disabled={status === 'loading'} size="lg" className="w-full">
         {status === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send Message'}
       </Button>

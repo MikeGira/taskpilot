@@ -66,9 +66,9 @@ export function AccountActions() {
       </Card>
 
       {/* GDPR Delete Account */}
-      <Card className="border-red-500/15">
+      <Card className="border-white/12">
         <CardHeader>
-          <CardTitle className="text-base text-red-400">Delete account</CardTitle>
+          <CardTitle className="text-base text-white">Delete account</CardTitle>
           <CardDescription>
             Permanently delete your account and all associated data (GDPR Article 17).
             Purchase records are anonymized and retained for 7 years as required by law.
@@ -85,7 +85,7 @@ export function AccountActions() {
               placeholder="DELETE"
               className="max-w-xs"
             />
-            {deleteError && <p className="text-sm text-red-400">{deleteError}</p>}
+            {deleteError && <p className="text-sm text-white">{deleteError}</p>}
             <Button
               type="submit"
               variant="destructive"

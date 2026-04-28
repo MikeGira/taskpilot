@@ -18,7 +18,7 @@ interface Analysis {
 }
 
 const PRIORITY_STYLE: Record<string, string> = {
-  high: 'text-red-400 border-red-500/20 bg-red-500/5',
+  high: 'text-white border-white/12 bg-white/5',
   medium: 'text-amber-400 border-amber-500/20 bg-amber-500/5',
   low: 'text-zinc-400 border-zinc-500/20 bg-zinc-500/5',
 };
@@ -49,7 +49,7 @@ export function AnalyticsClient({ negativeCount }: { negativeCount: number }) {
   }
 
   return (
-    <div className="rounded-xl border border-red-500/20 bg-red-500/4 p-5">
+    <div className="rounded-xl border border-white/12 bg-white/5 p-5">
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <h2 className="text-sm font-semibold text-[#F9FAFB] mb-1">AI Prompt Improvement</h2>
@@ -62,7 +62,7 @@ export function AnalyticsClient({ negativeCount }: { negativeCount: number }) {
           onClick={analyze}
           disabled={loading || negativeCount === 0}
           size="sm"
-          className="shrink-0 gap-1.5 bg-red-600 hover:bg-red-500 text-white"
+          className="shrink-0 gap-1.5"
         >
           {loading
             ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -76,7 +76,7 @@ export function AnalyticsClient({ negativeCount }: { negativeCount: number }) {
       )}
 
       {error && (
-        <div className="flex items-center gap-2 text-xs text-red-400 mt-2">
+        <div className="flex items-center gap-2 text-xs text-white mt-2">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" />
           {error}
         </div>
@@ -97,7 +97,7 @@ export function AnalyticsClient({ negativeCount }: { negativeCount: number }) {
               <ul className="space-y-1.5">
                 {result.patterns.map((p, i) => (
                   <li key={i} className="text-xs text-[#9CA3AF] flex items-start gap-2">
-                    <span className="text-red-400 mt-0.5 shrink-0">→</span>
+                    <span className="text-white mt-0.5 shrink-0">→</span>
                     {p}
                   </li>
                 ))}
@@ -148,7 +148,7 @@ export function AnalyticsClient({ negativeCount }: { negativeCount: number }) {
           <p className="text-xs text-[#4B5563]">
             Based on {result.analyzedCount} negative {result.analyzedCount === 1 ? 'rating' : 'ratings'}.
             Apply changes manually to{' '}
-            <code className="text-red-400/80 text-[11px]">src/app/api/generate/route.ts</code>.
+            <code className="text-white/80 text-[11px]">src/app/api/generate/route.ts</code>.
           </p>
         </div>
       )}

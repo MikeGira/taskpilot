@@ -43,11 +43,11 @@ export default function LoginPage({
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/15 border border-red-500/30">
-              <Terminal className="h-5 w-5 text-red-400" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 border border-white/12">
+              <Terminal className="h-5 w-5 text-white" />
             </div>
             <span className="font-bold text-xl text-[#F9FAFB]">
-              Task<span className="text-red-400">Pilot</span>
+              Task<span className="text-white">Pilot</span>
             </span>
           </Link>
           <h1 className="text-2xl font-bold text-[#F9FAFB]">Sign in to TaskPilot</h1>
@@ -57,14 +57,14 @@ export default function LoginPage({
         </div>
 
         {searchParams.error === 'auth_failed' && (
-          <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/8 px-4 py-3 text-sm text-red-400">
+          <div className="mb-4 rounded-lg border border-white/12 bg-white/5 px-4 py-3 text-sm text-white">
             Authentication failed. Please try again.
           </div>
         )}
 
         {status === 'sent' ? (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/8 p-6 text-center">
-            <CheckCircle2 className="h-10 w-10 text-red-400 mx-auto mb-3" />
+          <div className="rounded-xl border border-white/12 bg-white/5 p-6 text-center">
+            <CheckCircle2 className="h-10 w-10 text-white mx-auto mb-3" />
             <h2 className="font-semibold text-[#F9FAFB] mb-2">Check your inbox</h2>
             <p className="text-sm text-[#9CA3AF]">
               We sent a magic link to <strong className="text-[#F9FAFB]">{email}</strong>.
@@ -74,7 +74,7 @@ export default function LoginPage({
               Didn&apos;t get it? Check your spam folder or{' '}
               <button
                 onClick={() => { setStatus('idle'); setEmail(''); }}
-                className="text-red-400 hover:underline"
+                className="text-white hover:underline"
               >
                 try again
               </button>.
@@ -97,7 +97,7 @@ export default function LoginPage({
                   autoFocus
                 />
               </div>
-              {errorMsg && <p className="text-sm text-red-400">{errorMsg}</p>}
+              {errorMsg && <p className="text-sm text-white">{errorMsg}</p>}
               <Button type="submit" size="lg" className="w-full" disabled={status === 'loading'}>
                 {status === 'loading' ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -108,7 +108,7 @@ export default function LoginPage({
             </div>
             <p className="text-center text-xs text-[#4B5563]">
               Don&apos;t have an account?{' '}
-              <Link href="/checkout" className="text-red-400 hover:underline">
+              <Link href="/checkout" className="text-white hover:underline">
                 Buy the kit first
               </Link>{' '}
               and your account is created automatically.

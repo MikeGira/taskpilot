@@ -30,7 +30,7 @@ export function Navbar() {
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-white/8 border border-white/10">
             <Terminal className="h-3.5 w-3.5 text-white" />
           </div>
-          <span className="text-white">Task<span className="text-red-500">Pilot</span></span>
+          <span className="text-white">Task<span className="text-white">Pilot</span></span>
         </Link>
 
         {/* Desktop nav — pill-shaped links */}
@@ -113,7 +113,7 @@ function NavPill({
       className={cn(
         'flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
         accent
-          ? 'text-red-400 hover:text-red-300 border border-red-500/25 hover:border-red-500/50 bg-red-500/5'
+          ? 'text-white hover:text-zinc-300 border border-white/12 hover:border-white/12 bg-white/5'
           : 'text-[#888] hover:text-white hover:bg-white/6 border border-transparent hover:border-white/10'
       )}
     >
@@ -134,7 +134,7 @@ function MobileLink({
       onClick={onClick}
       className={cn(
         'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-        accent ? 'text-red-400 hover:text-red-300' : 'text-[#888] hover:text-white hover:bg-white/5'
+        accent ? 'text-white hover:text-zinc-300' : 'text-[#888] hover:text-white hover:bg-white/5'
       )}
     >
       {children}

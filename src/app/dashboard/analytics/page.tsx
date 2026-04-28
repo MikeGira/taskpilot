@@ -66,9 +66,9 @@ export default async function AnalyticsPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         {[
           { label: 'Total Feedback', value: String(total), color: '' },
-          { label: 'Positive', value: `${positive}`, sub: `${positiveRate}%`, color: 'text-red-400' },
+          { label: 'Positive', value: `${positive}`, sub: `${positiveRate}%`, color: 'text-white' },
           { label: 'Needs Work', value: String(negative), color: 'text-amber-400' },
-          { label: 'Satisfaction', value: `${positiveRate}%`, color: positiveRate >= 70 ? 'text-red-400' : 'text-amber-400' },
+          { label: 'Satisfaction', value: `${positiveRate}%`, color: positiveRate >= 70 ? 'text-white' : 'text-amber-400' },
         ].map((s) => (
           <div key={s.label} className="rounded-xl border border-white/8 bg-[#0D0D0D] p-4">
             <p className="text-xs text-[#6B7280] mb-1">{s.label}</p>
