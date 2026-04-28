@@ -16,20 +16,27 @@ export default async function DashboardPage() {
 
   let purchases: Record<string, unknown>[] = [];
 
-  if (userId || userEmail) {
+  if (userEmail) {
     try {
       const db = getAdminClient();
-      const { data, error } = await db
-        .from('purchases')
-        .select('*, products(id, slug, name, tagline)')
-        .eq('status', 'completed')
-        .or(`user_id.eq.${userId},email.eq.${userEmail}`)
-        .order('created_at', { ascending: false });
+      // Build OR conditions only for non-empty values to avoid invalid PostgREST syntax
+      const conditions: string[] = [];
+      if (userId) conditions.push(`user_id.eq.${userId}`);
+      if (userEmail) conditions.push(`email.eq.${userEmail}`);
 
-      if (error) {
-        console.error('[dashboard] purchases query error:', error.message);
-      } else {
-        purchases = (data ?? []) as Record<string, unknown>[];
+      if (conditions.length > 0) {
+        const { data, error } = await db
+          .from('purchases')
+          .select('*, products(id, slug, name, tagline)')
+          .eq('status', 'completed')
+          .or(conditions.join(','))
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('[dashboard] purchases query error:', error.message);
+        } else {
+          purchases = (data ?? []) as Record<string, unknown>[];
+        }
       }
     } catch (err) {
       console.error('[dashboard] unexpected error:', err);

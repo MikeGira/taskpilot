@@ -23,17 +23,17 @@ interface Cloud { id: string; label: string; short: string; }
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 const OS_OPTIONS: OS[] = [
-  { id: 'windows',        label: 'Windows',        desc: 'Server 2016–2022 · Windows 10/11 · PowerShell', icon: Monitor,  color: 'border-blue-500/40   bg-blue-500/12   hover:border-blue-400/70   hover:bg-blue-500/18',   accent: 'text-blue-400'   },
-  { id: 'linux',          label: 'Linux',          desc: 'Ubuntu · RHEL/CentOS · Debian · Amazon Linux',  icon: Terminal, color: 'border-orange-500/40 bg-orange-500/12 hover:border-orange-400/70 hover:bg-orange-500/18', accent: 'text-orange-400' },
-  { id: 'macos',          label: 'macOS',          desc: 'macOS 12+ · Admin or MDM managed',              icon: Apple,    color: 'border-zinc-400/40   bg-zinc-400/10   hover:border-zinc-300/60   hover:bg-zinc-400/15',   accent: 'text-zinc-300'   },
-  { id: 'cross-platform', label: 'Cross-Platform', desc: 'Works on Windows, Linux & macOS · Python',      icon: Layers,   color: 'border-violet-500/40 bg-violet-500/12 hover:border-violet-400/70 hover:bg-violet-500/18', accent: 'text-violet-400' },
+  { id: 'windows',        label: 'Windows',        desc: 'Server 2016–2022 · Windows 10/11 · PowerShell', icon: Monitor,  color: 'border-blue-500/60   bg-blue-500/20   hover:border-blue-400     hover:bg-blue-500/30',   accent: 'text-blue-300'   },
+  { id: 'linux',          label: 'Linux',          desc: 'Ubuntu · RHEL/CentOS · Debian · Amazon Linux',  icon: Terminal, color: 'border-yellow-500/60 bg-yellow-500/20 hover:border-yellow-400   hover:bg-yellow-500/30', accent: 'text-yellow-300' },
+  { id: 'macos',          label: 'macOS',          desc: 'macOS 12+ · Admin or MDM managed',              icon: Apple,    color: 'border-zinc-400/60   bg-zinc-400/15   hover:border-zinc-300     hover:bg-zinc-400/25',   accent: 'text-zinc-200'   },
+  { id: 'cross-platform', label: 'Cross-Platform', desc: 'Works on Windows, Linux & macOS · Python',      icon: Layers,   color: 'border-violet-500/60 bg-violet-500/20 hover:border-violet-400   hover:bg-violet-500/30', accent: 'text-violet-300' },
 ];
 
 const ENV_OPTIONS: Env[] = [
-  { id: 'on-premises', label: 'On-Premises', desc: 'Active Directory · Local servers · No cloud', icon: Server,   color: 'border-indigo-500/40 bg-indigo-500/12 hover:border-indigo-400/70 hover:bg-indigo-500/18', accent: 'text-indigo-400'  },
-  { id: 'hybrid',      label: 'Hybrid',      desc: 'On-prem + cloud · Best of both worlds',       icon: GitMerge, color: 'border-cyan-500/40   bg-cyan-500/12   hover:border-cyan-400/70   hover:bg-cyan-500/18',   accent: 'text-cyan-400'   },
-  { id: 'cloud',       label: 'Cloud',       desc: 'AWS · Azure · GCP · Fully managed',           icon: Cloud,    color: 'border-emerald-500/40 bg-emerald-500/12 hover:border-emerald-400/70 hover:bg-emerald-500/18', accent: 'text-emerald-400'},
-  { id: 'multi-cloud', label: 'Multi-Cloud', desc: 'Multiple providers · Complex infrastructure', icon: Layers,   color: 'border-amber-500/40  bg-amber-500/12  hover:border-amber-400/70  hover:bg-amber-500/18',  accent: 'text-amber-400'  },
+  { id: 'on-premises', label: 'On-Premises', desc: 'Active Directory · Local servers · No cloud', icon: Server,   color: 'border-indigo-500/60  bg-indigo-500/20  hover:border-indigo-400   hover:bg-indigo-500/30',  accent: 'text-indigo-300'  },
+  { id: 'hybrid',      label: 'Hybrid',      desc: 'On-prem + cloud · Best of both worlds',       icon: GitMerge, color: 'border-cyan-500/60    bg-cyan-500/20    hover:border-cyan-400     hover:bg-cyan-500/30',    accent: 'text-cyan-300'    },
+  { id: 'cloud',       label: 'Cloud',       desc: 'AWS · Azure · GCP · Fully managed',           icon: Cloud,    color: 'border-emerald-500/60 bg-emerald-500/20 hover:border-emerald-400  hover:bg-emerald-500/30', accent: 'text-emerald-300' },
+  { id: 'multi-cloud', label: 'Multi-Cloud', desc: 'Multiple providers · Complex infrastructure', icon: Layers,   color: 'border-amber-500/60   bg-amber-500/20   hover:border-amber-400    hover:bg-amber-500/30',   accent: 'text-amber-300'   },
 ];
 
 const CLOUD_PROVIDERS: Cloud[] = [

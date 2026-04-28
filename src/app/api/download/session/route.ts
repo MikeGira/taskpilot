@@ -4,20 +4,12 @@ import { getAdminClient } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
 
-const used = new Set<string>();
-
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const sessionId = searchParams.get('session_id') ?? '';
 
   if (!sessionId.startsWith('cs_')) {
     return NextResponse.json({ error: 'Invalid session ID' }, { status: 400 });
-  }
-  if (used.has(sessionId)) {
-    return NextResponse.json(
-      { error: 'Link already used. Sign in to re-download from your dashboard.' },
-      { status: 429 }
-    );
   }
 
   // 1 — Verify payment with Stripe
@@ -32,11 +24,13 @@ export async function GET(request: Request) {
     console.error('[download/session] retrieve failed:', err);
     return NextResponse.json({ error: 'Session not found' }, { status: 404 });
   }
+
   if (session.payment_status !== 'paid') {
     return NextResponse.json({ error: 'Payment not completed' }, { status: 403 });
   }
 
   const productSlug = session.metadata?.product_slug ?? 'it-helpdesk-starter-kit';
+  const customerEmail = session.customer_email ?? session.customer_details?.email ?? '';
 
   // 2 — Get storage path from DB
   let db;
@@ -47,7 +41,7 @@ export async function GET(request: Request) {
 
   const { data: product, error: productErr } = await db
     .from('products')
-    .select('storage_path')
+    .select('id, storage_path')
     .eq('slug', productSlug)
     .maybeSingle();
 
@@ -56,21 +50,38 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
 
-  // 3 — Generate signed URL, trying multiple path variants
-  //     Common issue: DB has "products/taskpilot-kit.zip" but file was uploaded
-  //     to the bucket root as "taskpilot-kit.zip" — we try both.
+  // 3 — Backfill purchase record so it shows in dashboard
+  //     (idempotent via onConflict — safe to call on every download)
+  if (customerEmail && product.id) {
+    try {
+      await db.from('purchases').upsert({
+        email: customerEmail,
+        product_id: product.id,
+        product_slug: productSlug,
+        stripe_session_id: sessionId,
+        stripe_customer_id: typeof session.customer === 'string' ? session.customer : null,
+        amount_cents: session.amount_total ?? 0,
+        currency: session.currency ?? 'usd',
+        status: 'completed',
+      }, { onConflict: 'stripe_session_id' });
+    } catch (err) {
+      // Non-fatal: log but don't block the download
+      console.error('[download/session] purchase backfill failed:', err);
+    }
+  }
+
+  // 4 — Generate signed URL (try multiple path variants)
   const pathsToTry = [
-    product.storage_path,                                      // exact DB value
-    product.storage_path.split('/').pop() ?? '',               // filename only
-    `products/${product.storage_path.split('/').pop() ?? ''}`, // products/ prefix
-  ].filter((p, i, arr) => p && arr.indexOf(p) === i);         // dedupe
+    product.storage_path,
+    product.storage_path.split('/').pop() ?? '',
+    `products/${product.storage_path.split('/').pop() ?? ''}`,
+  ].filter((p, i, a) => p && a.indexOf(p) === i);
 
   let signedUrl = '';
   for (const p of pathsToTry) {
     const { data, error } = await db.storage.from('products').createSignedUrl(p, 3600);
     if (!error && data?.signedUrl) {
       signedUrl = data.signedUrl;
-      console.log('[download/session] signed URL OK for path:', p);
       break;
     }
     console.log('[download/session] path not found:', p, '|', error?.message);
@@ -78,11 +89,10 @@ export async function GET(request: Request) {
 
   if (!signedUrl) {
     return NextResponse.json(
-      { error: 'File not found in storage. Contact support — download link will be emailed to you.' },
+      { error: 'File not found in storage. Please contact support or sign in to re-download from your dashboard.' },
       { status: 500 }
     );
   }
 
-  used.add(sessionId);
   return NextResponse.redirect(signedUrl);
 }

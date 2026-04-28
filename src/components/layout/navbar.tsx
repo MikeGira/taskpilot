@@ -22,20 +22,25 @@ function NavItem({ href, label }: { href: string; label: string }) {
       href={href}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative text-sm font-medium transition-colors duration-150 px-3 py-1.5"
-      style={{ color: hovered ? '#ffffff' : '#888888' }}
+      className="relative inline-flex items-center text-sm font-medium px-3 py-1.5 rounded-full"
+      style={{
+        color: hovered ? '#ffffff' : '#888888',
+        transition: 'color 0.15s ease',
+      }}
     >
-      {/* Pop-up pill background */}
+      {/* Spring pill — uses inline styles so cubic-bezier actually fires */}
       <span
-        className={cn(
-          'absolute inset-0 rounded-full transition-all duration-200 ease-out',
-          hovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
-        )}
-        style={{
-          background: 'rgba(255,255,255,0.07)',
-          transformOrigin: 'center',
-        }}
         aria-hidden
+        className="absolute inset-0 rounded-full"
+        style={{
+          background: 'rgba(255,255,255,0.08)',
+          opacity: hovered ? 1 : 0,
+          transform: hovered ? 'scale(1)' : 'scale(0.55)',
+          transformOrigin: 'center',
+          transition: hovered
+            ? 'opacity 0.12s ease, transform 0.22s cubic-bezier(0.34,1.56,0.64,1)'
+            : 'opacity 0.15s ease, transform 0.15s ease-in',
+        }}
       />
       <span className="relative z-10">{label}</span>
     </Link>
