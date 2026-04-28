@@ -45,12 +45,21 @@ const CLOUD_PROVIDERS: Cloud[] = [
 ];
 
 const TASK_EXAMPLES = [
-  'Auto-disable user accounts that haven\'t logged in for 90 days',
-  'Monitor disk space and send an email alert when below 15%',
-  'Automatically restart a failed service and log the event',
-  'Bulk-create new employee accounts from a CSV file',
-  'Generate a weekly security report of failed login attempts',
-  'Sync files between two servers on a schedule',
+  // User lifecycle
+  'Onboard a new employee — create AD account, assign groups, set temp password, email HR',
+  'Offboard a departing employee — disable account, remove from all groups, archive home folder',
+  'Run a monthly user access review and export stale accounts to CSV',
+  'Auto-disable accounts inactive for 90 days with full audit report',
+  // Device lifecycle
+  'Provision a new laptop — join domain, install approved software, apply GPO settings',
+  'Decommission an old device — backup data, wipe disk, remove from AD and inventory',
+  'Generate a device inventory report with OS version, last seen, and patch status',
+  // Day-to-day automation
+  'Monitor disk space on all servers and alert when below 15%',
+  'Auto-restart a failed Windows service and log the event with timestamp',
+  'Bulk-create user accounts from a CSV file with group assignments',
+  'Generate a weekly security report of failed logins and locked accounts',
+  'Sync files between two servers on a nightly schedule',
 ];
 
 const LOADING_MESSAGES = [

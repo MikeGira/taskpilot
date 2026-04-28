@@ -13,15 +13,20 @@ import { ContactForm } from '@/components/landing/contact-form';
 import { FadeInSection } from '@/components/animations/fade-in-section';
 import { AnimatedTerminal } from '@/components/animations/animated-terminal';
 import { HeroBeams } from '@/components/animations/hero-beams';
+import { AnimatedArcs } from '@/components/animations/animated-arcs';
 
 const SCRIPTS = [
-  { icon: ShieldCheck, name: 'Password Reset Automation',  desc: 'Reset AD passwords with one command. Logs every action with timestamp.',                          color: 'text-white', bg: 'bg-white/6' },
-  { icon: HardDrive,   name: 'Disk Cleanup + Alerts',      desc: 'Auto-clears temp files and alerts when drives fall below your threshold.',                         color: 'text-white', bg: 'bg-white/6' },
-  { icon: Users,       name: 'New User Onboarding',        desc: 'Create AD users, assign groups, and set temp passwords in seconds.',                              color: 'text-white', bg: 'bg-white/6' },
-  { icon: Activity,    name: 'Daily Health Check',         desc: 'CPU, RAM, and disk usage report — schedule it once and forget it.',                               color: 'text-white', bg: 'bg-white/6' },
-  { icon: Zap,         name: 'Config Template',            desc: 'Edit 6 fields in config.json and every script is ready for your environment.',                    color: 'text-white', bg: 'bg-white/6' },
-  { icon: Clock,       name: 'Task Scheduler Template',    desc: 'Pre-built scheduler.xml — import it and your scripts run automatically.',                         color: 'text-white', bg: 'bg-white/6' },
-  { icon: Download,    name: 'Step-by-Step Setup Guide',   desc: 'From ZIP to running in 7 clear steps. No guesswork, no prerequisites hunting.',                  color: 'text-white', bg: 'bg-white/6' },
+  { icon: ShieldCheck, name: 'Password Reset Automation',      desc: 'Reset AD passwords with one command. Full audit log, optional user notification.',          color: 'text-blue-400',    bg: 'bg-blue-500/8'   },
+  { icon: HardDrive,   name: 'Disk Cleanup + Alerts',          desc: 'Auto-clears temp files and emails alerts before drives fill up.',                           color: 'text-cyan-400',    bg: 'bg-cyan-500/8'   },
+  { icon: Users,       name: 'User Onboarding',                desc: 'Create AD accounts from CSV, assign groups, set temp password, notify manager.',            color: 'text-emerald-400', bg: 'bg-emerald-500/8'},
+  { icon: Users,       name: 'User Offboarding',               desc: 'Disable account, remove group memberships, archive home folder, email HR report.',          color: 'text-orange-400',  bg: 'bg-orange-500/8' },
+  { icon: Activity,    name: 'Daily Health Check',             desc: 'CPU, RAM, disk — scheduled summary email every morning before you start.',                  color: 'text-violet-400',  bg: 'bg-violet-500/8' },
+  { icon: ShieldCheck, name: 'Account Lifecycle Audit',        desc: 'Monthly review: stale accounts, privilege changes, MFA status — exports to CSV.',          color: 'text-amber-400',   bg: 'bg-amber-500/8'  },
+  { icon: HardDrive,   name: 'Device Provisioning',            desc: 'Join domain, deploy approved software, apply GPO, tag in inventory — one command.',        color: 'text-pink-400',    bg: 'bg-pink-500/8'   },
+  { icon: HardDrive,   name: 'Device Decommission',            desc: 'Backup data, secure wipe, remove from domain, update asset inventory automatically.',      color: 'text-indigo-400',  bg: 'bg-indigo-500/8' },
+  { icon: Zap,         name: 'Config Template',                desc: 'Edit 6 fields in config.json and every script is ready for your environment.',             color: 'text-yellow-400',  bg: 'bg-yellow-500/8' },
+  { icon: Clock,       name: 'Task Scheduler Template',        desc: 'Pre-built scheduler.xml — import it once, scripts run on your schedule forever.',          color: 'text-white',       bg: 'bg-white/6'      },
+  { icon: Download,    name: 'Step-by-Step Setup Guide',       desc: 'From ZIP to running in 7 clear steps. No guesswork.',                                      color: 'text-white',       bg: 'bg-white/6'      },
 ];
 
 const WITHOUT = [
@@ -188,6 +193,44 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   </div>
                 </FadeInSection>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Deploy everywhere ────────────────────────────────────────────── */}
+        <section className="py-16 border-t border-white/6 overflow-hidden">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6">
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+              <FadeInSection>
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/4 px-3 py-1 text-xs font-medium text-white mb-5">
+                    <Zap className="h-3 w-3 text-cyan-400" /> Works everywhere
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
+                    One kit.<br />
+                    <span className="text-white/50">Every environment.</span>
+                  </h2>
+                  <p className="text-[#888] leading-relaxed mb-6">
+                    Whether your servers are on-premises, in Azure, AWS, or spread across a hybrid estate — TaskPilot scripts adapt to your environment with a single config file.
+                  </p>
+                  <ul className="space-y-2.5">
+                    {[
+                      { color: 'bg-blue-400',    text: 'Windows Server 2016–2022 + Windows 10/11' },
+                      { color: 'bg-orange-400',  text: 'Linux — Ubuntu, RHEL, Amazon Linux' },
+                      { color: 'bg-cyan-400',    text: 'Cloud — AWS, Azure, GCP, DigitalOcean' },
+                      { color: 'bg-violet-400',  text: 'Hybrid & on-premises Active Directory' },
+                    ].map(({ color, text }) => (
+                      <li key={text} className="flex items-center gap-2.5 text-sm text-[#999]">
+                        <span className={`h-2 w-2 rounded-full shrink-0 ${color}`} />
+                        {text}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </FadeInSection>
+              <FadeInSection delay={150}>
+                <AnimatedArcs />
+              </FadeInSection>
             </div>
           </div>
         </section>
