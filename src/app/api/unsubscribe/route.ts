@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getAdminClient } from '@/lib/supabase/admin';
 import { verifyUnsubscribeToken } from '@/lib/tokens';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function POST(request: Request) {
+  if (!rateLimit(`unsub:${getClientIp(request)}`, 20, 60 * 60 * 1000).allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
   const raw = await request.text();
   if (raw.length > 2048) {
     return NextResponse.json({ error: 'Payload too large' }, { status: 413 });

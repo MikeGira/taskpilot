@@ -2,8 +2,13 @@ import { NextResponse } from 'next/server';
 import { getAdminClient } from '@/lib/supabase/admin';
 import { getResend, FROM, logEmail } from '@/lib/resend';
 import { renderNewsletterWelcomeEmail } from '@/emails/newsletter-welcome';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function GET(request: Request) {
+  if (!rateLimit(`confirm:${getClientIp(request)}`, 20, 60 * 60 * 1000).allowed) {
+    return new Response('Too many requests', { status: 429 });
+  }
+
   const { searchParams } = new URL(request.url);
   const token = searchParams.get('token');
   const email = searchParams.get('email');

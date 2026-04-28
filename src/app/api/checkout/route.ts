@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createCheckoutSession } from '@/lib/stripe';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { CheckoutSchema } from '@/lib/validations';
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request);
+  if (!rateLimit(`checkout:${ip}`, 10, 60 * 60 * 1000).allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
   const raw = await request.text();
   if (raw.length > 2048) {
     return NextResponse.json({ error: 'Payload too large' }, { status: 413 });
