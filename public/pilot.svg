@@ -1,46 +1,90 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-  <!-- Helmet body -->
-  <ellipse cx="50" cy="52" rx="36" ry="40" fill="#1a1a2e"/>
-  <ellipse cx="50" cy="48" rx="36" ry="38" fill="#16213e"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <radialGradient id="helmGrad" cx="40%" cy="30%">
+      <stop offset="0%" stop-color="#e8e8e8"/>
+      <stop offset="60%" stop-color="#c0c0c0"/>
+      <stop offset="100%" stop-color="#888"/>
+    </radialGradient>
+    <radialGradient id="visorGrad" cx="35%" cy="30%">
+      <stop offset="0%" stop-color="#0d1a0d"/>
+      <stop offset="100%" stop-color="#020802"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
 
-  <!-- Helmet brim/rim -->
-  <ellipse cx="50" cy="86" rx="34" ry="7" fill="#0d1b2a" opacity="0.8"/>
-  <rect x="16" y="80" width="68" height="10" rx="5" fill="#1a1a2e"/>
+  <!-- Helmet dome -->
+  <ellipse cx="100" cy="85" rx="72" ry="78" fill="url(#helmGrad)"/>
 
-  <!-- Visor -->
-  <path d="M 22 45 Q 22 68 50 70 Q 78 68 78 45 Q 78 30 50 28 Q 22 30 22 45 Z" fill="#0a0a1a" opacity="0.95"/>
-  <!-- Visor tint -->
-  <path d="M 24 46 Q 24 67 50 69 Q 76 67 76 46 Q 76 32 50 30 Q 24 32 24 46 Z" fill="#001a00" opacity="0.7"/>
+  <!-- Helmet top highlight -->
+  <ellipse cx="85" cy="45" rx="38" ry="22" fill="white" opacity="0.25"/>
+
+  <!-- Helmet side shading -->
+  <ellipse cx="162" cy="90" rx="18" ry="45" fill="#777" opacity="0.35"/>
+
+  <!-- Visor opening shape -->
+  <path d="M 42 85 Q 38 120 62 148 Q 100 162 138 148 Q 162 120 158 85 Q 155 60 100 56 Q 45 60 42 85 Z"
+        fill="#111" opacity="0.95"/>
+
+  <!-- Visor glass -->
+  <path d="M 44 86 Q 40 120 63 147 Q 100 160 137 147 Q 160 120 156 86 Q 153 62 100 58 Q 47 62 44 86 Z"
+        fill="url(#visorGrad)"/>
+
+  <!-- Visor green tint overlay -->
+  <path d="M 44 86 Q 40 120 63 147 Q 100 160 137 147 Q 160 120 156 86 Q 153 62 100 58 Q 47 62 44 86 Z"
+        fill="#001800" opacity="0.5"/>
 
   <!-- Matrix code on visor -->
-  <text x="28" y="43" font-family="monospace" font-size="5" fill="#00ff41" opacity="0.9">01 10 11</text>
-  <text x="31" y="50" font-family="monospace" font-size="5" fill="#00cc33" opacity="0.7">10 01 00</text>
-  <text x="29" y="57" font-family="monospace" font-size="5" fill="#00ff41" opacity="0.8">11 00 10</text>
-  <text x="33" y="64" font-family="monospace" font-size="5" fill="#00aa22" opacity="0.6">01 11 01</text>
+  <g filter="url(#glow)" font-family="monospace" font-size="9" fill="#00ff41">
+    <text x="56"  y="95"  opacity="0.95">01 10 11 0</text>
+    <text x="60"  y="107" opacity="0.80">1 00 11 01</text>
+    <text x="55"  y="119" opacity="0.90">10 01 00 1</text>
+    <text x="58"  y="131" opacity="0.75">01 11 10 0</text>
+    <text x="62"  y="143" opacity="0.60">00 10 01</text>
+  </g>
 
-  <!-- Visor reflection -->
-  <path d="M 28 36 Q 38 32 50 32" stroke="rgba(0,255,65,0.3)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Visor reflection highlight -->
+  <path d="M 58 68 Q 75 60 100 60" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 50 80 Q 55 72 65 70" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
 
-  <!-- Visor frame/border -->
-  <path d="M 22 45 Q 22 68 50 70 Q 78 68 78 45 Q 78 30 50 28 Q 22 30 22 45 Z" fill="none" stroke="#2a3a5c" stroke-width="2"/>
+  <!-- Visor frame border -->
+  <path d="M 42 85 Q 38 120 62 148 Q 100 162 138 148 Q 162 120 158 85 Q 155 60 100 56 Q 45 60 42 85 Z"
+        fill="none" stroke="#999" stroke-width="2"/>
 
-  <!-- CP badge on forehead -->
-  <rect x="38" y="14" width="24" height="14" rx="3" fill="#2a3a5c"/>
-  <rect x="39" y="15" width="22" height="12" rx="2" fill="#0d1b2a"/>
-  <text x="50" y="24" text-anchor="middle" font-family="monospace" font-size="7" font-weight="bold" fill="#4a9eff" letter-spacing="1">CP</text>
+  <!-- CP badge plate -->
+  <rect x="78" y="14" width="44" height="22" rx="4" fill="#1a1a2e"/>
+  <rect x="79" y="15" width="42" height="20" rx="3" fill="#0a0a1a"/>
 
   <!-- Star on badge -->
-  <text x="50" y="13" text-anchor="middle" font-family="serif" font-size="6" fill="#4a9eff" opacity="0.8">★</text>
+  <text x="100" y="23" text-anchor="middle" font-family="serif" font-size="7" fill="#4a9eff">★</text>
 
-  <!-- Helmet side details -->
-  <rect x="14" y="50" width="5" height="18" rx="2.5" fill="#2a3a5c"/>
-  <rect x="81" y="50" width="5" height="18" rx="2.5" fill="#2a3a5c"/>
+  <!-- CP text -->
+  <text x="100" y="33" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="9" font-weight="900" fill="#e0e8ff" letter-spacing="2">CP</text>
 
-  <!-- Headset mic arm -->
-  <path d="M 14 58 Q 8 62 10 70" stroke="#2a3a5c" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <circle cx="10" cy="71" r="3" fill="#1a2a4a"/>
-  <circle cx="10" cy="71" r="1.5" fill="#4a9eff" opacity="0.8"/>
+  <!-- Chin guard / oxygen mask -->
+  <path d="M 62 148 Q 100 168 138 148 L 132 158 Q 100 175 68 158 Z" fill="#888"/>
+  <path d="M 68 155 Q 100 170 132 155 Q 116 162 100 164 Q 84 162 68 155 Z" fill="#666"/>
 
-  <!-- Chin strap area -->
-  <path d="M 22 76 Q 35 82 50 83 Q 65 82 78 76" stroke="#2a3a5c" stroke-width="2" fill="none"/>
+  <!-- Mask connector circle -->
+  <circle cx="100" cy="163" r="8" fill="#555"/>
+  <circle cx="100" cy="163" r="5" fill="#333"/>
+  <circle cx="100" cy="163" r="2" fill="#888"/>
+
+  <!-- Left side connector -->
+  <rect x="28" y="100" width="12" height="28" rx="6" fill="#999"/>
+  <rect x="29" y="101" width="10" height="26" rx="5" fill="#bbb"/>
+
+  <!-- Right side connector -->
+  <rect x="160" y="100" width="12" height="28" rx="6" fill="#999"/>
+  <rect x="161" y="101" width="10" height="26" rx="5" fill="#bbb"/>
+
+  <!-- Mic arm on left -->
+  <path d="M 28 116 Q 18 122 16 132" stroke="#777" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="15" cy="134" r="5" fill="#555"/>
+  <circle cx="15" cy="134" r="2.5" fill="#333"/>
+
+  <!-- Helmet bottom rim -->
+  <path d="M 40 148 Q 100 165 160 148" stroke="#aaa" stroke-width="3" fill="none"/>
 </svg>

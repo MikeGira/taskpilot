@@ -40,22 +40,13 @@ const STARTERS = [
   'How do I set up Task Scheduler automation?',
 ];
 
-// Loads /pilot.png if you've added your own image, otherwise falls back to /pilot.svg
 function PilotAvatar({ size = 'md' }: { size?: 'sm' | 'md' }) {
-  const [src, setSrc] = useState('/pilot.png');
   const dim = size === 'sm' ? 24 : 36;
   const cls = size === 'sm' ? 'h-6 w-6' : 'h-9 w-9';
   return (
-    <div className={cn('shrink-0 rounded-full bg-[#16213e] overflow-hidden flex items-center justify-center select-none', cls)}>
+    <div className={cn('shrink-0 rounded-full bg-[#0d1117] overflow-hidden flex items-center justify-center select-none', cls)}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={src}
-        alt="Pilot"
-        width={dim}
-        height={dim}
-        className="w-full h-full object-cover"
-        onError={() => src === '/pilot.png' && setSrc('/pilot.svg')}
-      />
+      <img src="/pilot.svg" alt="Pilot" width={dim} height={dim} className="w-full h-full object-cover" />
     </div>
   );
 }
