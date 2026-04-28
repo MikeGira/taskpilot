@@ -22,6 +22,61 @@ export interface GenerateResult {
   configNotes: string[] | null;
 }
 
+function extractJson(raw: string): GenerateResult {
+  let text = raw.trim();
+
+  // Strip markdown code fences if present (```json ... ``` or ``` ... ```)
+  const fenced = text.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
+  if (fenced) text = fenced[1].trim();
+
+  // Locate the outermost JSON object
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start === -1 || end === -1 || end <= start) throw new Error('No JSON object found');
+
+  const candidate = text.slice(start, end + 1);
+
+  // First attempt: parse as-is (Claude followed instructions)
+  try {
+    return JSON.parse(candidate) as GenerateResult;
+  } catch {
+    // Second attempt: Claude may have included literal newlines inside string values.
+    // Re-encode string values by processing character by character.
+    const fixed = fixLiteralNewlinesInJsonStrings(candidate);
+    return JSON.parse(fixed) as GenerateResult;
+  }
+}
+
+function fixLiteralNewlinesInJsonStrings(json: string): string {
+  let result = '';
+  let inString = false;
+  let escaped = false;
+
+  for (let i = 0; i < json.length; i++) {
+    const ch = json[i];
+    if (escaped) {
+      result += ch;
+      escaped = false;
+      continue;
+    }
+    if (ch === '\\' && inString) {
+      result += ch;
+      escaped = true;
+      continue;
+    }
+    if (ch === '"') {
+      inString = !inString;
+      result += ch;
+      continue;
+    }
+    if (inString && ch === '\n') { result += '\\n'; continue; }
+    if (inString && ch === '\r') { result += '\\r'; continue; }
+    if (inString && ch === '\t') { result += '\\t'; continue; }
+    result += ch;
+  }
+  return result;
+}
+
 const OS_LABELS: Record<string, string> = {
   windows: 'Windows (Server 2016/2019/2022 or Windows 10/11)',
   linux: 'Linux (Ubuntu/Debian, RHEL/CentOS, or Amazon Linux)',
@@ -73,31 +128,16 @@ NON-NEGOTIABLE SCRIPT STANDARDS:
 
 CLARIFICATION RULE: If you cannot write a genuinely useful script without one critical missing detail, ask exactly one specific, concise question. Otherwise, make reasonable assumptions, document them in configNotes, and generate the script.
 
-RESPOND WITH VALID JSON ONLY — no markdown fences, no text before or after the JSON object.
+OUTPUT FORMAT — STRICT RULES:
+- Return a single raw JSON object. No markdown fences, no prose, nothing outside the JSON.
+- Every string value must be a valid JSON string: escape all newlines as \\n, all double-quotes as \\", all backslashes as \\\\.
+- The "script" field is a single JSON string on one line — never include literal newline characters inside it.
 
 If generating a script:
-{
-  "needsClarification": false,
-  "question": null,
-  "script": "# complete script here",
-  "filename": "descriptive-kebab-name.ps1",
-  "language": "powershell",
-  "title": "One-line description of what the script does",
-  "explanation": "2-3 sentences: what the script does, what it automates, key behaviors.",
-  "configNotes": ["VARIABLE_NAME: what to replace it with", "ANOTHER_VAR: explanation"]
-}
+{"needsClarification":false,"question":null,"script":"# full script — newlines as \\n","filename":"descriptive-kebab-name.ps1","language":"powershell","title":"One-line description","explanation":"2-3 sentences about what this does.","configNotes":["VARIABLE_NAME: what to set it to"]}
 
 If you need clarification:
-{
-  "needsClarification": true,
-  "question": "One specific, concise question",
-  "script": null,
-  "filename": null,
-  "language": null,
-  "title": null,
-  "explanation": null,
-  "configNotes": null
-}`;
+{"needsClarification":true,"question":"One specific question","script":null,"filename":null,"language":null,"title":null,"explanation":null,"configNotes":null}`;
 }
 
 function buildUserMessage(
@@ -167,7 +207,7 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 4096,
+        max_tokens: 8192,
         system: systemPrompt,
         messages: [{ role: 'user', content: userMessage }],
       }),
@@ -188,11 +228,9 @@ export async function POST(request: Request) {
     // Parse the JSON response from Claude
     let result: GenerateResult;
     try {
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('No JSON found in response');
-      result = JSON.parse(jsonMatch[0]) as GenerateResult;
+      result = extractJson(text);
     } catch {
-      console.error('[generate] Failed to parse Claude response:', text.slice(0, 200));
+      console.error('[generate] Failed to parse Claude response:', text.slice(0, 300));
       return NextResponse.json(
         { error: 'Unexpected response format. Please try again.' },
         { status: 502 }
