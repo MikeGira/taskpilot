@@ -11,26 +11,43 @@ export default async function DashboardPage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const db = getAdminClient();
-  const { data: purchases } = await db
-    .from('purchases')
-    .select('*, products(id, slug, name, tagline)')
-    .eq('status', 'completed')
-    .or(`user_id.eq.${user!.id},email.eq.${user!.email}`)
-    .order('created_at', { ascending: false });
+  const userId = user?.id ?? '';
+  const userEmail = user?.email ?? '';
+
+  let purchases: Record<string, unknown>[] = [];
+
+  if (userId || userEmail) {
+    try {
+      const db = getAdminClient();
+      const { data, error } = await db
+        .from('purchases')
+        .select('*, products(id, slug, name, tagline)')
+        .eq('status', 'completed')
+        .or(`user_id.eq.${userId},email.eq.${userEmail}`)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('[dashboard] purchases query error:', error.message);
+      } else {
+        purchases = (data ?? []) as Record<string, unknown>[];
+      }
+    } catch (err) {
+      console.error('[dashboard] unexpected error:', err);
+    }
+  }
 
   return (
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-[#F9FAFB]">Your downloads</h1>
         <p className="text-sm text-[#9CA3AF] mt-1">
-          {purchases?.length ? 'Click Download to get your files.' : 'No purchases yet.'}
+          {purchases.length ? 'Click Download to get your files.' : 'No purchases yet.'}
         </p>
       </div>
 
-      {purchases && purchases.length > 0 ? (
+      {purchases.length > 0 ? (
         <div className="space-y-4">
-          {purchases.map((p: Record<string, unknown>) => (
+          {purchases.map((p) => (
             <DownloadCard key={p.id as string} purchase={p} />
           ))}
         </div>
@@ -42,7 +59,7 @@ export default async function DashboardPage() {
             Get the IT Helpdesk Automation Starter Kit and automate your most repetitive tasks.
           </p>
           <Button asChild>
-            <Link href="/checkout">Get the Kit — $19</Link>
+            <Link href="/checkout">Get the Kit $19</Link>
           </Button>
         </div>
       )}

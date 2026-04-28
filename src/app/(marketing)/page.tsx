@@ -152,21 +152,17 @@ export default function HomePage({
               run forever.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button asChild size="xl" className="w-full sm:w-auto shadow-xl ">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button asChild size="lg" className="w-full sm:w-auto">
                 <Link href="/checkout">
-                  Get the Kit — $19
-                  <ArrowRight className="h-5 w-5" />
+                  Get the Kit $19
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button
-                asChild
-                size="xl"
-                className="w-full sm:w-auto bg-white hover:bg-zinc-100 shadow-xl  text-white border-0"
-              >
+              <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
                 <Link href="/generate">
-                  <Wand2 className="h-5 w-5" />
-                  Generate a Script — Free
+                  <Wand2 className="h-4 w-4" />
+                  Try Generator Free
                 </Link>
               </Button>
             </div>
