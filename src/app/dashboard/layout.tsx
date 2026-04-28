@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Terminal, Download, Settings, LogOut } from 'lucide-react';
+import { Terminal, Download, Settings, BarChart2 } from 'lucide-react';
 import { SignOutButton } from '@/components/dashboard/sign-out-button';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -47,6 +47,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <Settings className="h-4 w-4" />
             Account
           </Link>
+          {user.email === process.env.ADMIN_EMAIL && (
+            <Link
+              href="/dashboard/analytics"
+              className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-[#9CA3AF] hover:text-[#F9FAFB] hover:bg-white/5 transition-colors"
+            >
+              <BarChart2 className="h-4 w-4" />
+              Analytics
+            </Link>
+          )}
         </nav>
         <main className="flex-1 min-w-0">{children}</main>
       </div>

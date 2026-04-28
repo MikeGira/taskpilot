@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import {
   Monitor, Terminal, Apple, Layers, Server, GitMerge, Cloud,
   ArrowRight, ArrowLeft, Wand2, Copy, Download, CheckCircle2,
-  RefreshCw, Loader2, AlertCircle, Check, ChevronRight,
+  RefreshCw, Loader2, AlertCircle, Check, ChevronRight, ThumbsUp, ThumbsDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
@@ -164,6 +164,10 @@ export function GeneratorWizard() {
   const [error, setError] = useState('');
   const [loadingMsg, setLoadingMsg] = useState(0);
   const loadingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [feedbackRating, setFeedbackRating] = useState<1 | -1 | null>(null);
+  const [feedbackComment, setFeedbackComment] = useState('');
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
 
   useEffect(() => {
     if (step === 'generating') {
@@ -220,6 +224,30 @@ export function GeneratorWizard() {
     }
   }
 
+  async function submitFeedback(rating: 1 | -1) {
+    if (feedbackSubmitted || feedbackSubmitting) return;
+    setFeedbackRating(rating);
+    setFeedbackSubmitting(true);
+    try {
+      await fetch('/api/generate/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          os,
+          environment: env,
+          language: result?.language ?? undefined,
+          rating,
+          comment: feedbackComment.trim() || undefined,
+        }),
+      });
+    } catch {
+      // Feedback is non-critical — fail silently
+    } finally {
+      setFeedbackSubmitted(true);
+      setFeedbackSubmitting(false);
+    }
+  }
+
   function reset() {
     setStep('os');
     setOs('');
@@ -229,6 +257,10 @@ export function GeneratorWizard() {
     setClarifyAnswer('');
     setResult(null);
     setError('');
+    setFeedbackRating(null);
+    setFeedbackComment('');
+    setFeedbackSubmitted(false);
+    setFeedbackSubmitting(false);
   }
 
   const needsCloud = env === 'cloud' || env === 'hybrid' || env === 'multi-cloud';
@@ -466,6 +498,74 @@ export function GeneratorWizard() {
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {/* Feedback */}
+          {feedbackSubmitted ? (
+            <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/5 px-4 py-3 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+              <p className="text-sm text-[#D1D5DB]">Thanks — your feedback helps improve the AI.</p>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-white/8 bg-white/2 p-4">
+              <p className="text-xs font-medium text-[#9CA3AF] mb-3">Did this script work for you?</p>
+              {feedbackRating === null && (
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => submitFeedback(1)}
+                    disabled={feedbackSubmitting}
+                    className="gap-1.5 flex-1"
+                  >
+                    <ThumbsUp className="h-3.5 w-3.5" />
+                    Worked great
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setFeedbackRating(-1)}
+                    disabled={feedbackSubmitting}
+                    className="gap-1.5 flex-1"
+                  >
+                    <ThumbsDown className="h-3.5 w-3.5" />
+                    Needs work
+                  </Button>
+                </div>
+              )}
+              {feedbackRating === -1 && (
+                <div className="space-y-3">
+                  <Textarea
+                    value={feedbackComment}
+                    onChange={(e) => setFeedbackComment(e.target.value)}
+                    placeholder="What went wrong? (optional — helps improve the AI)"
+                    rows={2}
+                    maxLength={500}
+                    className="resize-none text-sm"
+                    autoFocus
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => submitFeedback(-1)}
+                      disabled={feedbackSubmitting}
+                      className="gap-1.5"
+                    >
+                      {feedbackSubmitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                      Submit Feedback
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setFeedbackRating(null)}
+                      disabled={feedbackSubmitting}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
