@@ -14,10 +14,10 @@ const config: Config = {
         brand: {
           bg: '#000000',
           surface: '#0D0D0D',
-          accent: '#3ECF8E',
-          cta: '#3ECF8E',
-          'cta-hover': '#2DB97D',
-          success: '#3ECF8E',
+          accent: '#ef4444',
+          cta: '#ef4444',
+          'cta-hover': '#dc2626',
+          success: '#10b981',
         },
       },
       borderColor: {

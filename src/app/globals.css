@@ -5,12 +5,12 @@
 :root {
   --bg: #000000;
   --surface: #0D0D0D;
-  --accent: #3ECF8E;
-  --cta: #3ECF8E;
-  --cta-hover: #2DB97D;
-  --success: #3ECF8E;
-  --text-primary: #F9FAFB;
-  --text-secondary: #9CA3AF;
+  --accent: #ef4444;
+  --cta: #ef4444;
+  --cta-hover: #dc2626;
+  --success: #10b981;
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
   --border: rgba(255, 255, 255, 0.08);
 }
 
@@ -19,12 +19,12 @@
     border-color: rgba(255, 255, 255, 0.08);
   }
   body {
-    background-color: var(--bg);
+    background-color: #000000;
     color: var(--text-primary);
     font-feature-settings: 'ss01', 'cv01';
   }
   ::selection {
-    background-color: rgba(62, 207, 142, 0.25);
+    background-color: rgba(239, 68, 68, 0.2);
     color: #fff;
   }
 }

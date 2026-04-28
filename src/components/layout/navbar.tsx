@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Terminal, Menu, X, Wand2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type { User } from '@supabase/supabase-js';
 
 export function Navbar() {
@@ -21,36 +22,29 @@ export function Navbar() {
   }, [supabase]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/6 bg-[#000000]/80 backdrop-blur-md">
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/15 border border-emerald-500/30">
-            <Terminal className="h-4 w-4 text-emerald-400" />
+    <header className="sticky top-0 z-50 w-full border-b border-white/8 bg-black/80 backdrop-blur-md">
+      <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 font-bold text-base tracking-tight">
+          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-white/8 border border-white/10">
+            <Terminal className="h-3.5 w-3.5 text-white" />
           </div>
-          <span className="text-[#F9FAFB]">Task<span className="text-emerald-400">Pilot</span></span>
+          <span className="text-white">Task<span className="text-red-500">Pilot</span></span>
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-6 text-sm text-[#9CA3AF]">
-          <Link
-            href="/generate"
-            className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
-          >
-            <Wand2 className="h-3.5 w-3.5" />
+        {/* Desktop nav — pill-shaped links */}
+        <div className="hidden md:flex items-center gap-1 text-sm">
+          <NavPill href="/generate" icon={<Wand2 className="h-3 w-3" />} accent>
             Generator
-          </Link>
-          <Link href="/#includes" className="hover:text-[#F9FAFB] transition-colors">
-            What&apos;s included
-          </Link>
-          <Link href="/#pricing" className="hover:text-[#F9FAFB] transition-colors">
-            Pricing
-          </Link>
-          <Link href="/#faq" className="hover:text-[#F9FAFB] transition-colors">
-            FAQ
-          </Link>
+          </NavPill>
+          <NavPill href="/#includes">What&apos;s included</NavPill>
+          <NavPill href="/#pricing">Pricing</NavPill>
+          <NavPill href="/#faq">FAQ</NavPill>
         </div>
 
-        <div className="hidden md:flex items-center gap-3">
+        {/* Desktop auth — rectangular Vercel style */}
+        <div className="hidden md:flex items-center gap-2">
           {user ? (
             <Button asChild size="sm">
               <Link href="/dashboard">Dashboard</Link>
@@ -69,7 +63,7 @@ export function Navbar() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden p-2 text-[#9CA3AF] hover:text-[#F9FAFB]"
+          className="md:hidden p-2 text-[#888] hover:text-white transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -77,31 +71,26 @@ export function Navbar() {
         </button>
       </nav>
 
+      {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-white/6 bg-[#000000] px-4 py-4 flex flex-col gap-3">
-          <Link href="/generate" className="text-sm text-emerald-400 hover:text-emerald-300 py-1 flex items-center gap-1.5 font-medium" onClick={() => setMobileOpen(false)}>
+        <div className="md:hidden border-t border-white/8 bg-black px-4 py-4 flex flex-col gap-2">
+          <MobileLink href="/generate" onClick={() => setMobileOpen(false)} accent>
             <Wand2 className="h-3.5 w-3.5" /> Generator
-          </Link>
-          <Link href="/#includes" className="text-sm text-[#9CA3AF] hover:text-[#F9FAFB] py-1" onClick={() => setMobileOpen(false)}>
-            What&apos;s included
-          </Link>
-          <Link href="/#pricing" className="text-sm text-[#9CA3AF] hover:text-[#F9FAFB] py-1" onClick={() => setMobileOpen(false)}>
-            Pricing
-          </Link>
-          <Link href="/#faq" className="text-sm text-[#9CA3AF] hover:text-[#F9FAFB] py-1" onClick={() => setMobileOpen(false)}>
-            FAQ
-          </Link>
-          <div className="flex flex-col gap-2 pt-2 border-t border-white/6">
+          </MobileLink>
+          <MobileLink href="/#includes" onClick={() => setMobileOpen(false)}>What&apos;s included</MobileLink>
+          <MobileLink href="/#pricing" onClick={() => setMobileOpen(false)}>Pricing</MobileLink>
+          <MobileLink href="/#faq" onClick={() => setMobileOpen(false)}>FAQ</MobileLink>
+          <div className="flex flex-col gap-2 pt-3 mt-1 border-t border-white/8">
             {user ? (
-              <Button asChild>
+              <Button asChild size="sm">
                 <Link href="/dashboard" onClick={() => setMobileOpen(false)}>Dashboard</Link>
               </Button>
             ) : (
               <>
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" size="sm">
                   <Link href="/login" onClick={() => setMobileOpen(false)}>Sign in</Link>
                 </Button>
-                <Button asChild>
+                <Button asChild size="sm">
                   <Link href="/checkout" onClick={() => setMobileOpen(false)}>Get the Kit — $19</Link>
                 </Button>
               </>
@@ -110,5 +99,45 @@ export function Navbar() {
         </div>
       )}
     </header>
+  );
+}
+
+function NavPill({
+  href, children, icon, accent,
+}: {
+  href: string; children: React.ReactNode; icon?: React.ReactNode; accent?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        'flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors',
+        accent
+          ? 'text-red-400 hover:text-red-300 border border-red-500/25 hover:border-red-500/50 bg-red-500/5'
+          : 'text-[#888] hover:text-white hover:bg-white/6 border border-transparent hover:border-white/10'
+      )}
+    >
+      {icon}
+      {children}
+    </Link>
+  );
+}
+
+function MobileLink({
+  href, children, onClick, accent,
+}: {
+  href: string; children: React.ReactNode; onClick: () => void; accent?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={cn(
+        'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+        accent ? 'text-red-400 hover:text-red-300' : 'text-[#888] hover:text-white hover:bg-white/5'
+      )}
+    >
+      {children}
+    </Link>
   );
 }

@@ -15,7 +15,7 @@ export default function Icon() {
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: '7px',
-        border: '1px solid rgba(62,207,142,0.3)',
+        border: '1px solid rgba(239,68,68,0.3)',
       }}
     >
       <svg
@@ -23,7 +23,7 @@ export default function Icon() {
         height="18"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="#3ECF8E"
+        stroke="#ef4444"
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"

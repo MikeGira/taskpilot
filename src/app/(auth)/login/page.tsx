@@ -43,11 +43,11 @@ export default function LoginPage({
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15 border border-emerald-500/30">
-              <Terminal className="h-5 w-5 text-emerald-400" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/15 border border-red-500/30">
+              <Terminal className="h-5 w-5 text-red-400" />
             </div>
             <span className="font-bold text-xl text-[#F9FAFB]">
-              Task<span className="text-emerald-400">Pilot</span>
+              Task<span className="text-red-400">Pilot</span>
             </span>
           </Link>
           <h1 className="text-2xl font-bold text-[#F9FAFB]">Sign in to TaskPilot</h1>
@@ -63,8 +63,8 @@ export default function LoginPage({
         )}
 
         {status === 'sent' ? (
-          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/8 p-6 text-center">
-            <CheckCircle2 className="h-10 w-10 text-emerald-400 mx-auto mb-3" />
+          <div className="rounded-xl border border-red-500/20 bg-red-500/8 p-6 text-center">
+            <CheckCircle2 className="h-10 w-10 text-red-400 mx-auto mb-3" />
             <h2 className="font-semibold text-[#F9FAFB] mb-2">Check your inbox</h2>
             <p className="text-sm text-[#9CA3AF]">
               We sent a magic link to <strong className="text-[#F9FAFB]">{email}</strong>.
@@ -74,7 +74,7 @@ export default function LoginPage({
               Didn&apos;t get it? Check your spam folder or{' '}
               <button
                 onClick={() => { setStatus('idle'); setEmail(''); }}
-                className="text-emerald-400 hover:underline"
+                className="text-red-400 hover:underline"
               >
                 try again
               </button>.
@@ -108,7 +108,7 @@ export default function LoginPage({
             </div>
             <p className="text-center text-xs text-[#4B5563]">
               Don&apos;t have an account?{' '}
-              <Link href="/checkout" className="text-emerald-400 hover:underline">
+              <Link href="/checkout" className="text-red-400 hover:underline">
                 Buy the kit first
               </Link>{' '}
               and your account is created automatically.

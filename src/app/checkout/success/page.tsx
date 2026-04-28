@@ -12,8 +12,8 @@ export default function CheckoutSuccessPage() {
       <Navbar />
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20 mx-auto mb-6">
-            <CheckCircle2 className="h-10 w-10 text-emerald-400" />
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-500/10 border border-red-500/20 mx-auto mb-6">
+            <CheckCircle2 className="h-10 w-10 text-red-400" />
           </div>
           <h1 className="text-3xl font-bold text-[#F9FAFB] mb-4">You&apos;re all set!</h1>
           <p className="text-[#9CA3AF] mb-4">

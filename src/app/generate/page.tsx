@@ -19,15 +19,15 @@ export default function GeneratePage() {
         {/* Header */}
         <section className="relative overflow-hidden border-b border-white/6">
           <div className="absolute inset-0 bg-grid-pattern pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-radial from-emerald-500/6 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-radial from-red-500/6 via-transparent to-transparent pointer-events-none" />
           <div className="relative mx-auto max-w-3xl px-4 sm:px-6 py-14 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/8 px-4 py-1.5 text-xs font-medium text-emerald-400 mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-red-500/25 bg-red-500/8 px-4 py-1.5 text-xs font-medium text-red-400 mb-6">
               <Wand2 className="h-3.5 w-3.5" />
               AI-Powered Script Generator
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#F9FAFB] mb-4">
               Generate a script that{' '}
-              <span className="text-emerald-400">actually works</span>{' '}
+              <span className="text-red-400">actually works</span>{' '}
               in your environment
             </h1>
             <p className="text-[#9CA3AF] max-w-xl mx-auto leading-relaxed">
@@ -37,7 +37,7 @@ export default function GeneratePage() {
             <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs text-[#6B7280]">
               {['Windows · Linux · macOS', 'On-Prem · Hybrid · Cloud · Multi-Cloud', '10 free scripts per hour', 'No sign-up required'].map((t) => (
                 <span key={t} className="flex items-center gap-1.5">
-                  <Zap className="h-3 w-3 text-emerald-400/70" />
+                  <Zap className="h-3 w-3 text-red-400/70" />
                   {t}
                 </span>
               ))}

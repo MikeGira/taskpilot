@@ -50,11 +50,11 @@ export function ContactForm() {
 
   if (status === 'success') {
     return (
-      <div className="flex items-center gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/8 px-6 py-5 text-emerald-400">
+      <div className="flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/8 px-6 py-5 text-red-400">
         <CheckCircle2 className="h-6 w-6 shrink-0" />
         <div>
           <p className="font-semibold">Message received!</p>
-          <p className="text-sm text-emerald-400/80 mt-0.5">I&apos;ll reply within one business day.</p>
+          <p className="text-sm text-red-400/80 mt-0.5">I&apos;ll reply within one business day.</p>
         </div>
       </div>
     );
@@ -83,7 +83,7 @@ export function ContactForm() {
             id="budget"
             value={form.budget}
             onChange={set('budget')}
-            className="flex h-10 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-[#F9FAFB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            className="flex h-10 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-[#F9FAFB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
           >
             <option value="" className="bg-[#0D0D0D]">Select budget...</option>
             {BUDGETS.map((b) => (

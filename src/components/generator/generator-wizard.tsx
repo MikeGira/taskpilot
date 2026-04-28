@@ -23,17 +23,17 @@ interface Cloud { id: string; label: string; short: string; }
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 const OS_OPTIONS: OS[] = [
-  { id: 'windows', label: 'Windows', desc: 'Server 2016–2022 · Windows 10/11 · PowerShell', icon: Monitor, color: 'border-emerald-500/40 bg-emerald-500/8 hover:border-emerald-500/70 hover:bg-emerald-500/12', accent: 'text-emerald-400' },
+  { id: 'windows', label: 'Windows', desc: 'Server 2016–2022 · Windows 10/11 · PowerShell', icon: Monitor, color: 'border-red-500/40 bg-red-500/8 hover:border-red-500/70 hover:bg-red-500/12', accent: 'text-red-400' },
   { id: 'linux', label: 'Linux', desc: 'Ubuntu · RHEL/CentOS · Debian · Amazon Linux', icon: Terminal, color: 'border-orange-500/40 bg-orange-500/8 hover:border-orange-500/70 hover:bg-orange-500/12', accent: 'text-orange-400' },
   { id: 'macos', label: 'macOS', desc: 'macOS 12+ · Admin or MDM managed', icon: Apple, color: 'border-zinc-400/40 bg-zinc-400/8 hover:border-zinc-400/70 hover:bg-zinc-400/12', accent: 'text-zinc-300' },
-  { id: 'cross-platform', label: 'Cross-Platform', desc: 'Works on Windows, Linux & macOS · Python', icon: Layers, color: 'border-emerald-500/40 bg-emerald-500/8 hover:border-emerald-500/70 hover:bg-emerald-500/12', accent: 'text-emerald-400' },
+  { id: 'cross-platform', label: 'Cross-Platform', desc: 'Works on Windows, Linux & macOS · Python', icon: Layers, color: 'border-red-500/40 bg-red-500/8 hover:border-red-500/70 hover:bg-red-500/12', accent: 'text-red-400' },
 ];
 
 const ENV_OPTIONS: Env[] = [
   { id: 'on-premises', label: 'On-Premises', desc: 'Active Directory · Local servers · No cloud', icon: Server, color: 'border-blue-500/40 bg-blue-500/8 hover:border-blue-500/70 hover:bg-blue-500/12', accent: 'text-blue-400' },
-  { id: 'hybrid', label: 'Hybrid', desc: 'On-prem + cloud · Best of both worlds', icon: GitMerge, color: 'border-emerald-500/40 bg-emerald-500/8 hover:border-emerald-500/70 hover:bg-emerald-500/12', accent: 'text-emerald-400' },
-  { id: 'cloud', label: 'Cloud', desc: 'AWS · Azure · GCP · Fully managed', icon: Cloud, color: 'border-emerald-500/40 bg-emerald-500/8 hover:border-emerald-500/70 hover:bg-emerald-500/12', accent: 'text-emerald-400' },
-  { id: 'multi-cloud', label: 'Multi-Cloud', desc: 'Multiple providers · Complex infrastructure', icon: Layers, color: 'border-emerald-500/40 bg-emerald-500/8 hover:border-emerald-500/70 hover:bg-emerald-500/12', accent: 'text-emerald-400' },
+  { id: 'hybrid', label: 'Hybrid', desc: 'On-prem + cloud · Best of both worlds', icon: GitMerge, color: 'border-red-500/40 bg-red-500/8 hover:border-red-500/70 hover:bg-red-500/12', accent: 'text-red-400' },
+  { id: 'cloud', label: 'Cloud', desc: 'AWS · Azure · GCP · Fully managed', icon: Cloud, color: 'border-red-500/40 bg-red-500/8 hover:border-red-500/70 hover:bg-red-500/12', accent: 'text-red-400' },
+  { id: 'multi-cloud', label: 'Multi-Cloud', desc: 'Multiple providers · Complex infrastructure', icon: Layers, color: 'border-red-500/40 bg-red-500/8 hover:border-red-500/70 hover:bg-red-500/12', accent: 'text-red-400' },
 ];
 
 const CLOUD_PROVIDERS: Cloud[] = [
@@ -78,7 +78,7 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
           key={i}
           className={cn(
             'h-1.5 rounded-full transition-all duration-300',
-            i < current ? 'bg-emerald-400 flex-1' : i === current ? 'bg-emerald-400/60 flex-[2]' : 'bg-white/10 flex-1'
+            i < current ? 'bg-red-400 flex-1' : i === current ? 'bg-red-400/60 flex-[2]' : 'bg-white/10 flex-1'
           )}
         />
       ))}
@@ -96,11 +96,11 @@ function SelectionCard<T extends { id: string; label: string; desc: string; icon
       className={cn(
         'relative w-full text-left rounded-xl border p-5 transition-all duration-200 group cursor-pointer',
         option.color,
-        selected && 'ring-2 ring-emerald-400 ring-offset-2 ring-offset-[#000000]'
+        selected && 'ring-2 ring-red-400 ring-offset-2 ring-offset-[#000000]'
       )}
     >
       {selected && (
-        <div className="absolute top-3 right-3 h-5 w-5 rounded-full bg-emerald-400 flex items-center justify-center">
+        <div className="absolute top-3 right-3 h-5 w-5 rounded-full bg-red-400 flex items-center justify-center">
           <Check className="h-3 w-3 text-black" />
         </div>
       )}
@@ -120,7 +120,7 @@ function CopyButton({ text }: { text: string }) {
   }
   return (
     <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5">
-      {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+      {copied ? <Check className="h-3.5 w-3.5 text-red-400" /> : <Copy className="h-3.5 w-3.5" />}
       {copied ? 'Copied!' : 'Copy'}
     </Button>
   );
@@ -135,7 +135,7 @@ function ScriptBlock({ script, filename, language }: { script: string; filename:
           <div className="flex gap-1.5">
             <div className="h-3 w-3 rounded-full bg-red-500/60" />
             <div className="h-3 w-3 rounded-full bg-yellow-500/60" />
-            <div className="h-3 w-3 rounded-full bg-emerald-500/60" />
+            <div className="h-3 w-3 rounded-full bg-red-500/60" />
           </div>
           <span className="text-xs text-[#6B7280] ml-2 font-mono">{filename ?? 'script'}</span>
         </div>
@@ -323,7 +323,7 @@ export function GeneratorWizard() {
                     className={cn(
                       'px-3 py-1.5 rounded-lg text-sm font-medium border transition-all duration-150',
                       cloudProviders.includes(c.id)
-                        ? 'border-emerald-500/60 bg-emerald-500/15 text-emerald-300'
+                        ? 'border-red-500/60 bg-red-500/15 text-red-300'
                         : 'border-white/10 bg-white/4 text-[#9CA3AF] hover:border-white/20 hover:bg-white/8'
                     )}
                   >
@@ -396,8 +396,9 @@ export function GeneratorWizard() {
           <Button
             onClick={() => generate()}
             disabled={task.trim().length < 10}
+            variant="accent"
             size="lg"
-            className="w-full shadow-lg shadow-emerald-500/20"
+            className="w-full"
           >
             <Wand2 className="h-4 w-4" />
             Generate Script
@@ -409,10 +410,10 @@ export function GeneratorWizard() {
       {step === 'generating' && (
         <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
           <div className="relative mb-8">
-            <div className="h-20 w-20 rounded-full border-2 border-emerald-500/20 flex items-center justify-center">
-              <div className="h-14 w-14 rounded-full border-2 border-t-emerald-400 border-emerald-500/20 animate-spin" />
+            <div className="h-20 w-20 rounded-full border-2 border-red-500/20 flex items-center justify-center">
+              <div className="h-14 w-14 rounded-full border-2 border-t-red-400 border-red-500/20 animate-spin" />
             </div>
-            <Wand2 className="absolute inset-0 m-auto h-6 w-6 text-emerald-400" />
+            <Wand2 className="absolute inset-0 m-auto h-6 w-6 text-red-400" />
           </div>
           <h2 className="text-lg font-semibold text-[#F9FAFB] mb-2">Generating your script…</h2>
           <p className="text-sm text-[#9CA3AF] transition-all duration-500 min-h-[20px]">
@@ -425,13 +426,13 @@ export function GeneratorWizard() {
       {step === 'clarify' && result?.question && (
         <div className="animate-slide-up">
           <StepIndicator current={2} total={3} />
-          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/6 p-5 mb-6">
+          <div className="rounded-xl border border-red-500/20 bg-red-500/6 p-5 mb-6">
             <div className="flex items-start gap-3">
-              <div className="h-8 w-8 rounded-full bg-emerald-500/15 flex items-center justify-center shrink-0 mt-0.5">
-                <Wand2 className="h-4 w-4 text-emerald-400" />
+              <div className="h-8 w-8 rounded-full bg-red-500/15 flex items-center justify-center shrink-0 mt-0.5">
+                <Wand2 className="h-4 w-4 text-red-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-emerald-300 mb-1">One quick question</p>
+                <p className="text-sm font-medium text-red-300 mb-1">One quick question</p>
                 <p className="text-sm text-[#F9FAFB] leading-relaxed">{result.question}</p>
               </div>
             </div>
@@ -467,7 +468,7 @@ export function GeneratorWizard() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="h-5 w-5 text-red-400 shrink-0" />
                 <h2 className="font-bold text-[#F9FAFB]">{result.title ?? 'Your script is ready'}</h2>
               </div>
               {result.explanation && (
@@ -503,8 +504,8 @@ export function GeneratorWizard() {
 
           {/* Feedback */}
           {feedbackSubmitted ? (
-            <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/5 px-4 py-3 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+            <div className="rounded-xl border border-red-500/15 bg-red-500/5 px-4 py-3 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-red-400 shrink-0" />
               <p className="text-sm text-[#D1D5DB]">Thanks — your feedback helps improve the AI.</p>
             </div>
           ) : (
@@ -595,7 +596,7 @@ export function GeneratorWizard() {
           </div>
 
           {/* Upsell */}
-          <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/6 p-4 flex items-center justify-between gap-4">
+          <div className="rounded-xl border border-red-500/15 bg-red-500/6 p-4 flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-[#F9FAFB] mb-0.5">Want 4 ready-to-deploy scripts?</p>
               <p className="text-xs text-[#9CA3AF]">The Starter Kit includes pre-tested scripts for the most common IT tasks — $19.</p>

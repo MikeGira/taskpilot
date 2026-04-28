@@ -6,29 +6,40 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#000000] disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:pointer-events-none disabled:opacity-40',
   {
     variants: {
       variant: {
+        // Primary CTA — Vercel white, rectangular
         default:
-          'bg-emerald-500 text-white hover:bg-emerald-600 active:bg-emerald-700 shadow-lg shadow-emerald-500/20',
+          'bg-white text-black hover:bg-zinc-100 active:bg-zinc-200 rounded-md shadow-sm',
+        // Red accent — AI/generate actions
+        accent:
+          'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 rounded-md shadow-sm shadow-red-900/30',
+        // Outline — rectangular, sign-in / auth (Vercel style)
         outline:
-          'border border-white/15 text-[#F9FAFB] hover:bg-white/5 hover:border-white/25',
+          'border border-white/20 text-white hover:bg-white/6 hover:border-white/30 rounded-md',
+        // Ghost — plain text
         ghost:
-          'text-[#9CA3AF] hover:text-[#F9FAFB] hover:bg-white/5',
+          'text-[#888] hover:text-white hover:bg-white/5 rounded-md',
+        // Pill — nav links to other pages (cylindrical)
+        pill:
+          'border border-white/15 text-white hover:bg-white/6 hover:border-white/25 rounded-full',
+        // Destructive
         destructive:
-          'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20',
+          'bg-red-950 text-red-400 border border-red-900 hover:bg-red-900 rounded-md',
+        // Success (semantic emerald — kept separate from red accent)
         success:
-          'bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/20',
+          'bg-emerald-600 text-white hover:bg-emerald-700 rounded-md shadow-sm',
         link:
-          'text-emerald-400 underline-offset-4 hover:underline p-0 h-auto',
+          'text-red-400 underline-offset-4 hover:underline p-0 h-auto',
       },
       size: {
-        default: 'h-10 px-5 py-2',
+        default: 'h-9 px-5 py-2',
         sm: 'h-8 px-3 text-xs',
-        lg: 'h-12 px-8 text-base',
-        xl: 'h-14 px-10 text-lg',
-        icon: 'h-10 w-10',
+        lg: 'h-11 px-7 text-base',
+        xl: 'h-13 px-9 text-lg',
+        icon: 'h-9 w-9',
       },
     },
     defaultVariants: {

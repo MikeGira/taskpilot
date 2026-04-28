@@ -46,11 +46,11 @@ function UnsubscribeContent() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#000000] px-4">
       <div className="max-w-sm w-full text-center">
         <Link href="/" className="inline-flex items-center gap-2 mb-8">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/15 border border-emerald-500/30">
-            <Terminal className="h-4 w-4 text-emerald-400" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/15 border border-red-500/30">
+            <Terminal className="h-4 w-4 text-red-400" />
           </div>
           <span className="font-bold text-lg text-[#F9FAFB]">
-            Task<span className="text-emerald-400">Pilot</span>
+            Task<span className="text-red-400">Pilot</span>
           </span>
         </Link>
 
@@ -63,7 +63,7 @@ function UnsubscribeContent() {
           )}
           {status === 'success' && (
             <>
-              <CheckCircle2 className="h-10 w-10 text-emerald-400 mx-auto mb-4" />
+              <CheckCircle2 className="h-10 w-10 text-red-400 mx-auto mb-4" />
               <h1 className="text-xl font-bold text-[#F9FAFB] mb-3">Unsubscribed</h1>
               <p className="text-sm text-[#9CA3AF] mb-6">{message}</p>
               <Button asChild variant="outline" size="sm">

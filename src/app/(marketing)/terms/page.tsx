@@ -76,7 +76,7 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold text-[#F9FAFB] mb-3">8. Contact</h2>
             <p className="text-sm text-[#9CA3AF] leading-relaxed">
               Questions:{' '}
-              <a href="mailto:hello@taskpilot.dev" className="text-emerald-400">hello@taskpilot.dev</a>
+              <a href="mailto:hello@taskpilot.dev" className="text-red-400">hello@taskpilot.dev</a>
             </p>
           </section>
         </div>
