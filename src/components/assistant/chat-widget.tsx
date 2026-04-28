@@ -23,10 +23,10 @@ const ENV_OPTS = [
   { id: 'multi-cloud', label: 'Multi-Cloud' },
 ];
 const GEN_EXAMPLES = [
-  'Onboard a new employee — create AD account, assign groups, set temp password',
-  'Offboard a departing employee — disable account, revoke access, archive data',
-  'Provision a new laptop — join domain, install software, configure settings',
-  'Decommission an old device — backup data, wipe disk, remove from inventory',
+  'Onboard a new employee create AD account, assign groups, set temp password',
+  'Offboard a departing employee disable account, revoke access, archive data',
+  'Provision a new laptop join domain, install software, configure settings',
+  'Decommission an old device backup data, wipe disk, remove from inventory',
   'Run a monthly user access review and export to CSV',
   'Monitor disk space and alert when drives fall below 15%',
   'Auto-disable accounts inactive for 90 days with audit report',
@@ -67,7 +67,7 @@ function stripMarkdown(text: string): string {
     })
     // Remove inline code backticks
     .replace(/`{1,3}([^`]*)`{1,3}/g, '$1')
-    // Remove markdown links — keep text
+    // Remove markdown links keep text
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
     // Collapse 3+ newlines to 2
     .replace(/\n{3,}/g, '\n\n')
@@ -337,7 +337,7 @@ export function ChatWidget() {
                 <textarea
                   value={genTask}
                   onChange={(e) => setGenTask(e.target.value)}
-                  placeholder="e.g. Offboard a leaving employee — disable their AD account, remove from all groups, archive their home folder, and send a report to HR..."
+                  placeholder="e.g. Offboard a leaving employee disable their AD account, remove from all groups, archive their home folder, and send a report to HR..."
                   rows={4}
                   maxLength={2000}
                   className="w-full rounded-xl text-sm text-white placeholder:text-[#777] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/40 p-3"

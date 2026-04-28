@@ -304,7 +304,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {step === 'environment' && (
         <div className="animate-slide-up">
           <StepIndicator current={1} total={3} />
-          <button onClick={() => setStep('os')} className="flex items-center gap-1 text-sm text-[#6B7280] hover:text-[#9CA3AF] mb-4 transition-colors">
+          <button onClick={() => setStep('os')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/20 rounded-full px-3 py-1.5 mb-5 transition-colors">
             <ArrowLeft className="h-3.5 w-3.5" /> Back
           </button>
           <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">What&apos;s your environment?</h2>
@@ -361,7 +361,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {step === 'task' && (
         <div className="animate-slide-up">
           <StepIndicator current={2} total={3} />
-          <button onClick={() => setStep('environment')} className="flex items-center gap-1 text-sm text-[#6B7280] hover:text-[#9CA3AF] mb-4 transition-colors">
+          <button onClick={() => setStep('environment')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/20 rounded-full px-3 py-1.5 mb-5 transition-colors">
             <ArrowLeft className="h-3.5 w-3.5" /> Back
           </button>
           <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">What do you want to automate?</h2>

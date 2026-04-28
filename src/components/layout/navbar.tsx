@@ -22,22 +22,27 @@ function NavItem({ href, label }: { href: string; label: string }) {
       href={href}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative inline-flex items-center text-sm font-medium px-3 py-1.5 rounded-full"
+      className="relative inline-flex items-center text-sm font-medium px-4 py-2 rounded-full"
       style={{
-        color: hovered ? '#ffffff' : '#888888',
-        transition: 'color 0.15s ease',
+        color: hovered ? '#ffffff' : '#999999',
+        transition: 'color 0.12s ease',
+        zIndex: 0,
       }}
     >
-      {/* Spring pill — transition must be CONSTANT for CSS animation to fire in React */}
+      {/* Visible pill — solid enough to see on black */}
       <span
         aria-hidden
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'rgba(255,255,255,0.09)',
-          opacity: hovered ? 1 : 0,
-          transform: hovered ? 'scale(1)' : 'scale(0.5)',
+          background: hovered
+            ? 'linear-gradient(135deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.10) 100%)'
+            : 'transparent',
+          border: hovered ? '1px solid rgba(255,255,255,0.18)' : '1px solid transparent',
+          boxShadow: hovered ? '0 2px 12px rgba(0,0,0,0.3)' : 'none',
+          transform: hovered ? 'scale(1) translateY(0)' : 'scale(0.7) translateY(3px)',
           transformOrigin: 'center',
-          transition: 'opacity 0.15s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)',
+          opacity: hovered ? 1 : 0,
+          transition: 'transform 0.22s cubic-bezier(0.34,1.56,0.64,1), opacity 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease',
         }}
       />
       <span className="relative z-10">{label}</span>
