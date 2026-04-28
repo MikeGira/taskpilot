@@ -43,9 +43,9 @@ export function AnimatedTerminal() {
     <div className="mx-auto mt-12 max-w-lg rounded-xl border border-white/10 bg-[#0A0A0A] overflow-hidden shadow-2xl shadow-black/60">
       {/* Title bar */}
       <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/8 bg-white/3">
-        <div className="h-2.5 w-2.5 rounded-full bg-white/20" />
-        <div className="h-2.5 w-2.5 rounded-full bg-white/20" />
-        <div className="h-2.5 w-2.5 rounded-full bg-white/20" />
+        <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+        <div className="h-3 w-3 rounded-full bg-[#febc2e]" />
+        <div className="h-3 w-3 rounded-full bg-[#28c840]" />
         <span className="ml-2 text-xs text-[#777] font-mono">taskpilot — PowerShell 5.1</span>
       </div>
       {/* Body */}
