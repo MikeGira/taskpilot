@@ -208,7 +208,7 @@ export default function HomePage({
         </section>
 
         {/* ── How it works ────────────────────────────────────────────────── */}
-        <section className="py-20 border-t border-white/6 bg-[#0D1221]">
+        <section className="py-20 border-t border-white/6 bg-black">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
             <div className="text-center mb-14">
               <h2 className="text-3xl sm:text-4xl font-bold text-[#F9FAFB] mb-4">
@@ -273,7 +273,7 @@ export default function HomePage({
         </section>
 
         {/* ── Pricing ──────────────────────────────────────────────────────── */}
-        <section id="pricing" className="py-20 border-t border-white/6 bg-[#0D1221]">
+        <section id="pricing" className="py-20 border-t border-white/6 bg-black">
           <div className="mx-auto max-w-md px-4 sm:px-6 text-center">
             <h2 className="text-3xl sm:text-4xl font-bold text-[#F9FAFB] mb-4">
               Simple pricing
@@ -331,7 +331,7 @@ export default function HomePage({
         </section>
 
         {/* ── Newsletter ───────────────────────────────────────────────────── */}
-        <section className="py-20 border-t border-white/6 bg-[#0D1221]">
+        <section className="py-20 border-t border-white/6 bg-black">
           <div className="mx-auto max-w-xl px-4 sm:px-6 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-xs font-medium text-white mb-6">
               Free weekly tips
