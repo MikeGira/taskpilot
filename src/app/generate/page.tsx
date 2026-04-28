@@ -9,7 +9,13 @@ export const metadata: Metadata = {
   description: 'Generate custom IT automation scripts for your exact OS and environment — Windows, Linux, macOS, on-premises, cloud, or hybrid.',
 };
 
-export default function GeneratePage() {
+export default function GeneratePage({
+  searchParams,
+}: {
+  searchParams: { task?: string };
+}) {
+  const initialTask = searchParams.task ? decodeURIComponent(searchParams.task) : '';
+
   return (
     <div className="min-h-screen flex flex-col bg-black">
       <Navbar />
@@ -50,7 +56,7 @@ export default function GeneratePage() {
 
         {/* Wizard */}
         <section className="py-12 px-4 sm:px-6">
-          <GeneratorWizard />
+          <GeneratorWizard initialTask={initialTask} />
         </section>
       </main>
 

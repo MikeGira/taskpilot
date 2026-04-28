@@ -36,15 +36,61 @@ function extractJson(raw: string): GenerateResult {
 
   const candidate = text.slice(start, end + 1);
 
-  // First attempt: parse as-is (Claude followed instructions)
+  // Attempt 1: parse as-is
+  try { return JSON.parse(candidate) as GenerateResult; } catch { /* continue */ }
+
+  // Attempt 2: fix literal newlines (handles Claude including actual \n in strings)
   try {
-    return JSON.parse(candidate) as GenerateResult;
-  } catch {
-    // Second attempt: Claude may have included literal newlines inside string values.
-    // Re-encode string values by processing character by character.
     const fixed = fixLiteralNewlinesInJsonStrings(candidate);
     return JSON.parse(fixed) as GenerateResult;
+  } catch { /* continue */ }
+
+  // Attempt 3: field-by-field regex extraction (handles Python """ docstrings
+  // where the first " closes the JSON string, making everything after it invalid)
+  return extractFieldsByRegex(text);
+}
+
+function extractFieldsByRegex(text: string): GenerateResult {
+  const boolMatch = /"needsClarification"\s*:\s*(true|false)/i.exec(text);
+  if (!boolMatch) throw new Error('Cannot extract needsClarification');
+
+  const needsClarification = boolMatch[1] === 'true';
+
+  const getString = (field: string): string | null => {
+    const m = new RegExp(`"${field}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`, 'i').exec(text);
+    if (!m) return null;
+    return m[1].replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+  };
+
+  if (needsClarification) {
+    return { needsClarification: true, question: getString('question'), script: null, filename: null, language: null, title: null, explanation: null, configNotes: null };
   }
+
+  // Extract the script field — find its content even when """ broke the string boundary
+  let script: string | null = null;
+  const scriptKeyIdx = text.indexOf('"script"');
+  if (scriptKeyIdx !== -1) {
+    const openQuote = text.indexOf('"', text.indexOf(':', scriptKeyIdx) + 1);
+    if (openQuote !== -1) {
+      const rest = text.slice(openQuote + 1);
+      const fieldEnd = /","(?:filename|language|title|explanation|configNotes)"/.exec(rest);
+      if (fieldEnd) {
+        script = rest.slice(0, fieldEnd.index)
+          .replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+      }
+    }
+  }
+
+  return {
+    needsClarification: false,
+    question: null,
+    script,
+    filename: getString('filename'),
+    language: getString('language') as GenerateResult['language'],
+    title: getString('title'),
+    explanation: getString('explanation'),
+    configNotes: null,
+  };
 }
 
 function fixLiteralNewlinesInJsonStrings(json: string): string {
@@ -120,6 +166,7 @@ NON-NEGOTIABLE SCRIPT STANDARDS:
    - Linux → Bash (#!/bin/bash, strict mode: set -euo pipefail)
    - macOS → Zsh (#!/bin/zsh) or Bash, prefer built-in tools
    - Cross-platform → Python 3.8+ (compatible with Windows and Unix, use pathlib, subprocess)
+     IMPORTANT FOR PYTHON: Use # comment headers only. NEVER use triple-quoted strings (""") anywhere — they break JSON string encoding. Use # for all documentation and comments.
 6. CLOUD TOOLING (use only if environment includes cloud):
    - AWS → AWS CLI v2 (assume installed and configured with appropriate IAM role/profile)
    - Azure → Azure CLI (az) or Az PowerShell module

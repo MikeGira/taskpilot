@@ -162,12 +162,14 @@ function ScriptBlock({ script, filename, language }: { script: string; filename:
 
 // ── Main Wizard ───────────────────────────────────────────────────────────────
 
-export function GeneratorWizard() {
+export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) {
+  // When arriving from a kit card, the task is pre-filled — start on OS step still
+  // so user can pick their OS/env, but task textarea will be pre-populated
   const [step, setStep] = useState<Step>('os');
   const [os, setOs] = useState('');
   const [env, setEnv] = useState('');
   const [cloudProviders, setCloudProviders] = useState<string[]>([]);
-  const [task, setTask] = useState('');
+  const [task, setTask] = useState(initialTask);
   const [clarifyAnswer, setClarifyAnswer] = useState('');
   const [result, setResult] = useState<GenerateResult | null>(null);
   const [error, setError] = useState('');

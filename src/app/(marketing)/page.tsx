@@ -16,17 +16,17 @@ import { HeroBeams } from '@/components/animations/hero-beams';
 import { AnimatedArcs } from '@/components/animations/animated-arcs';
 
 const SCRIPTS = [
-  { icon: ShieldCheck, name: 'Password Reset Automation',      desc: 'Reset AD passwords with one command. Full audit log, optional user notification.',          color: 'text-blue-300',    bg: 'bg-blue-500/25'   },
-  { icon: HardDrive,   name: 'Disk Cleanup + Alerts',          desc: 'Auto-clears temp files and emails alerts before drives fill up.',                           color: 'text-cyan-300',    bg: 'bg-cyan-500/25'   },
-  { icon: Users,       name: 'User Onboarding',                desc: 'Create AD accounts from CSV, assign groups, set temp password, notify manager.',            color: 'text-emerald-300', bg: 'bg-emerald-500/25'},
-  { icon: Users,       name: 'User Offboarding',               desc: 'Disable account, remove group memberships, archive home folder, email HR report.',          color: 'text-orange-300',  bg: 'bg-orange-500/25' },
-  { icon: Activity,    name: 'Daily Health Check',             desc: 'CPU, RAM, disk — scheduled summary email every morning before you start.',                  color: 'text-violet-300',  bg: 'bg-violet-500/25' },
-  { icon: ShieldCheck, name: 'Account Lifecycle Audit',        desc: 'Monthly review: stale accounts, privilege changes, MFA status — exports to CSV.',          color: 'text-amber-300',   bg: 'bg-amber-500/25'  },
-  { icon: HardDrive,   name: 'Device Provisioning',            desc: 'Join domain, deploy approved software, apply GPO, tag in inventory — one command.',        color: 'text-pink-300',    bg: 'bg-pink-500/25'   },
-  { icon: HardDrive,   name: 'Device Decommission',            desc: 'Backup data, secure wipe, remove from domain, update asset inventory automatically.',      color: 'text-indigo-300',  bg: 'bg-indigo-500/25' },
-  { icon: Zap,         name: 'Config Template',                desc: 'Edit 6 fields in config.json and every script is ready for your environment.',             color: 'text-yellow-300',  bg: 'bg-yellow-500/25' },
-  { icon: Clock,       name: 'Task Scheduler Template',        desc: 'Pre-built scheduler.xml — import it once, scripts run on your schedule forever.',          color: 'text-white',       bg: 'bg-white/6'      },
-  { icon: Download,    name: 'Step-by-Step Setup Guide',       desc: 'From ZIP to running in 7 clear steps. No guesswork.',                                      color: 'text-white',       bg: 'bg-white/6'      },
+  { icon: ShieldCheck, name: 'Password Reset Automation',  color: 'text-blue-300',    bg: 'bg-blue-500/25',    desc: 'Reset AD passwords with one command. Full audit log, optional user notification.',          task: 'Reset Active Directory passwords, log every action with timestamp, and optionally send email notification to the user when their password is reset' },
+  { icon: HardDrive,   name: 'Disk Cleanup + Alerts',      color: 'text-cyan-300',    bg: 'bg-cyan-500/25',    desc: 'Auto-clears temp files and emails alerts before drives fill up.',                           task: 'Monitor disk space on all servers and send email alerts when drives fall below a configurable threshold, then auto-clean temp files' },
+  { icon: Users,       name: 'User Onboarding',            color: 'text-emerald-300', bg: 'bg-emerald-500/25', desc: 'Create AD accounts from CSV, assign groups, set temp password, notify manager.',            task: 'Create new employee AD account from CSV input, assign to appropriate groups, set temporary password, and notify the manager by email' },
+  { icon: Users,       name: 'User Offboarding',           color: 'text-orange-300',  bg: 'bg-orange-500/25',  desc: 'Disable account, remove group memberships, archive home folder, email HR report.',          task: 'Offboard a departing employee: disable their AD account, remove from all groups, archive home folder to a backup location, and send report to HR' },
+  { icon: Activity,    name: 'Daily Health Check',         color: 'text-violet-300',  bg: 'bg-violet-500/25',  desc: 'CPU, RAM, disk — scheduled summary email every morning before you start.',                  task: 'Run a daily health check on all servers: monitor CPU, RAM, and disk usage, check critical services, and email a summary report each morning' },
+  { icon: ShieldCheck, name: 'Account Lifecycle Audit',    color: 'text-amber-300',   bg: 'bg-amber-500/25',   desc: 'Monthly review: stale accounts, privilege changes, MFA status — exports to CSV.',          task: 'Monthly account lifecycle audit: find stale accounts, review privilege changes, check MFA enrollment status, and export results to CSV for compliance' },
+  { icon: HardDrive,   name: 'Device Provisioning',        color: 'text-pink-300',    bg: 'bg-pink-500/25',    desc: 'Join domain, deploy approved software, apply GPO, tag in inventory — one command.',        task: 'Provision a new device: join it to the domain, deploy approved software packages, apply group policy settings, and register in the asset inventory' },
+  { icon: HardDrive,   name: 'Device Decommission',        color: 'text-indigo-300',  bg: 'bg-indigo-500/25',  desc: 'Backup data, secure wipe, remove from domain, update asset inventory automatically.',      task: 'Decommission an old device: backup user data, perform a secure disk wipe, remove from the domain, and update the asset inventory database' },
+  { icon: Zap,         name: 'Config Template',            color: 'text-yellow-300',  bg: 'bg-yellow-500/25',  desc: 'Edit 6 fields in config.json and every script is ready for your environment.',             task: null },
+  { icon: Clock,       name: 'Task Scheduler Template',    color: 'text-white',       bg: 'bg-white/6',        desc: 'Pre-built scheduler.xml — import it once, scripts run on your schedule forever.',          task: null },
+  { icon: Download,    name: 'Step-by-Step Setup Guide',   color: 'text-white',       bg: 'bg-white/6',        desc: 'From ZIP to running in 7 clear steps. No guesswork.',                                      task: null },
 ];
 
 const WITHOUT = [
@@ -154,17 +154,29 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             </FadeInSection>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {SCRIPTS.map((s, i) => (
-                <FadeInSection key={s.name} delay={i * 60}>
-                  <Card className="p-5 group hover:border-white/20 hover:bg-white/3 transition-all duration-200 h-full">
+              {SCRIPTS.map((s, i) => {
+                const cardContent = (
+                  <Card className={`p-5 group transition-all duration-200 h-full ${s.task ? 'hover:border-white/25 hover:bg-white/4 cursor-pointer' : 'hover:border-white/15 hover:bg-white/2'}`}>
                     <div className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${s.bg} mb-4 group-hover:scale-110 transition-transform duration-200`}>
                       <s.icon className={`h-5 w-5 ${s.color}`} />
                     </div>
-                    <h3 className="font-semibold text-white mb-1.5">{s.name}</h3>
-                    <p className="text-sm text-[#666] leading-relaxed">{s.desc}</p>
+                    <h3 className="font-semibold text-white mb-1.5 flex items-center gap-2">
+                      {s.name}
+                      {s.task && <span className="text-[10px] text-[#555] font-normal group-hover:text-[#888] transition-colors">Generate →</span>}
+                    </h3>
+                    <p className="text-sm text-[#777] leading-relaxed">{s.desc}</p>
                   </Card>
-                </FadeInSection>
-              ))}
+                );
+                return (
+                  <FadeInSection key={s.name} delay={i * 60}>
+                    {s.task ? (
+                      <Link href={`/generate?task=${encodeURIComponent(s.task)}`}>
+                        {cardContent}
+                      </Link>
+                    ) : cardContent}
+                  </FadeInSection>
+                );
+              })}
             </div>
           </div>
         </section>
