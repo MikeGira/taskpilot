@@ -19,7 +19,7 @@
     color: var(--text-primary);
     font-feature-settings: 'ss01', 'cv01';
   }
-  ::selection { background-color: rgba(255,255,255,0.15); color: #fff; }
+  ::selection { background-color: rgba(99,102,241,0.35); color: #fff; }
 }
 
 @layer utilities {
@@ -75,4 +75,30 @@
 @keyframes ping-slow {
   0%   { transform: scale(1); opacity: 0.6; }
   75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+/* Pilot button orbital glow */
+@keyframes pilot-orbit {
+  0%   { box-shadow: 0 0 0 0 rgba(99,102,241,0.4), 0 0 0 0 rgba(99,102,241,0.15); }
+  50%  { box-shadow: 0 0 0 8px rgba(99,102,241,0.0), 0 0 20px 4px rgba(99,102,241,0.2); }
+  100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.0), 0 0 0 0 rgba(99,102,241,0.0); }
+}
+
+/* Colored hero radial glow shift */
+@keyframes glow-drift-indigo {
+  0%, 100% { opacity: 0.12; transform: translateX(0) translateY(0) scale(1); }
+  33%       { opacity: 0.2; transform: translateX(30px) translateY(-20px) scale(1.1); }
+  66%       { opacity: 0.08; transform: translateX(-20px) translateY(10px) scale(0.95); }
+}
+@keyframes glow-drift-cyan {
+  0%, 100% { opacity: 0.08; transform: translateX(0) translateY(0) scale(1); }
+  33%       { opacity: 0.16; transform: translateX(-25px) translateY(15px) scale(1.05); }
+  66%       { opacity: 0.1; transform: translateX(15px) translateY(-20px) scale(1.1); }
+}
+
+/* Nav pill pop-up */
+@keyframes nav-pop {
+  0%   { transform: scaleX(0.6) scaleY(0.5); opacity: 0; }
+  60%  { transform: scaleX(1.05) scaleY(1.05); }
+  100% { transform: scaleX(1) scaleY(1); opacity: 1; }
 }

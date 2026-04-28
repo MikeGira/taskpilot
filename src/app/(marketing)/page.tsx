@@ -2,6 +2,7 @@ import Link from 'next/link';
 import {
   ShieldCheck, HardDrive, Users, Activity,
   CheckCircle2, ArrowRight, Zap, Clock, Download, Wand2,
+  XCircle, Rocket,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -67,13 +68,20 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
 
         {/* ── Hero ──────────────────────────────────────────────────────────── */}
         <section className="relative overflow-hidden bg-black">
-          {/* Grid + radial glow */}
+          {/* Grid */}
           <div className="absolute inset-0 bg-grid-pattern pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-radial from-white/4 via-transparent to-transparent pointer-events-none animate-glow-pulse" />
+
+          {/* Colorful radial glows — indigo top-left, cyan top-right */}
+          <div className="absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full pointer-events-none"
+            style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 70%)', animation: 'glow-drift-indigo 8s ease-in-out infinite' }} />
+          <div className="absolute -top-32 -right-32 h-[500px] w-[500px] rounded-full pointer-events-none"
+            style={{ background: 'radial-gradient(circle, rgba(34,211,238,0.09) 0%, transparent 70%)', animation: 'glow-drift-cyan 10s ease-in-out infinite' }} />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-64 w-96 pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse, rgba(167,139,250,0.06) 0%, transparent 70%)' }} />
 
           {/* Sweeping beam */}
-          <div className="absolute inset-y-0 left-0 w-1/3 h-full pointer-events-none overflow-hidden">
-            <div className="absolute inset-y-0 w-[2px] bg-gradient-to-b from-transparent via-white/20 to-transparent animate-beam" />
+          <div className="absolute inset-y-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+            <div className="absolute inset-y-0 w-[2px] bg-gradient-to-b from-transparent via-indigo-400/20 to-transparent animate-beam" />
           </div>
 
           <div className="relative mx-auto max-w-4xl px-4 sm:px-6 pt-24 pb-8 text-center">
@@ -194,14 +202,17 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             </FadeInSection>
             <div className="grid md:grid-cols-2 gap-6">
               <FadeInSection delay={0}>
-                <Card className="p-6 border-white/8 h-full">
+                <Card className="p-6 border-red-500/10 bg-red-950/5 h-full">
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
-                    <span className="text-lg">😩</span> Without TaskPilot
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-500/10 border border-red-500/20">
+                      <XCircle className="h-4 w-4 text-red-400" />
+                    </div>
+                    Without TaskPilot
                   </h3>
                   <ul className="space-y-3">
                     {WITHOUT.map((item) => (
                       <li key={item} className="flex items-start gap-3 text-sm text-[#888]">
-                        <span className="mt-0.5 h-4 w-4 shrink-0 text-[#444]">✗</span>
+                        <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400/50" />
                         {item}
                       </li>
                     ))}
@@ -209,14 +220,17 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 </Card>
               </FadeInSection>
               <FadeInSection delay={120}>
-                <Card className="p-6 border-white/12 h-full">
+                <Card className="p-6 border-emerald-500/15 bg-emerald-950/5 h-full">
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
-                    <span className="text-lg">🚀</span> With TaskPilot
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                      <Rocket className="h-4 w-4 text-emerald-400" />
+                    </div>
+                    With TaskPilot
                   </h3>
                   <ul className="space-y-3">
                     {WITH.map((item) => (
                       <li key={item} className="flex items-start gap-3 text-sm text-white">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-white" />
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400/70" />
                         {item}
                       </li>
                     ))}
