@@ -29,7 +29,7 @@ export default function CheckoutSuccessPage({
           <p className="text-[#888] leading-relaxed mb-2">
             Your purchase is confirmed. Click below to download your kit immediately — no account needed.
           </p>
-          <p className="text-sm text-[#555] mb-10">
+          <p className="text-sm text-[#888] mb-10">
             We also sent a download link to your inbox as a backup.
           </p>
 
@@ -59,7 +59,7 @@ export default function CheckoutSuccessPage({
           </div>
 
           {sessionId && (
-            <p className="mt-8 text-xs text-[#444]">
+            <p className="mt-8 text-xs text-[#777]">
               Want to re-download later?{' '}
               <Link href="/login" className="text-[#888] hover:text-white underline underline-offset-2 transition-colors">
                 Sign in

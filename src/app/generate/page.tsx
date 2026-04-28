@@ -37,7 +37,7 @@ export default function GeneratePage() {
               Get a production-ready script with error handling, logging, and a config section — in under 10 seconds.
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs text-[#555]">
+            <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs text-[#888]">
               {['Windows · Linux · macOS', 'On-Prem · Hybrid · Cloud · Multi-Cloud', '10 free scripts per hour', 'No sign-up required'].map((t) => (
                 <span key={t} className="flex items-center gap-1.5">
                   <Zap className="h-3 w-3 text-white/40" />

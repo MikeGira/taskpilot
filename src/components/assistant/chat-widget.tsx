@@ -40,12 +40,32 @@ const STARTERS = [
   'How do I set up Task Scheduler automation?',
 ];
 
+// Place your pilot image at public/pilot.png — it will show here automatically.
+// If the file is missing the emoji fallback is shown instead.
 function PilotAvatar({ size = 'md' }: { size?: 'sm' | 'md' }) {
+  const [err, setErr] = useState(false);
+  const dim = size === 'sm' ? 24 : 36;
+  const cls = size === 'sm' ? 'h-6 w-6' : 'h-9 w-9';
   return (
-    <div className={cn('shrink-0 rounded-full bg-white flex items-center justify-center select-none', size === 'sm' ? 'h-6 w-6 text-sm' : 'h-9 w-9 text-base')}>
-      <span role="img" aria-label="Pilot">👨‍✈️</span>
+    <div className={cn('shrink-0 rounded-full bg-white overflow-hidden flex items-center justify-center select-none', cls)}>
+      {!err ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src="/pilot.png" alt="Pilot" width={dim} height={dim} className="w-full h-full object-cover" onError={() => setErr(true)} />
+      ) : (
+        <span className={size === 'sm' ? 'text-xs' : 'text-lg'} role="img" aria-label="Pilot">👨‍✈️</span>
+      )}
     </div>
   );
+}
+
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '$1')   // **bold**
+    .replace(/\*(.*?)\*/g, '$1')        // *italic*
+    .replace(/^#{1,6}\s+/gm, '')        // ## Heading
+    .replace(/^[-*]\s+/gm, '• ')        // - item or * item → • item
+    .replace(/`([^`]+)`/g, '$1')        // `code`
+    .trim();
 }
 
 /* ── Main widget ──────────────────────────────────────────────────────────── */
@@ -94,7 +114,7 @@ export function ChatWidget() {
       });
       const data = await res.json() as { content?: string; error?: string };
       if (!res.ok) { setChatError(data.error ?? 'Something went wrong.'); return; }
-      setMessages(prev => [...prev, { role: 'assistant', content: data.content ?? '' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: stripMarkdown(data.content ?? '') }]);
     } catch { setChatError('Network error. Try again.'); }
     finally { setChatLoading(false); }
   }, [messages, chatLoading]);
@@ -175,7 +195,7 @@ export function ChatWidget() {
           </div>
           <div className="flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse mr-1" />
-            <button onClick={() => setOpen(false)} className="text-[#444] hover:text-white transition-colors rounded-lg p-1.5 hover:bg-white/5" aria-label="Close">
+            <button onClick={() => setOpen(false)} className="text-[#777] hover:text-white transition-colors rounded-lg p-1.5 hover:bg-white/5" aria-label="Close">
               <ChevronDown className="h-4 w-4" />
             </button>
           </div>
@@ -189,7 +209,7 @@ export function ChatWidget() {
               onClick={() => setPanel(p)}
               className={cn(
                 'flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium transition-colors',
-                panel === p ? 'text-white border-b-2 border-indigo-500' : 'text-[#555] hover:text-[#888]'
+                panel === p ? 'text-white border-b-2 border-indigo-500' : 'text-[#888] hover:text-[#ccc]'
               )}
             >
               {p === 'chat' ? <MessageSquare className="h-3.5 w-3.5" /> : <Wand2 className="h-3.5 w-3.5" />}
@@ -225,11 +245,11 @@ export function ChatWidget() {
               )}
               {showStarters && (
                 <div className="space-y-1.5 pt-1">
-                  <p className="text-[10px] text-[#444] px-1 uppercase tracking-wider">Quick questions</p>
+                  <p className="text-[10px] text-[#888] px-1 uppercase tracking-wider font-medium">Quick questions</p>
                   {STARTERS.map((q) => (
-                    <button key={q} onClick={() => sendChat(q)} className="w-full text-left text-xs text-[#777] border border-indigo-500/15 bg-indigo-950/20 hover:bg-indigo-950/50 hover:text-white rounded-xl px-3 py-2 transition-colors">{q}</button>
+                    <button key={q} onClick={() => sendChat(q)} className="w-full text-left text-xs text-[#aaa] border border-indigo-500/25 bg-indigo-950/30 hover:bg-indigo-950/60 hover:text-white rounded-xl px-3 py-2 transition-colors">{q}</button>
                   ))}
-                  <button onClick={() => setPanel('generate')} className="w-full text-left text-xs text-indigo-400 border border-indigo-500/25 bg-indigo-950/30 hover:bg-indigo-950/60 hover:text-indigo-300 rounded-xl px-3 py-2 transition-colors flex items-center gap-1.5">
+                  <button onClick={() => setPanel('generate')} className="w-full text-left text-xs text-indigo-300 border border-indigo-400/30 bg-indigo-900/30 hover:bg-indigo-900/50 hover:text-white rounded-xl px-3 py-2 transition-colors flex items-center gap-1.5 font-medium">
                     <Wand2 className="h-3 w-3" /> Generate a custom script for my environment →
                   </button>
                 </div>
@@ -244,7 +264,7 @@ export function ChatWidget() {
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   placeholder="Ask Pilot anything…"
-                  className="flex-1 min-w-0 rounded-full px-4 py-2 text-sm text-white placeholder:text-[#555] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 transition-all"
+                  className="flex-1 min-w-0 rounded-full px-4 py-2 text-sm text-white placeholder:text-[#777] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 transition-all"
                   style={{ backgroundColor: '#0f0f1a', border: '1px solid rgba(99,102,241,0.2)' }}
                   disabled={chatLoading}
                 />
@@ -253,7 +273,7 @@ export function ChatWidget() {
                   {chatLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
                 </button>
               </form>
-              <p className="text-center text-[10px] text-[#2a2a3a] mt-1.5">Powered by Claude AI</p>
+              <p className="text-center text-[10px] text-[#aaa] mt-1.5">Powered by Claude AI</p>
             </div>
           </>
         )}
@@ -266,7 +286,7 @@ export function ChatWidget() {
             {genStep === 'os' && (
               <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden">
                 <p className="text-xs font-semibold text-white mb-1">What OS are you targeting?</p>
-                <p className="text-[11px] text-[#555] mb-4">Determines the scripting language used.</p>
+                <p className="text-[11px] text-[#888] mb-4">Determines the scripting language used.</p>
                 <div className="grid grid-cols-2 gap-2">
                   {OS_OPTS.map((o) => (
                     <button key={o.id} onClick={() => { setGenOs(o.id); setGenStep('env'); }}
@@ -282,11 +302,11 @@ export function ChatWidget() {
             {/* STEP: Environment */}
             {genStep === 'env' && (
               <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden">
-                <button onClick={() => setGenStep('os')} className="flex items-center gap-1 text-[11px] text-[#555] hover:text-white mb-3 transition-colors">
+                <button onClick={() => setGenStep('os')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white mb-3 transition-colors">
                   <ArrowLeft className="h-3 w-3" /> Back
                 </button>
                 <p className="text-xs font-semibold text-white mb-1">What&apos;s your environment?</p>
-                <p className="text-[11px] text-[#555] mb-4">Determines which tools and APIs the script uses.</p>
+                <p className="text-[11px] text-[#888] mb-4">Determines which tools and APIs the script uses.</p>
                 <div className="grid grid-cols-2 gap-2">
                   {ENV_OPTS.map((e) => (
                     <button key={e.id} onClick={() => { setGenEnv(e.id); setGenStep('task'); }}
@@ -301,12 +321,12 @@ export function ChatWidget() {
             {/* STEP: Task */}
             {genStep === 'task' && (
               <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-3">
-                <button onClick={() => setGenStep('env')} className="flex items-center gap-1 text-[11px] text-[#555] hover:text-white transition-colors w-fit">
+                <button onClick={() => setGenStep('env')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit">
                   <ArrowLeft className="h-3 w-3" /> Back
                 </button>
                 <div>
                   <p className="text-xs font-semibold text-white mb-0.5">What do you want to automate?</p>
-                  <p className="text-[11px] text-[#555]">Describe in plain English. More detail = better script.</p>
+                  <p className="text-[11px] text-[#888]">Describe in plain English. More detail = better script.</p>
                 </div>
                 <textarea
                   value={genTask}
@@ -314,15 +334,15 @@ export function ChatWidget() {
                   placeholder="e.g. Offboard a leaving employee — disable their AD account, remove from all groups, archive their home folder, and send a report to HR..."
                   rows={4}
                   maxLength={2000}
-                  className="w-full rounded-xl text-sm text-white placeholder:text-[#444] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/40 p-3"
+                  className="w-full rounded-xl text-sm text-white placeholder:text-[#777] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/40 p-3"
                   style={{ backgroundColor: '#0f0f1a', border: '1px solid rgba(99,102,241,0.2)' }}
                 />
                 <div>
-                  <p className="text-[10px] text-[#444] mb-1.5 uppercase tracking-wider">Examples</p>
+                  <p className="text-[10px] text-[#aaa] mb-1.5 uppercase tracking-wider">Examples</p>
                   <div className="flex flex-col gap-1">
                     {GEN_EXAMPLES.slice(0, 4).map((ex) => (
                       <button key={ex} onClick={() => setGenTask(ex)}
-                        className="text-left text-[11px] text-[#666] hover:text-white px-2 py-1.5 rounded-lg hover:bg-white/5 transition-colors truncate">
+                        className="text-left text-[11px] text-[#999] hover:text-white px-2 py-1.5 rounded-lg hover:bg-white/5 transition-colors truncate">
                         → {ex}
                       </button>
                     ))}
@@ -351,7 +371,7 @@ export function ChatWidget() {
                 </div>
                 <div className="text-center">
                   <p className="text-sm font-medium text-white">Generating your script…</p>
-                  <p className="text-xs text-[#555] mt-1">Adding error handling, logging & config section</p>
+                  <p className="text-xs text-[#888] mt-1">Adding error handling, logging & config section</p>
                 </div>
               </div>
             )}
@@ -362,7 +382,7 @@ export function ChatWidget() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-white truncate">{genResult.title ?? 'Script ready'}</p>
-                    {genResult.explanation && <p className="text-[11px] text-[#666] leading-relaxed mt-0.5 line-clamp-2">{genResult.explanation}</p>}
+                    {genResult.explanation && <p className="text-[11px] text-[#999] leading-relaxed mt-0.5 line-clamp-2">{genResult.explanation}</p>}
                   </div>
                   <button onClick={resetGenerate} className="text-[11px] text-indigo-400 hover:text-indigo-300 shrink-0 whitespace-nowrap">New script</button>
                 </div>
@@ -370,7 +390,7 @@ export function ChatWidget() {
                 {/* Script block */}
                 <div className="rounded-xl border border-white/10 overflow-hidden">
                   <div className="flex items-center justify-between px-3 py-2 bg-white/4 border-b border-white/8">
-                    <span className="text-[11px] font-mono text-[#555]">{genResult.filename ?? 'script'}</span>
+                    <span className="text-[11px] font-mono text-[#888]">{genResult.filename ?? 'script'}</span>
                     <div className="flex gap-1.5">
                       <button onClick={copyScript} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white px-2 py-1 rounded-md hover:bg-white/8 transition-colors">
                         {genCopied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}

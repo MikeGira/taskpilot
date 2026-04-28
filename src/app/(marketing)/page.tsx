@@ -122,7 +122,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               </Button>
             </div>
 
-            <p className="mt-5 text-sm text-[#555]">
+            <p className="mt-5 text-sm text-[#888]">
               Instant download · Windows Server 2016+ · One-time purchase
             </p>
 
@@ -132,7 +132,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             {/* Animated terminal */}
             <AnimatedTerminal />
 
-            <p className="mt-6 text-xs text-[#444]">
+            <p className="mt-6 text-xs text-[#777]">
               <Link href="/generate" className="text-[#888] hover:text-white underline underline-offset-2 transition-colors">
                 Try the AI script generator
               </Link>
@@ -294,7 +294,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               <Card className="p-8 border-white/12 bg-gradient-to-b from-white/3 to-transparent hover:border-white/20 transition-colors duration-300">
                 <div className="mb-6">
                   <div className="text-5xl font-extrabold text-white mb-1">$19</div>
-                  <div className="text-sm text-[#555]">one-time · instant download</div>
+                  <div className="text-sm text-[#888]">one-time · instant download</div>
                 </div>
                 <ul className="space-y-3 mb-8 text-left">
                   {[
@@ -317,7 +317,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
-                <p className="mt-4 text-xs text-[#444]">
+                <p className="mt-4 text-xs text-[#777]">
                   Secure checkout via Stripe. We never see your card details.
                 </p>
               </Card>

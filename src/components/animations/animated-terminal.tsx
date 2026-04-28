@@ -46,7 +46,7 @@ export function AnimatedTerminal() {
         <div className="h-2.5 w-2.5 rounded-full bg-white/20" />
         <div className="h-2.5 w-2.5 rounded-full bg-white/20" />
         <div className="h-2.5 w-2.5 rounded-full bg-white/20" />
-        <span className="ml-2 text-xs text-[#444] font-mono">taskpilot — PowerShell 5.1</span>
+        <span className="ml-2 text-xs text-[#777] font-mono">taskpilot — PowerShell 5.1</span>
       </div>
       {/* Body */}
       <div className="px-5 py-4 font-mono text-xs space-y-1.5 min-h-[160px]">

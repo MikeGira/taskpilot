@@ -23,17 +23,17 @@ interface Cloud { id: string; label: string; short: string; }
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 const OS_OPTIONS: OS[] = [
-  { id: 'windows', label: 'Windows', desc: 'Server 2016–2022 · Windows 10/11 · PowerShell', icon: Monitor, color: 'border-white/12 bg-white/5 hover:border-white/12 hover:bg-white/5', accent: 'text-white' },
-  { id: 'linux', label: 'Linux', desc: 'Ubuntu · RHEL/CentOS · Debian · Amazon Linux', icon: Terminal, color: 'border-orange-500/40 bg-orange-500/8 hover:border-orange-500/70 hover:bg-orange-500/12', accent: 'text-orange-400' },
-  { id: 'macos', label: 'macOS', desc: 'macOS 12+ · Admin or MDM managed', icon: Apple, color: 'border-zinc-400/40 bg-zinc-400/8 hover:border-zinc-400/70 hover:bg-zinc-400/12', accent: 'text-zinc-300' },
-  { id: 'cross-platform', label: 'Cross-Platform', desc: 'Works on Windows, Linux & macOS · Python', icon: Layers, color: 'border-white/12 bg-white/5 hover:border-white/12 hover:bg-white/5', accent: 'text-white' },
+  { id: 'windows',        label: 'Windows',        desc: 'Server 2016–2022 · Windows 10/11 · PowerShell', icon: Monitor,  color: 'border-blue-500/40   bg-blue-500/12   hover:border-blue-400/70   hover:bg-blue-500/18',   accent: 'text-blue-400'   },
+  { id: 'linux',          label: 'Linux',          desc: 'Ubuntu · RHEL/CentOS · Debian · Amazon Linux',  icon: Terminal, color: 'border-orange-500/40 bg-orange-500/12 hover:border-orange-400/70 hover:bg-orange-500/18', accent: 'text-orange-400' },
+  { id: 'macos',          label: 'macOS',          desc: 'macOS 12+ · Admin or MDM managed',              icon: Apple,    color: 'border-zinc-400/40   bg-zinc-400/10   hover:border-zinc-300/60   hover:bg-zinc-400/15',   accent: 'text-zinc-300'   },
+  { id: 'cross-platform', label: 'Cross-Platform', desc: 'Works on Windows, Linux & macOS · Python',      icon: Layers,   color: 'border-violet-500/40 bg-violet-500/12 hover:border-violet-400/70 hover:bg-violet-500/18', accent: 'text-violet-400' },
 ];
 
 const ENV_OPTIONS: Env[] = [
-  { id: 'on-premises', label: 'On-Premises', desc: 'Active Directory · Local servers · No cloud', icon: Server, color: 'border-blue-500/40 bg-blue-500/8 hover:border-blue-500/70 hover:bg-blue-500/12', accent: 'text-blue-400' },
-  { id: 'hybrid', label: 'Hybrid', desc: 'On-prem + cloud · Best of both worlds', icon: GitMerge, color: 'border-white/12 bg-white/5 hover:border-white/12 hover:bg-white/5', accent: 'text-white' },
-  { id: 'cloud', label: 'Cloud', desc: 'AWS · Azure · GCP · Fully managed', icon: Cloud, color: 'border-white/12 bg-white/5 hover:border-white/12 hover:bg-white/5', accent: 'text-white' },
-  { id: 'multi-cloud', label: 'Multi-Cloud', desc: 'Multiple providers · Complex infrastructure', icon: Layers, color: 'border-white/12 bg-white/5 hover:border-white/12 hover:bg-white/5', accent: 'text-white' },
+  { id: 'on-premises', label: 'On-Premises', desc: 'Active Directory · Local servers · No cloud', icon: Server,   color: 'border-indigo-500/40 bg-indigo-500/12 hover:border-indigo-400/70 hover:bg-indigo-500/18', accent: 'text-indigo-400'  },
+  { id: 'hybrid',      label: 'Hybrid',      desc: 'On-prem + cloud · Best of both worlds',       icon: GitMerge, color: 'border-cyan-500/40   bg-cyan-500/12   hover:border-cyan-400/70   hover:bg-cyan-500/18',   accent: 'text-cyan-400'   },
+  { id: 'cloud',       label: 'Cloud',       desc: 'AWS · Azure · GCP · Fully managed',           icon: Cloud,    color: 'border-emerald-500/40 bg-emerald-500/12 hover:border-emerald-400/70 hover:bg-emerald-500/18', accent: 'text-emerald-400'},
+  { id: 'multi-cloud', label: 'Multi-Cloud', desc: 'Multiple providers · Complex infrastructure', icon: Layers,   color: 'border-amber-500/40  bg-amber-500/12  hover:border-amber-400/70  hover:bg-amber-500/18',  accent: 'text-amber-400'  },
 ];
 
 const CLOUD_PROVIDERS: Cloud[] = [
