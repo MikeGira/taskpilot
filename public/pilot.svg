@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Helmet body -->
+  <ellipse cx="50" cy="52" rx="36" ry="40" fill="#1a1a2e"/>
+  <ellipse cx="50" cy="48" rx="36" ry="38" fill="#16213e"/>
+
+  <!-- Helmet brim/rim -->
+  <ellipse cx="50" cy="86" rx="34" ry="7" fill="#0d1b2a" opacity="0.8"/>
+  <rect x="16" y="80" width="68" height="10" rx="5" fill="#1a1a2e"/>
+
+  <!-- Visor -->
+  <path d="M 22 45 Q 22 68 50 70 Q 78 68 78 45 Q 78 30 50 28 Q 22 30 22 45 Z" fill="#0a0a1a" opacity="0.95"/>
+  <!-- Visor tint -->
+  <path d="M 24 46 Q 24 67 50 69 Q 76 67 76 46 Q 76 32 50 30 Q 24 32 24 46 Z" fill="#001a00" opacity="0.7"/>
+
+  <!-- Matrix code on visor -->
+  <text x="28" y="43" font-family="monospace" font-size="5" fill="#00ff41" opacity="0.9">01 10 11</text>
+  <text x="31" y="50" font-family="monospace" font-size="5" fill="#00cc33" opacity="0.7">10 01 00</text>
+  <text x="29" y="57" font-family="monospace" font-size="5" fill="#00ff41" opacity="0.8">11 00 10</text>
+  <text x="33" y="64" font-family="monospace" font-size="5" fill="#00aa22" opacity="0.6">01 11 01</text>
+
+  <!-- Visor reflection -->
+  <path d="M 28 36 Q 38 32 50 32" stroke="rgba(0,255,65,0.3)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Visor frame/border -->
+  <path d="M 22 45 Q 22 68 50 70 Q 78 68 78 45 Q 78 30 50 28 Q 22 30 22 45 Z" fill="none" stroke="#2a3a5c" stroke-width="2"/>
+
+  <!-- CP badge on forehead -->
+  <rect x="38" y="14" width="24" height="14" rx="3" fill="#2a3a5c"/>
+  <rect x="39" y="15" width="22" height="12" rx="2" fill="#0d1b2a"/>
+  <text x="50" y="24" text-anchor="middle" font-family="monospace" font-size="7" font-weight="bold" fill="#4a9eff" letter-spacing="1">CP</text>
+
+  <!-- Star on badge -->
+  <text x="50" y="13" text-anchor="middle" font-family="serif" font-size="6" fill="#4a9eff" opacity="0.8">★</text>
+
+  <!-- Helmet side details -->
+  <rect x="14" y="50" width="5" height="18" rx="2.5" fill="#2a3a5c"/>
+  <rect x="81" y="50" width="5" height="18" rx="2.5" fill="#2a3a5c"/>
+
+  <!-- Headset mic arm -->
+  <path d="M 14 58 Q 8 62 10 70" stroke="#2a3a5c" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="10" cy="71" r="3" fill="#1a2a4a"/>
+  <circle cx="10" cy="71" r="1.5" fill="#4a9eff" opacity="0.8"/>
+
+  <!-- Chin strap area -->
+  <path d="M 22 76 Q 35 82 50 83 Q 65 82 78 76" stroke="#2a3a5c" stroke-width="2" fill="none"/>
+</svg>

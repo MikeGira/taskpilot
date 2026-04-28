@@ -16,15 +16,15 @@ import { HeroBeams } from '@/components/animations/hero-beams';
 import { AnimatedArcs } from '@/components/animations/animated-arcs';
 
 const SCRIPTS = [
-  { icon: ShieldCheck, name: 'Password Reset Automation',      desc: 'Reset AD passwords with one command. Full audit log, optional user notification.',          color: 'text-blue-400',    bg: 'bg-blue-500/8'   },
-  { icon: HardDrive,   name: 'Disk Cleanup + Alerts',          desc: 'Auto-clears temp files and emails alerts before drives fill up.',                           color: 'text-cyan-400',    bg: 'bg-cyan-500/8'   },
-  { icon: Users,       name: 'User Onboarding',                desc: 'Create AD accounts from CSV, assign groups, set temp password, notify manager.',            color: 'text-emerald-400', bg: 'bg-emerald-500/8'},
-  { icon: Users,       name: 'User Offboarding',               desc: 'Disable account, remove group memberships, archive home folder, email HR report.',          color: 'text-orange-400',  bg: 'bg-orange-500/8' },
-  { icon: Activity,    name: 'Daily Health Check',             desc: 'CPU, RAM, disk — scheduled summary email every morning before you start.',                  color: 'text-violet-400',  bg: 'bg-violet-500/8' },
-  { icon: ShieldCheck, name: 'Account Lifecycle Audit',        desc: 'Monthly review: stale accounts, privilege changes, MFA status — exports to CSV.',          color: 'text-amber-400',   bg: 'bg-amber-500/8'  },
-  { icon: HardDrive,   name: 'Device Provisioning',            desc: 'Join domain, deploy approved software, apply GPO, tag in inventory — one command.',        color: 'text-pink-400',    bg: 'bg-pink-500/8'   },
-  { icon: HardDrive,   name: 'Device Decommission',            desc: 'Backup data, secure wipe, remove from domain, update asset inventory automatically.',      color: 'text-indigo-400',  bg: 'bg-indigo-500/8' },
-  { icon: Zap,         name: 'Config Template',                desc: 'Edit 6 fields in config.json and every script is ready for your environment.',             color: 'text-yellow-400',  bg: 'bg-yellow-500/8' },
+  { icon: ShieldCheck, name: 'Password Reset Automation',      desc: 'Reset AD passwords with one command. Full audit log, optional user notification.',          color: 'text-blue-300',    bg: 'bg-blue-500/25'   },
+  { icon: HardDrive,   name: 'Disk Cleanup + Alerts',          desc: 'Auto-clears temp files and emails alerts before drives fill up.',                           color: 'text-cyan-300',    bg: 'bg-cyan-500/25'   },
+  { icon: Users,       name: 'User Onboarding',                desc: 'Create AD accounts from CSV, assign groups, set temp password, notify manager.',            color: 'text-emerald-300', bg: 'bg-emerald-500/25'},
+  { icon: Users,       name: 'User Offboarding',               desc: 'Disable account, remove group memberships, archive home folder, email HR report.',          color: 'text-orange-300',  bg: 'bg-orange-500/25' },
+  { icon: Activity,    name: 'Daily Health Check',             desc: 'CPU, RAM, disk — scheduled summary email every morning before you start.',                  color: 'text-violet-300',  bg: 'bg-violet-500/25' },
+  { icon: ShieldCheck, name: 'Account Lifecycle Audit',        desc: 'Monthly review: stale accounts, privilege changes, MFA status — exports to CSV.',          color: 'text-amber-300',   bg: 'bg-amber-500/25'  },
+  { icon: HardDrive,   name: 'Device Provisioning',            desc: 'Join domain, deploy approved software, apply GPO, tag in inventory — one command.',        color: 'text-pink-300',    bg: 'bg-pink-500/25'   },
+  { icon: HardDrive,   name: 'Device Decommission',            desc: 'Backup data, secure wipe, remove from domain, update asset inventory automatically.',      color: 'text-indigo-300',  bg: 'bg-indigo-500/25' },
+  { icon: Zap,         name: 'Config Template',                desc: 'Edit 6 fields in config.json and every script is ready for your environment.',             color: 'text-yellow-300',  bg: 'bg-yellow-500/25' },
   { icon: Clock,       name: 'Task Scheduler Template',        desc: 'Pre-built scheduler.xml — import it once, scripts run on your schedule forever.',          color: 'text-white',       bg: 'bg-white/6'      },
   { icon: Download,    name: 'Step-by-Step Setup Guide',       desc: 'From ZIP to running in 7 clear steps. No guesswork.',                                      color: 'text-white',       bg: 'bg-white/6'      },
 ];

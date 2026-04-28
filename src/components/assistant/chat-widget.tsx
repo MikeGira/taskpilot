@@ -40,20 +40,22 @@ const STARTERS = [
   'How do I set up Task Scheduler automation?',
 ];
 
-// Place your pilot image at public/pilot.png — it will show here automatically.
-// If the file is missing the emoji fallback is shown instead.
+// Loads /pilot.png if you've added your own image, otherwise falls back to /pilot.svg
 function PilotAvatar({ size = 'md' }: { size?: 'sm' | 'md' }) {
-  const [err, setErr] = useState(false);
+  const [src, setSrc] = useState('/pilot.png');
   const dim = size === 'sm' ? 24 : 36;
   const cls = size === 'sm' ? 'h-6 w-6' : 'h-9 w-9';
   return (
-    <div className={cn('shrink-0 rounded-full bg-white overflow-hidden flex items-center justify-center select-none', cls)}>
-      {!err ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src="/pilot.png" alt="Pilot" width={dim} height={dim} className="w-full h-full object-cover" onError={() => setErr(true)} />
-      ) : (
-        <span className={size === 'sm' ? 'text-xs' : 'text-lg'} role="img" aria-label="Pilot">👨‍✈️</span>
-      )}
+    <div className={cn('shrink-0 rounded-full bg-[#16213e] overflow-hidden flex items-center justify-center select-none', cls)}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt="Pilot"
+        width={dim}
+        height={dim}
+        className="w-full h-full object-cover"
+        onError={() => src === '/pilot.png' && setSrc('/pilot.svg')}
+      />
     </div>
   );
 }

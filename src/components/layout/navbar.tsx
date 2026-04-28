@@ -28,18 +28,16 @@ function NavItem({ href, label }: { href: string; label: string }) {
         transition: 'color 0.15s ease',
       }}
     >
-      {/* Spring pill — uses inline styles so cubic-bezier actually fires */}
+      {/* Spring pill — transition must be CONSTANT for CSS animation to fire in React */}
       <span
         aria-hidden
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'rgba(255,255,255,0.08)',
+          background: 'rgba(255,255,255,0.09)',
           opacity: hovered ? 1 : 0,
-          transform: hovered ? 'scale(1)' : 'scale(0.55)',
+          transform: hovered ? 'scale(1)' : 'scale(0.5)',
           transformOrigin: 'center',
-          transition: hovered
-            ? 'opacity 0.12s ease, transform 0.22s cubic-bezier(0.34,1.56,0.64,1)'
-            : 'opacity 0.15s ease, transform 0.15s ease-in',
+          transition: 'opacity 0.15s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)',
         }}
       />
       <span className="relative z-10">{label}</span>
