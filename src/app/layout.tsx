@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { ChatWidget } from '@/components/assistant/chat-widget';
+import { ScrollToTop } from '@/components/ui/scroll-to-top';
 import './globals.css';
 
 const inter = Inter({
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.variable} font-sans bg-black text-white antialiased`}>
         {children}
         <ChatWidget />
+        <ScrollToTop />
         <Analytics />
       </body>
     </html>

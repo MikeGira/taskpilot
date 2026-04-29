@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { GeneratorWizard } from '@/components/generator/generator-wizard';
-import { Wand2, Zap } from 'lucide-react';
+import { Wand2, Zap, ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Script Generator',
@@ -21,6 +22,17 @@ export default function GeneratePage({
       <Navbar />
 
       <main className="flex-1">
+        {/* Back link */}
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 pt-5">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm text-[#9CA3AF] hover:text-white transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to home
+          </Link>
+        </div>
+
         {/* Header */}
         <section className="relative overflow-hidden border-b border-white/6">
           <div className="absolute inset-0 bg-grid-pattern pointer-events-none" />

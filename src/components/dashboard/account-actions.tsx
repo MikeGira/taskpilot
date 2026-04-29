@@ -20,7 +20,7 @@ export function AccountActions() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'taskpilot-data-export.json';
+      a.download = 'taskpilot-data-export.html';
       a.click();
       URL.revokeObjectURL(url);
     }
