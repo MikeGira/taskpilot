@@ -27,46 +27,50 @@ export default function GeneratePage({
           <div className="absolute inset-0 bg-grid-pattern pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-radial from-white/3 via-transparent to-transparent pointer-events-none" />
 
-          <div className="relative mx-auto max-w-3xl px-4 sm:px-6 py-14 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-xs font-medium text-white mb-6 animate-float-up">
-              <Wand2 className="h-3.5 w-3.5 animate-spin-slow" />
-              AI-Powered Script Generator
+          <div className="relative mx-auto max-w-3xl px-4 sm:px-6">
+            {/* Back link — top-left of header, before the page title (Linear/Stripe pattern) */}
+            <div className="pt-6 pb-0">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 text-sm text-[#9CA3AF] hover:text-white transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to home
+              </Link>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-4 animate-fade-in">
-              Generate a script that{' '}
-              <span className="text-white/70">actually works</span>{' '}
-              in your environment
-            </h1>
+            {/* Centered hero */}
+            <div className="py-10 text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-xs font-medium text-white mb-6 animate-float-up">
+                <Wand2 className="h-3.5 w-3.5 animate-spin-slow" />
+                AI-Powered Script Generator
+              </div>
 
-            <p className="text-[#888] max-w-xl mx-auto leading-relaxed animate-slide-up">
-              Tell us your OS and infrastructure. Describe what you want to automate.
-              Get a production-ready script with error handling, logging, and a config section. Ready in under 10 seconds.
-            </p>
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-4 animate-fade-in">
+                Generate a script that{' '}
+                <span className="text-white/70">actually works</span>{' '}
+                in your environment
+              </h1>
 
-            <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs text-[#888]">
-              {['Windows · Linux · macOS', 'On-Prem · Hybrid · Cloud · Multi-Cloud', '10 free scripts per hour', 'No sign-up required'].map((t) => (
-                <span key={t} className="flex items-center gap-1.5">
-                  <Zap className="h-3 w-3 text-white/40" />
-                  {t}
-                </span>
-              ))}
+              <p className="text-[#888] max-w-xl mx-auto leading-relaxed animate-slide-up">
+                Tell us your OS and infrastructure. Describe what you want to automate.
+                Get a production-ready script with error handling, logging, and a config section. Ready in under 10 seconds.
+              </p>
+
+              <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs text-[#888]">
+                {['Windows · Linux · macOS', 'On-Prem · Hybrid · Cloud · Multi-Cloud', '10 free scripts per hour', 'No sign-up required'].map((t) => (
+                  <span key={t} className="flex items-center gap-1.5">
+                    <Zap className="h-3 w-3 text-white/40" />
+                    {t}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
         {/* Wizard */}
         <section className="py-12 px-4 sm:px-6">
-          {/* Back link sits directly above the first wizard step */}
-          <div className="w-full max-w-2xl mx-auto mb-6">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-sm text-[#9CA3AF] hover:text-white transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to home
-            </Link>
-          </div>
           <GeneratorWizard initialTask={initialTask} />
         </section>
       </main>
