@@ -34,8 +34,7 @@ export default function TermsPage() {
             <p className="text-sm text-[#9CA3AF] leading-relaxed">
               A single purchase grants you a personal, non-transferable license to use the scripts
               in your own IT environment. You may not resell, redistribute, or sublicense the
-              scripts. MSPs or consultants deploying these for clients require a commercial license —
-              contact us.
+              scripts. MSPs or consultants deploying these for clients require a commercial license; contact us via the contact form.
             </p>
           </section>
 

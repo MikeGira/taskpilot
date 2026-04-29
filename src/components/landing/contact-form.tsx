@@ -8,8 +8,8 @@ import { CheckCircle2, Loader2 } from 'lucide-react';
 
 const BUDGETS = [
   { value: 'under_500', label: 'Under $500' },
-  { value: '500_2000', label: '$500 – $2,000' },
-  { value: '2000_5000', label: '$2,000 – $5,000' },
+  { value: '500_2000', label: '$500 to $2,000' },
+  { value: '2000_5000', label: '$2,000 to $5,000' },
   { value: '5000_plus', label: '$5,000+' },
   { value: 'not_sure', label: 'Not sure yet' },
 ];
