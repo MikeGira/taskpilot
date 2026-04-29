@@ -50,7 +50,7 @@ export function AnimatedTerminal() {
         <span className="ml-2 text-[11px] text-[#999] font-mono">taskpilot | PowerShell 5.1</span>
       </div>
       {/* Body */}
-      <div className="px-5 py-4 font-mono text-[13px] sm:text-xs space-y-2 min-h-[160px]">
+      <div className="px-5 py-4 font-mono text-[13px] sm:text-xs space-y-2 h-[240px] overflow-hidden">
         {LINES.slice(0, visibleCount).map((line, i) => (
           <div
             key={i}
