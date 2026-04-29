@@ -7,7 +7,7 @@ import { Wand2, Zap, ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Script Generator',
-  description: 'Generate custom IT automation scripts for your exact OS and environment — Windows, Linux, macOS, on-premises, cloud, or hybrid.',
+  description: 'Generate custom IT automation scripts for your exact OS and environment. Windows, Linux, macOS, on-premises, cloud, or hybrid.',
 };
 
 export default function GeneratePage({
@@ -22,19 +22,8 @@ export default function GeneratePage({
       <Navbar />
 
       <main className="flex-1">
-        {/* Back link */}
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 pt-5">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-[#9CA3AF] hover:text-white transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to home
-          </Link>
-        </div>
-
         {/* Header */}
-        <section className="relative overflow-hidden border-b border-white/6">
+        <section className="relative overflow-hidden border-b border-white/12">
           <div className="absolute inset-0 bg-grid-pattern pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-radial from-white/3 via-transparent to-transparent pointer-events-none" />
 
@@ -68,6 +57,16 @@ export default function GeneratePage({
 
         {/* Wizard */}
         <section className="py-12 px-4 sm:px-6">
+          {/* Back link sits directly above the first wizard step */}
+          <div className="w-full max-w-2xl mx-auto mb-6">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-sm text-[#9CA3AF] hover:text-white transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to home
+            </Link>
+          </div>
           <GeneratorWizard initialTask={initialTask} />
         </section>
       </main>
