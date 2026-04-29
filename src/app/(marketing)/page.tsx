@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import {
-  ShieldCheck, HardDrive, Users, Activity, FileText,
+  ShieldCheck, HardDrive, Users, Activity, FileText, Laptop,
   CheckCircle2, ArrowRight, Zap, Clock, Download, Wand2,
   XCircle, Rocket,
 } from 'lucide-react';
@@ -16,16 +16,18 @@ import { HeroBeams } from '@/components/animations/hero-beams';
 import { AnimatedArcs } from '@/components/animations/animated-arcs';
 
 const SCRIPTS = [
-  { icon: ShieldCheck, name: 'Password Reset Automation',  color: 'text-blue-300',    bg: 'bg-blue-500/25',    desc: 'Reset AD passwords with one command. Full audit log and optional user notification.',                    task: 'Reset Active Directory passwords, log every action with timestamp, and optionally send email notification to the user when their password is reset' },
-  { icon: HardDrive,   name: 'Disk Cleanup + Alerts',      color: 'text-cyan-300',    bg: 'bg-cyan-500/25',    desc: 'Auto-clears temp files and emails alerts before drives fill up.',                                       task: 'Monitor disk space on all servers and send email alerts when drives fall below a configurable threshold, then auto-clean temp files' },
-  { icon: Users,       name: 'User Onboarding',            color: 'text-emerald-300', bg: 'bg-emerald-500/25', desc: 'Create AD accounts from CSV, assign groups, set temp password, notify manager.',                         task: 'Create new employee AD account from CSV input, assign to appropriate groups, set temporary password, and notify the manager by email' },
-  { icon: Users,       name: 'User Offboarding',           color: 'text-orange-300',  bg: 'bg-orange-500/25',  desc: 'Disable account, remove group memberships, archive home folder, email HR report.',                      task: 'Offboard a departing employee: disable their AD account, remove from all groups, archive home folder to a backup location, and send report to HR' },
-  { icon: Activity,    name: 'Daily Health Check',         color: 'text-violet-300',  bg: 'bg-violet-500/25',  desc: 'CPU, RAM, and disk usage tracked on schedule. Summary email waiting every morning.',                    task: 'Run a daily health check on all servers: monitor CPU, RAM, and disk usage, check critical services, and email a summary report each morning' },
-  { icon: ShieldCheck, name: 'Account Deactivation',       color: 'text-amber-300',   bg: 'bg-amber-500/25',   desc: 'Disable accounts inactive for 90 days, move to disabled OU, generate audit report.',                    task: 'Find and disable Active Directory accounts that have been inactive for 90 days, move them to a disabled OU, and generate an audit report' },
-  { icon: FileText,    name: 'Security Report',            color: 'text-red-300',     bg: 'bg-red-500/25',     desc: 'Weekly report of failed logins and locked accounts, exported to CSV and HTML.',                         task: 'Generate a weekly security report of failed login attempts and locked accounts across all Windows servers, export to CSV and HTML, and email it to the security team' },
-  { icon: Zap,         name: 'Config Template',            color: 'text-yellow-300',  bg: 'bg-yellow-500/25',  desc: 'Edit 6 fields in config.json and every script is ready for your environment.',                          task: null },
-  { icon: Clock,       name: 'Task Scheduler Template',    color: 'text-white',       bg: 'bg-white/6',        desc: 'Pre-built scheduler.xml. Import it once, scripts run on your schedule forever.',                         task: null },
-  { icon: Download,    name: 'Step-by-Step Setup Guide',   color: 'text-white',       bg: 'bg-white/6',        desc: 'From ZIP to running in 7 clear steps. No guesswork.',                                                     task: null },
+  { icon: ShieldCheck, name: 'Password Reset Automation',  color: 'text-blue-300',    bg: 'bg-blue-500/25',    desc: 'Reset AD passwords with one command. Full audit log and optional user notification.',              task: 'Reset Active Directory passwords, log every action with timestamp, and optionally send email notification to the user when their password is reset' },
+  { icon: HardDrive,   name: 'Disk Cleanup + Alerts',      color: 'text-cyan-300',    bg: 'bg-cyan-500/25',    desc: 'Auto-clears temp files and emails alerts before drives fill up.',                                 task: 'Monitor disk space on all servers and send email alerts when drives fall below a configurable threshold, then auto-clean temp files' },
+  { icon: Users,       name: 'User Onboarding',            color: 'text-emerald-300', bg: 'bg-emerald-500/25', desc: 'Create AD accounts from CSV, assign groups, set temp password, notify manager.',                 task: 'Create new employee AD account from CSV input, assign to appropriate groups, set temporary password, and notify the manager by email' },
+  { icon: Users,       name: 'User Offboarding',           color: 'text-orange-300',  bg: 'bg-orange-500/25',  desc: 'Disable account, remove group memberships, archive home folder, email HR report.',              task: 'Offboard a departing employee: disable their AD account, remove from all groups, archive home folder to a backup location, and send report to HR' },
+  { icon: Activity,    name: 'Daily Health Check',         color: 'text-violet-300',  bg: 'bg-violet-500/25',  desc: 'CPU, RAM, and disk usage tracked on schedule. Summary email waiting every morning.',            task: 'Run a daily health check on all servers: monitor CPU, RAM, and disk usage, check critical services, and email a summary report each morning' },
+  { icon: ShieldCheck, name: 'Account Deactivation',       color: 'text-amber-300',   bg: 'bg-amber-500/25',   desc: 'Disable accounts inactive for 90 days, move to disabled OU, generate audit report.',            task: 'Find and disable Active Directory accounts that have been inactive for 90 days, move them to a disabled OU, and generate an audit report' },
+  { icon: FileText,    name: 'Security Report',            color: 'text-red-300',     bg: 'bg-red-500/25',     desc: 'Weekly report of failed logins and locked accounts, exported to CSV and HTML.',                 task: 'Generate a weekly security report of failed login attempts and locked accounts across all Windows servers, export to CSV and HTML, and email it to the security team' },
+  { icon: Laptop,      name: 'Device Provisioning',        color: 'text-pink-300',    bg: 'bg-pink-500/25',    desc: 'Join domain, deploy approved software, apply GPO, tag in asset inventory. One command.',        task: 'Provision a new device: join it to the domain, deploy approved software packages, apply group policy settings, and register in the asset inventory' },
+  { icon: HardDrive,   name: 'Device Decommission',        color: 'text-indigo-300',  bg: 'bg-indigo-500/25',  desc: 'Backup data, secure wipe, remove from domain, update asset inventory automatically.',          task: 'Decommission an old device: backup user data, perform a secure disk wipe, remove from the domain, and update the asset inventory' },
+  { icon: Zap,         name: 'Config Template',            color: 'text-yellow-300',  bg: 'bg-yellow-500/25',  desc: 'Edit 6 fields in config.json and every script is ready for your environment.',                  task: null },
+  { icon: Clock,       name: 'Task Scheduler Template',    color: 'text-white',       bg: 'bg-white/8',        desc: 'Pre-built scheduler.xml. Import it once, scripts run on your schedule forever.',                 task: null },
+  { icon: Download,    name: 'Step-by-Step Setup Guide',   color: 'text-white',       bg: 'bg-white/8',        desc: 'From ZIP to running in 7 clear steps. No guesswork.',                                           task: null },
 ];
 
 const WITHOUT = [
@@ -45,10 +47,16 @@ const WITH = [
 ];
 
 const ENVIRONMENTS = [
-  { color: 'bg-blue-400',   border: 'border-blue-500/20',   bg: 'bg-blue-500/5',   title: 'Windows',  desc: 'Server 2016 to 2022, plus Windows 10 and 11' },
-  { color: 'bg-orange-400', border: 'border-orange-500/20', bg: 'bg-orange-500/5', title: 'Linux',    desc: 'Ubuntu, RHEL, Amazon Linux' },
-  { color: 'bg-cyan-400',   border: 'border-cyan-500/20',   bg: 'bg-cyan-500/5',   title: 'Cloud',    desc: 'AWS, Azure, GCP, DigitalOcean' },
-  { color: 'bg-violet-400', border: 'border-violet-500/20', bg: 'bg-violet-500/5', title: 'Hybrid',   desc: 'On-premises Active Directory' },
+  { color: 'bg-blue-400',   border: 'border-blue-500/40',   bg: 'bg-blue-500/8',   title: 'Windows',  desc: 'Server 2016 to 2022, plus Windows 10 and 11' },
+  { color: 'bg-orange-400', border: 'border-orange-500/40', bg: 'bg-orange-500/8', title: 'Linux',    desc: 'Ubuntu, RHEL, Amazon Linux' },
+  { color: 'bg-cyan-400',   border: 'border-cyan-500/40',   bg: 'bg-cyan-500/8',   title: 'Cloud',    desc: 'AWS, Azure, GCP, DigitalOcean' },
+  { color: 'bg-violet-400', border: 'border-violet-500/40', bg: 'bg-violet-500/8', title: 'Hybrid',   desc: 'On-premises Active Directory' },
+];
+
+const STEPS = [
+  { num: '01', title: 'Download', desc: 'Buy, get the ZIP, extract to any folder on your server.' },
+  { num: '02', title: 'Configure', desc: 'Edit 6 fields in config.json: your domain, OUs, log path, and alert threshold.' },
+  { num: '03', title: 'Run or Schedule', desc: 'Execute manually or import scheduler.xml into Task Scheduler. Done.' },
 ];
 
 const FAQS = [
@@ -65,12 +73,12 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
       <Navbar />
 
       {searchParams.subscribed && (
-        <div className="bg-white/5 border-b border-white/12 text-center py-2 text-sm text-white">
+        <div className="bg-white/5 border-b border-white/20 text-center py-2 text-sm text-white">
           You&apos;re subscribed! Check your inbox to confirm.
         </div>
       )}
       {searchParams.cancelled && (
-        <div className="bg-yellow-500/10 border-b border-yellow-500/20 text-center py-2 text-sm text-yellow-400">
+        <div className="bg-yellow-500/10 border-b border-yellow-500/30 text-center py-2 text-sm text-yellow-400">
           Checkout cancelled. Questions? Use the contact form below.
         </div>
       )}
@@ -93,7 +101,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
 
           <div className="relative mx-auto max-w-4xl px-4 sm:px-6 pt-24 pb-8 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-xs font-medium text-white mb-8 animate-float-up">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-medium text-white mb-8 animate-float-up">
               <Zap className="h-3 w-3" />
               Built by an IT pro with 10+ years in the field
             </div>
@@ -104,7 +112,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             </h1>
 
             <p className="text-lg sm:text-xl text-[#888] max-w-2xl mx-auto mb-10 text-balance animate-slide-up">
-              7 production-ready PowerShell scripts that handle your most repetitive helpdesk
+              9 production-ready PowerShell scripts that handle your most repetitive helpdesk
               tasks: password resets, disk cleanup, user onboarding, and more.
               Configure once, run forever.
             </p>
@@ -141,13 +149,13 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* What's included */}
-        <section id="includes" className="py-20 border-t border-white/6">
+        <section id="includes" className="py-20 border-t border-white/12">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <FadeInSection>
               <div className="text-center mb-14">
                 <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Everything in the kit</h2>
                 <p className="text-[#888] max-w-xl mx-auto">
-                  7 scripts. Ready to deploy. No assembly required beyond editing 6 config values.
+                  9 scripts. Ready to deploy. No assembly required beyond editing 6 config values.
                 </p>
               </div>
             </FadeInSection>
@@ -155,7 +163,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {SCRIPTS.map((s, i) => {
                 const cardContent = (
-                  <Card className={`p-5 group transition-all duration-200 h-full ${s.task ? 'hover:border-white/25 hover:bg-white/4 cursor-pointer' : 'hover:border-white/15 hover:bg-white/2'}`}>
+                  <Card className={`p-5 group transition-all duration-200 h-full ${s.task ? 'hover:border-white/35 hover:bg-white/4 cursor-pointer' : 'hover:border-white/28 hover:bg-white/2'}`}>
                     <div className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${s.bg} mb-4 group-hover:scale-110 transition-transform duration-200`}>
                       <s.icon className={`h-5 w-5 ${s.color}`} />
                     </div>
@@ -181,27 +189,23 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* How it works */}
-        <section className="py-20 border-t border-white/6 bg-black">
+        <section className="py-20 border-t border-white/12 bg-black">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
             <FadeInSection>
               <div className="text-center mb-14">
                 <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Up and running in 3 steps</h2>
               </div>
             </FadeInSection>
-            <div className="grid sm:grid-cols-3 gap-8">
-              {[
-                { num: '01', title: 'Download', desc: 'Buy, get the ZIP, extract to any folder on your server.' },
-                { num: '02', title: 'Configure', desc: 'Edit 6 fields in config.json: your domain, OUs, log path, and alert threshold.' },
-                { num: '03', title: 'Run or Schedule', desc: 'Execute manually or import scheduler.xml into Task Scheduler. Done.' },
-              ].map((step, i) => (
+            <div className="grid sm:grid-cols-3 gap-5">
+              {STEPS.map((step, i) => (
                 <FadeInSection key={step.num} delay={i * 100}>
-                  <div className="flex flex-col items-center text-center group">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/12 bg-white/4 text-white font-bold text-lg mb-5 group-hover:border-white/25 group-hover:bg-white/8 transition-all duration-200">
+                  <Card className="p-6 flex flex-col items-center text-center hover:border-white/35 transition-all duration-200 group">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-white/5 text-white font-bold text-lg mb-5 group-hover:border-white/40 group-hover:bg-white/8 transition-all duration-200">
                       {step.num}
                     </div>
                     <h3 className="font-semibold text-white mb-2">{step.title}</h3>
                     <p className="text-sm text-[#888] leading-relaxed">{step.desc}</p>
-                  </div>
+                  </Card>
                 </FadeInSection>
               ))}
             </div>
@@ -209,12 +213,12 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Deploy everywhere */}
-        <section className="py-16 border-t border-white/6 overflow-hidden">
+        <section className="py-16 border-t border-white/12 overflow-hidden">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="grid lg:grid-cols-2 gap-10 items-center">
               <FadeInSection>
                 <div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/4 px-3 py-1 text-xs font-medium text-white mb-5">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/4 px-3 py-1 text-xs font-medium text-white mb-5">
                     <Zap className="h-3 w-3 text-cyan-400" /> Works everywhere
                   </div>
                   <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
@@ -243,7 +247,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Before / After */}
-        <section className="py-20 border-t border-white/6">
+        <section className="py-20 border-t border-white/12">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <FadeInSection>
               <div className="text-center mb-14">
@@ -252,9 +256,9 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             </FadeInSection>
             <div className="grid md:grid-cols-2 gap-6">
               <FadeInSection delay={0}>
-                <Card className="p-6 border-red-500/10 bg-red-950/5 h-full">
+                <Card className="p-6 border-red-500/30 bg-red-950/5 h-full">
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-500/10 border border-red-500/20">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-500/10 border border-red-500/30">
                       <XCircle className="h-4 w-4 text-red-400" />
                     </div>
                     Without TaskPilot
@@ -262,7 +266,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   <ul className="space-y-3">
                     {WITHOUT.map((item) => (
                       <li key={item} className="flex items-start gap-3 text-sm text-[#888]">
-                        <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400/50" />
+                        <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400/60" />
                         {item}
                       </li>
                     ))}
@@ -270,9 +274,9 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 </Card>
               </FadeInSection>
               <FadeInSection delay={120}>
-                <Card className="p-6 border-emerald-500/15 bg-emerald-950/5 h-full">
+                <Card className="p-6 border-emerald-500/30 bg-emerald-950/5 h-full">
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30">
                       <Rocket className="h-4 w-4 text-emerald-400" />
                     </div>
                     With TaskPilot
@@ -280,7 +284,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   <ul className="space-y-3">
                     {WITH.map((item) => (
                       <li key={item} className="flex items-start gap-3 text-sm text-white">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400/70" />
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400/80" />
                         {item}
                       </li>
                     ))}
@@ -292,20 +296,20 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="py-20 border-t border-white/6 bg-black">
+        <section id="pricing" className="py-20 border-t border-white/12 bg-black">
           <div className="mx-auto max-w-md px-4 sm:px-6 text-center">
             <FadeInSection>
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Simple pricing</h2>
               <p className="text-[#888] mb-10">One price. Everything included. No subscription.</p>
 
-              <Card className="p-8 border-white/12 bg-gradient-to-b from-white/3 to-transparent hover:border-white/20 transition-colors duration-300">
+              <Card className="p-8 border-white/25 bg-gradient-to-b from-white/3 to-transparent hover:border-white/35 transition-colors duration-300">
                 <div className="mb-6">
                   <div className="text-5xl font-extrabold text-white mb-1">$19</div>
                   <div className="text-sm text-[#888]">one-time · instant download</div>
                 </div>
                 <ul className="space-y-3 mb-8 text-left">
                   {[
-                    '7 production-ready PowerShell scripts',
+                    '9 production-ready PowerShell scripts',
                     'Config template (edit 6 fields)',
                     'Windows Task Scheduler XML',
                     'Step-by-step setup guide',
@@ -313,7 +317,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     'Email support',
                   ].map((item) => (
                     <li key={item} className="flex items-center gap-3 text-sm text-white">
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-white/60" />
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-white/70" />
                       {item}
                     </li>
                   ))}
@@ -333,7 +337,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="py-20 border-t border-white/6">
+        <section id="faq" className="py-20 border-t border-white/12">
           <div className="mx-auto max-w-3xl px-4 sm:px-6">
             <FadeInSection>
               <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-14">
@@ -343,7 +347,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="space-y-4">
               {FAQS.map((faq, i) => (
                 <FadeInSection key={faq.q} delay={i * 50}>
-                  <Card className="p-6 hover:border-white/15 transition-colors duration-200">
+                  <Card className="p-6 hover:border-white/30 transition-colors duration-200">
                     <h3 className="font-semibold text-white mb-3">{faq.q}</h3>
                     <p className="text-sm text-[#888] leading-relaxed">{faq.a}</p>
                   </Card>
@@ -354,10 +358,10 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Newsletter */}
-        <section className="py-20 border-t border-white/6 bg-black">
+        <section className="py-20 border-t border-white/12 bg-black">
           <div className="mx-auto max-w-xl px-4 sm:px-6 text-center">
             <FadeInSection>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/4 px-4 py-1.5 text-xs font-medium text-white mb-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/4 px-4 py-1.5 text-xs font-medium text-white mb-6">
                 Free weekly tips
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
@@ -370,7 +374,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Contact */}
-        <section id="contact" className="py-20 border-t border-white/6">
+        <section id="contact" className="py-20 border-t border-white/12">
           <div className="mx-auto max-w-xl px-4 sm:px-6">
             <FadeInSection>
               <div className="text-center mb-12">

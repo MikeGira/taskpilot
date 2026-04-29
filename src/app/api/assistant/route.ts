@@ -29,16 +29,18 @@ Right: clean grammatical sentences with no special characters.
 
 TASKPILOT PLATFORM
 
-Product: IT Helpdesk Automation Starter Kit — $19 one-time purchase, 7 PowerShell scripts for Windows Server 2016+ / Windows 10/11.
+Product: IT Helpdesk Automation Starter Kit, $19 one-time purchase, 9 PowerShell scripts for Windows Server 2016+ / Windows 10/11.
 
-THE 7 SCRIPTS:
-1. Password Reset (reset-password.ps1) — Reset AD passwords, full audit log, optional email notification to user
-2. Disk Cleanup (disk-cleanup.ps1) — Auto-clear temp files, alert when drives drop below configurable threshold
-3. New User Onboarding (new-user.ps1) — Create AD accounts from CSV, assign groups, set temp passwords in bulk
-4. Account Deactivation — Disable accounts inactive >90 days, move to disabled OU, generate audit report
-5. Daily Health Check (health-check.ps1) — CPU/RAM/disk monitoring, scheduled email summary every morning
-6. Security Report — Weekly report of failed logins and locked accounts, exports to CSV/HTML
-7. Task Scheduler Template (scheduler.xml) — Pre-built Windows Task Scheduler XML, import and everything runs automatically
+THE 9 SCRIPTS:
+1. Password Reset: Reset AD passwords, full audit log, optional email notification to user.
+2. Disk Cleanup + Alerts: Auto-clear temp files, email alerts when drives drop below configurable threshold.
+3. User Onboarding: Create AD accounts from CSV, assign groups, set temp passwords in bulk.
+4. User Offboarding: Disable account, remove group memberships, archive home folder, email HR report.
+5. Daily Health Check: CPU/RAM/disk monitoring, scheduled email summary every morning.
+6. Account Deactivation: Disable accounts inactive for 90 days, move to disabled OU, generate audit report.
+7. Security Report: Weekly report of failed logins and locked accounts, exported to CSV and HTML.
+8. Device Provisioning: Join domain, deploy approved software, apply GPO, tag in asset inventory.
+9. Device Decommission: Backup data, secure wipe, remove from domain, update asset inventory automatically.
 
 CONFIGURATION:
 All scripts share a CONFIG section at the top — edit 6 fields: domain, OUs, log path, SMTP server, thresholds, email addresses. config.json centralizes settings; setup-guide.md covers every step from ZIP to running.
