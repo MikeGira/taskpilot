@@ -46,13 +46,13 @@ const CLOUD_PROVIDERS: Cloud[] = [
 
 const TASK_EXAMPLES = [
   // User lifecycle
-  'Onboard a new employee — create AD account, assign groups, set temp password, email HR',
-  'Offboard a departing employee — disable account, remove from all groups, archive home folder',
+  'Onboard a new employee: create AD account, assign groups, set temp password, email HR',
+  'Offboard a departing employee: disable account, remove from all groups, archive home folder',
   'Run a monthly user access review and export stale accounts to CSV',
   'Auto-disable accounts inactive for 90 days with full audit report',
   // Device lifecycle
-  'Provision a new laptop — join domain, install approved software, apply GPO settings',
-  'Decommission an old device — backup data, wipe disk, remove from AD and inventory',
+  'Provision a new laptop: join domain, install approved software, apply GPO settings',
+  'Decommission an old device: backup data, wipe disk, remove from AD and inventory',
   'Generate a device inventory report with OS version, last seen, and patch status',
   // Day-to-day automation
   'Monitor disk space on all servers and alert when below 15%',
@@ -165,10 +165,10 @@ function ScriptBlock({ script, filename, language, locked = false }: {
         </pre>
         {locked && (
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/70 to-transparent flex flex-col items-center justify-end pb-5 gap-1.5">
-            <p className="text-sm font-semibold text-[#F9FAFB]">Pro script — upgrade to unlock</p>
+            <p className="text-sm font-semibold text-[#F9FAFB]">Pro script: upgrade to unlock</p>
             <p className="text-xs text-[#6B7280]">Copy, download and save to history with Pro</p>
             <Button asChild size="sm" className="mt-1">
-              <a href="/checkout">Upgrade to Pro — $12/mo</a>
+              <a href="/checkout">Upgrade to Pro, $12/mo</a>
             </Button>
           </div>
         )}
@@ -383,7 +383,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           </button>
           <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">What do you want to automate?</h2>
           <p className="text-sm text-[#9CA3AF] mb-6">
-            Describe the task in plain English. Be specific — the more detail you give, the better the script.
+            Describe the task in plain English. Be specific: the more detail you give, the better the script.
           </p>
 
           <div className="mb-4">
@@ -534,7 +534,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           {feedbackSubmitted ? (
             <div className="rounded-xl border border-white/12 bg-white/5 px-4 py-3 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-white shrink-0" />
-              <p className="text-sm text-[#D1D5DB]">Thanks — your feedback helps improve the AI.</p>
+              <p className="text-sm text-[#D1D5DB]">Thanks, your feedback helps improve the AI.</p>
             </div>
           ) : (
             <div className="rounded-xl border border-white/8 bg-white/2 p-4">
@@ -568,7 +568,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
                   <Textarea
                     value={feedbackComment}
                     onChange={(e) => setFeedbackComment(e.target.value)}
-                    placeholder="What went wrong? (optional — helps improve the AI)"
+                    placeholder="What went wrong? (optional, helps improve the AI)"
                     rows={2}
                     maxLength={500}
                     className="resize-none text-sm"
@@ -629,7 +629,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           <div className="rounded-xl border border-white/12 bg-white/5 p-4 flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-[#F9FAFB] mb-0.5">Want 4 ready-to-deploy scripts?</p>
-              <p className="text-xs text-[#9CA3AF]">The Starter Kit includes pre-tested scripts for the most common IT tasks — $19.</p>
+              <p className="text-xs text-[#9CA3AF]">The Starter Kit includes pre-tested scripts for the most common IT tasks, just $19.</p>
             </div>
             <Button asChild size="sm" className="shrink-0">
               <a href="/checkout">Get the Kit →</a>

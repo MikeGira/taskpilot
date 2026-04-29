@@ -40,7 +40,7 @@ export default function GeneratePage({
 
             <p className="text-[#888] max-w-xl mx-auto leading-relaxed animate-slide-up">
               Tell us your OS and infrastructure. Describe what you want to automate.
-              Get a production-ready script with error handling, logging, and a config section — in under 10 seconds.
+              Get a production-ready script with error handling, logging, and a config section. Ready in under 10 seconds.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs text-[#888]">

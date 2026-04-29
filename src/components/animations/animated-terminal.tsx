@@ -9,7 +9,7 @@ const LINES = [
   { kind: 'cmd', text: 'Applying 90-day inactivity policy...' },
   { kind: 'ok',  text: '23 accounts flagged and disabled' },
   { kind: 'cmd', text: 'Running disk cleanup on all servers...' },
-  { kind: 'ok',  text: '4.2 GB freed — report saved to /logs/' },
+  { kind: 'ok',  text: '4.2 GB freed, report saved to /logs/' },
 ];
 
 const DELAY_PER_LINE = 700;
@@ -47,7 +47,7 @@ export function AnimatedTerminal() {
         <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
         <div className="h-3 w-3 rounded-full bg-[#febc2e]" />
         <div className="h-3 w-3 rounded-full bg-[#28c840]" />
-        <span className="ml-2 text-[11px] text-[#999] font-mono">taskpilot — PowerShell 5.1</span>
+        <span className="ml-2 text-[11px] text-[#999] font-mono">taskpilot | PowerShell 5.1</span>
       </div>
       {/* Body */}
       <div className="px-5 py-4 font-mono text-[13px] sm:text-xs space-y-2 min-h-[160px]">

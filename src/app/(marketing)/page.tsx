@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import {
-  ShieldCheck, HardDrive, Users, Activity,
+  ShieldCheck, HardDrive, Users, Activity, FileText,
   CheckCircle2, ArrowRight, Zap, Clock, Download, Wand2,
   XCircle, Rocket,
 } from 'lucide-react';
@@ -16,17 +16,16 @@ import { HeroBeams } from '@/components/animations/hero-beams';
 import { AnimatedArcs } from '@/components/animations/animated-arcs';
 
 const SCRIPTS = [
-  { icon: ShieldCheck, name: 'Password Reset Automation',  color: 'text-blue-300',    bg: 'bg-blue-500/25',    desc: 'Reset AD passwords with one command. Full audit log, optional user notification.',          task: 'Reset Active Directory passwords, log every action with timestamp, and optionally send email notification to the user when their password is reset' },
-  { icon: HardDrive,   name: 'Disk Cleanup + Alerts',      color: 'text-cyan-300',    bg: 'bg-cyan-500/25',    desc: 'Auto-clears temp files and emails alerts before drives fill up.',                           task: 'Monitor disk space on all servers and send email alerts when drives fall below a configurable threshold, then auto-clean temp files' },
-  { icon: Users,       name: 'User Onboarding',            color: 'text-emerald-300', bg: 'bg-emerald-500/25', desc: 'Create AD accounts from CSV, assign groups, set temp password, notify manager.',            task: 'Create new employee AD account from CSV input, assign to appropriate groups, set temporary password, and notify the manager by email' },
-  { icon: Users,       name: 'User Offboarding',           color: 'text-orange-300',  bg: 'bg-orange-500/25',  desc: 'Disable account, remove group memberships, archive home folder, email HR report.',          task: 'Offboard a departing employee: disable their AD account, remove from all groups, archive home folder to a backup location, and send report to HR' },
-  { icon: Activity,    name: 'Daily Health Check',         color: 'text-violet-300',  bg: 'bg-violet-500/25',  desc: 'CPU, RAM, disk — scheduled summary email every morning before you start.',                  task: 'Run a daily health check on all servers: monitor CPU, RAM, and disk usage, check critical services, and email a summary report each morning' },
-  { icon: ShieldCheck, name: 'Account Lifecycle Audit',    color: 'text-amber-300',   bg: 'bg-amber-500/25',   desc: 'Monthly review: stale accounts, privilege changes, MFA status — exports to CSV.',          task: 'Monthly account lifecycle audit: find stale accounts, review privilege changes, check MFA enrollment status, and export results to CSV for compliance' },
-  { icon: HardDrive,   name: 'Device Provisioning',        color: 'text-pink-300',    bg: 'bg-pink-500/25',    desc: 'Join domain, deploy approved software, apply GPO, tag in inventory — one command.',        task: 'Provision a new device: join it to the domain, deploy approved software packages, apply group policy settings, and register in the asset inventory' },
-  { icon: HardDrive,   name: 'Device Decommission',        color: 'text-indigo-300',  bg: 'bg-indigo-500/25',  desc: 'Backup data, secure wipe, remove from domain, update asset inventory automatically.',      task: 'Decommission an old device: backup user data, perform a secure disk wipe, remove from the domain, and update the asset inventory database' },
-  { icon: Zap,         name: 'Config Template',            color: 'text-yellow-300',  bg: 'bg-yellow-500/25',  desc: 'Edit 6 fields in config.json and every script is ready for your environment.',             task: null },
-  { icon: Clock,       name: 'Task Scheduler Template',    color: 'text-white',       bg: 'bg-white/6',        desc: 'Pre-built scheduler.xml — import it once, scripts run on your schedule forever.',          task: null },
-  { icon: Download,    name: 'Step-by-Step Setup Guide',   color: 'text-white',       bg: 'bg-white/6',        desc: 'From ZIP to running in 7 clear steps. No guesswork.',                                      task: null },
+  { icon: ShieldCheck, name: 'Password Reset Automation',  color: 'text-blue-300',    bg: 'bg-blue-500/25',    desc: 'Reset AD passwords with one command. Full audit log and optional user notification.',                    task: 'Reset Active Directory passwords, log every action with timestamp, and optionally send email notification to the user when their password is reset' },
+  { icon: HardDrive,   name: 'Disk Cleanup + Alerts',      color: 'text-cyan-300',    bg: 'bg-cyan-500/25',    desc: 'Auto-clears temp files and emails alerts before drives fill up.',                                       task: 'Monitor disk space on all servers and send email alerts when drives fall below a configurable threshold, then auto-clean temp files' },
+  { icon: Users,       name: 'User Onboarding',            color: 'text-emerald-300', bg: 'bg-emerald-500/25', desc: 'Create AD accounts from CSV, assign groups, set temp password, notify manager.',                         task: 'Create new employee AD account from CSV input, assign to appropriate groups, set temporary password, and notify the manager by email' },
+  { icon: Users,       name: 'User Offboarding',           color: 'text-orange-300',  bg: 'bg-orange-500/25',  desc: 'Disable account, remove group memberships, archive home folder, email HR report.',                      task: 'Offboard a departing employee: disable their AD account, remove from all groups, archive home folder to a backup location, and send report to HR' },
+  { icon: Activity,    name: 'Daily Health Check',         color: 'text-violet-300',  bg: 'bg-violet-500/25',  desc: 'CPU, RAM, and disk usage tracked on schedule. Summary email waiting every morning.',                    task: 'Run a daily health check on all servers: monitor CPU, RAM, and disk usage, check critical services, and email a summary report each morning' },
+  { icon: ShieldCheck, name: 'Account Deactivation',       color: 'text-amber-300',   bg: 'bg-amber-500/25',   desc: 'Disable accounts inactive for 90 days, move to disabled OU, generate audit report.',                    task: 'Find and disable Active Directory accounts that have been inactive for 90 days, move them to a disabled OU, and generate an audit report' },
+  { icon: FileText,    name: 'Security Report',            color: 'text-red-300',     bg: 'bg-red-500/25',     desc: 'Weekly report of failed logins and locked accounts, exported to CSV and HTML.',                         task: 'Generate a weekly security report of failed login attempts and locked accounts across all Windows servers, export to CSV and HTML, and email it to the security team' },
+  { icon: Zap,         name: 'Config Template',            color: 'text-yellow-300',  bg: 'bg-yellow-500/25',  desc: 'Edit 6 fields in config.json and every script is ready for your environment.',                          task: null },
+  { icon: Clock,       name: 'Task Scheduler Template',    color: 'text-white',       bg: 'bg-white/6',        desc: 'Pre-built scheduler.xml. Import it once, scripts run on your schedule forever.',                         task: null },
+  { icon: Download,    name: 'Step-by-Step Setup Guide',   color: 'text-white',       bg: 'bg-white/6',        desc: 'From ZIP to running in 7 clear steps. No guesswork.',                                                     task: null },
 ];
 
 const WITHOUT = [
@@ -45,11 +44,18 @@ const WITH = [
   'Spend those 20 minutes on work that actually matters',
 ];
 
+const ENVIRONMENTS = [
+  { color: 'bg-blue-400',   border: 'border-blue-500/20',   bg: 'bg-blue-500/5',   title: 'Windows',  desc: 'Server 2016 to 2022, plus Windows 10 and 11' },
+  { color: 'bg-orange-400', border: 'border-orange-500/20', bg: 'bg-orange-500/5', title: 'Linux',    desc: 'Ubuntu, RHEL, Amazon Linux' },
+  { color: 'bg-cyan-400',   border: 'border-cyan-500/20',   bg: 'bg-cyan-500/5',   title: 'Cloud',    desc: 'AWS, Azure, GCP, DigitalOcean' },
+  { color: 'bg-violet-400', border: 'border-violet-500/20', bg: 'bg-violet-500/5', title: 'Hybrid',   desc: 'On-premises Active Directory' },
+];
+
 const FAQS = [
   { q: 'Do I need Active Directory?', a: 'The password reset and new user scripts require Active Directory (on-prem or Azure AD DS). Disk cleanup and health check work on any Windows Server 2016+ without AD.' },
   { q: 'Which Windows versions are supported?', a: 'All scripts require PowerShell 5.1+, which ships with Windows Server 2016 and later. Windows 10/11 workstations with RSAT installed also work for the AD scripts.' },
-  { q: "What if I'm not sure it'll work in my environment?", a: 'Every script has a config file with clear comments. Test in a lab or a non-production OU first. The setup guide walks you through a safe first run. If you hit a wall, email me — I respond within one business day.' },
-  { q: 'How do I get updates when you add new scripts?', a: "Subscribe to the weekly newsletter and you'll be the first to know. Existing customers get a discount on any future bundle. There's no subscription — you buy once, you own it." },
+  { q: "What if I'm not sure it'll work in my environment?", a: 'Every script has a config file with clear comments. Test in a lab or a non-production OU first. The setup guide walks you through a safe first run. If you hit a wall, email me and I respond within one business day.' },
+  { q: 'How do I get updates when you add new scripts?', a: "Subscribe to the weekly newsletter and you'll be the first to know. Existing customers get a discount on any future bundle. There's no subscription. You buy once, you own it." },
   { q: 'Can I use this for multiple clients?', a: "Yes. One purchase covers your own use. If you're an MSP or consultant using these for clients as part of a managed service, reach out via the contact form for a commercial license." },
 ];
 
@@ -71,12 +77,10 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
 
       <main className="flex-1">
 
-        {/* ── Hero ──────────────────────────────────────────────────────────── */}
+        {/* Hero */}
         <section className="relative overflow-hidden bg-black">
-          {/* Grid */}
           <div className="absolute inset-0 bg-grid-pattern pointer-events-none" />
 
-          {/* Colorful radial glows — indigo top-left, cyan top-right */}
           <div className="absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full pointer-events-none"
             style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 70%)', animation: 'glow-drift-indigo 8s ease-in-out infinite' }} />
           <div className="absolute -top-32 -right-32 h-[500px] w-[500px] rounded-full pointer-events-none"
@@ -84,13 +88,11 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-64 w-96 pointer-events-none"
             style={{ background: 'radial-gradient(ellipse, rgba(167,139,250,0.06) 0%, transparent 70%)' }} />
 
-          {/* Sweeping beam */}
           <div className="absolute inset-y-0 left-0 w-full h-full pointer-events-none overflow-hidden">
             <div className="absolute inset-y-0 w-[2px] bg-gradient-to-b from-transparent via-indigo-400/20 to-transparent animate-beam" />
           </div>
 
           <div className="relative mx-auto max-w-4xl px-4 sm:px-6 pt-24 pb-8 text-center">
-            {/* Badge */}
             <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-xs font-medium text-white mb-8 animate-float-up">
               <Zap className="h-3 w-3" />
               Built by an IT pro with 10+ years in the field
@@ -103,7 +105,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
 
             <p className="text-lg sm:text-xl text-[#888] max-w-2xl mx-auto mb-10 text-balance animate-slide-up">
               7 production-ready PowerShell scripts that handle your most repetitive helpdesk
-              tasks — password resets, disk cleanup, user onboarding, and health checks.
+              tasks: password resets, disk cleanup, user onboarding, and more.
               Configure once, run forever.
             </p>
 
@@ -126,29 +128,26 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               Instant download · Windows Server 2016+ · One-time purchase
             </p>
 
-            {/* Animated connection diagram */}
             <HeroBeams />
-
-            {/* Animated terminal */}
             <AnimatedTerminal />
 
             <p className="mt-6 text-xs text-[#777]">
               <Link href="/generate" className="text-[#888] hover:text-white underline underline-offset-2 transition-colors">
                 Try the AI script generator
               </Link>
-              {' '}— pick your OS, describe your task, get a working script in seconds.
+              {' '}to pick your OS, describe your task, and get a working script in seconds.
             </p>
           </div>
         </section>
 
-        {/* ── What's included ───────────────────────────────────────────────── */}
+        {/* What's included */}
         <section id="includes" className="py-20 border-t border-white/6">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <FadeInSection>
               <div className="text-center mb-14">
                 <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Everything in the kit</h2>
                 <p className="text-[#888] max-w-xl mx-auto">
-                  7 files. Ready to deploy. No assembly required beyond editing 6 config values.
+                  7 scripts. Ready to deploy. No assembly required beyond editing 6 config values.
                 </p>
               </div>
             </FadeInSection>
@@ -181,7 +180,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
         </section>
 
-        {/* ── How it works ──────────────────────────────────────────────────── */}
+        {/* How it works */}
         <section className="py-20 border-t border-white/6 bg-black">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
             <FadeInSection>
@@ -192,7 +191,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="grid sm:grid-cols-3 gap-8">
               {[
                 { num: '01', title: 'Download', desc: 'Buy, get the ZIP, extract to any folder on your server.' },
-                { num: '02', title: 'Configure', desc: 'Edit 6 fields in config.json — your domain, OUs, log path, and alert threshold.' },
+                { num: '02', title: 'Configure', desc: 'Edit 6 fields in config.json: your domain, OUs, log path, and alert threshold.' },
                 { num: '03', title: 'Run or Schedule', desc: 'Execute manually or import scheduler.xml into Task Scheduler. Done.' },
               ].map((step, i) => (
                 <FadeInSection key={step.num} delay={i * 100}>
@@ -209,7 +208,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
         </section>
 
-        {/* ── Deploy everywhere ────────────────────────────────────────────── */}
+        {/* Deploy everywhere */}
         <section className="py-16 border-t border-white/6 overflow-hidden">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="grid lg:grid-cols-2 gap-10 items-center">
@@ -223,21 +222,17 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     <span className="text-white/50">Every environment.</span>
                   </h2>
                   <p className="text-[#888] leading-relaxed mb-6">
-                    Whether your servers are on-premises, in Azure, AWS, or spread across a hybrid estate — TaskPilot scripts adapt to your environment with a single config file.
+                    Whether your servers are on-premises, in Azure, AWS, or spread across a hybrid estate. TaskPilot scripts adapt to your environment with a single config file.
                   </p>
-                  <ul className="space-y-2.5">
-                    {[
-                      { color: 'bg-blue-400',    text: 'Windows Server 2016–2022 + Windows 10/11' },
-                      { color: 'bg-orange-400',  text: 'Linux — Ubuntu, RHEL, Amazon Linux' },
-                      { color: 'bg-cyan-400',    text: 'Cloud — AWS, Azure, GCP, DigitalOcean' },
-                      { color: 'bg-violet-400',  text: 'Hybrid & on-premises Active Directory' },
-                    ].map(({ color, text }) => (
-                      <li key={text} className="flex items-center gap-2.5 text-sm text-[#999]">
-                        <span className={`h-2 w-2 rounded-full shrink-0 ${color}`} />
-                        {text}
-                      </li>
+                  <div className="grid grid-cols-2 gap-3">
+                    {ENVIRONMENTS.map(({ color, border, bg, title, desc }) => (
+                      <div key={title} className={`rounded-xl border ${border} ${bg} p-3.5`}>
+                        <div className={`inline-block h-2.5 w-2.5 rounded-full ${color} mb-2.5`} />
+                        <div className="text-sm font-semibold text-white mb-1">{title}</div>
+                        <div className="text-xs text-[#777] leading-relaxed">{desc}</div>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </FadeInSection>
               <FadeInSection delay={150}>
@@ -247,7 +242,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
         </section>
 
-        {/* ── Before / After ────────────────────────────────────────────────── */}
+        {/* Before / After */}
         <section className="py-20 border-t border-white/6">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <FadeInSection>
@@ -296,7 +291,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
         </section>
 
-        {/* ── Pricing ───────────────────────────────────────────────────────── */}
+        {/* Pricing */}
         <section id="pricing" className="py-20 border-t border-white/6 bg-black">
           <div className="mx-auto max-w-md px-4 sm:px-6 text-center">
             <FadeInSection>
@@ -310,7 +305,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 </div>
                 <ul className="space-y-3 mb-8 text-left">
                   {[
-                    '7 production PowerShell scripts',
+                    '7 production-ready PowerShell scripts',
                     'Config template (edit 6 fields)',
                     'Windows Task Scheduler XML',
                     'Step-by-step setup guide',
@@ -337,7 +332,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
         </section>
 
-        {/* ── FAQ ───────────────────────────────────────────────────────────── */}
+        {/* FAQ */}
         <section id="faq" className="py-20 border-t border-white/6">
           <div className="mx-auto max-w-3xl px-4 sm:px-6">
             <FadeInSection>
@@ -358,7 +353,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
         </section>
 
-        {/* ── Newsletter ────────────────────────────────────────────────────── */}
+        {/* Newsletter */}
         <section className="py-20 border-t border-white/6 bg-black">
           <div className="mx-auto max-w-xl px-4 sm:px-6 text-center">
             <FadeInSection>
@@ -374,7 +369,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
         </section>
 
-        {/* ── Contact ───────────────────────────────────────────────────────── */}
+        {/* Contact */}
         <section id="contact" className="py-20 border-t border-white/6">
           <div className="mx-auto max-w-xl px-4 sm:px-6">
             <FadeInSection>

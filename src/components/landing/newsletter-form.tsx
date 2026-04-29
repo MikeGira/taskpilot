@@ -60,7 +60,7 @@ export function NewsletterForm() {
         {status === 'loading' ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (
-          'Subscribe — Free'
+          'Subscribe Free'
         )}
       </Button>
       {status === 'error' && (

@@ -53,23 +53,16 @@ function PilotAvatar({ size = 'md' }: { size?: 'sm' | 'md' }) {
 
 function stripMarkdown(text: string): string {
   return text
-    // Remove bold/italic asterisks and underscores
     .replace(/\*{1,3}([^*\n]+)\*{1,3}/g, '$1')
     .replace(/_{1,2}([^_\n]+)_{1,2}/g, '$1')
-    // Remove headings
     .replace(/^#{1,6}\s+/gm, '')
-    // Convert bullet/dash list items to numbered or plain
     .replace(/^[\-\*\+]\s+/gm, '')
-    // Remove numbered list markers (keep the content)
     .replace(/^\d+\.\s+/gm, (_, offset, str) => {
-      // Keep numbers if they look like actual lists
       return offset === 0 || str[offset - 1] === '\n' ? '' : '';
     })
-    // Remove inline code backticks
     .replace(/`{1,3}([^`]*)`{1,3}/g, '$1')
-    // Remove markdown links keep text
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    // Collapse 3+ newlines to 2
+    .replace(/\s*—\s*/g, ', ')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }

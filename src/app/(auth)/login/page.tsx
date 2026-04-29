@@ -52,7 +52,7 @@ export default function LoginPage({
           </Link>
           <h1 className="text-2xl font-bold text-[#F9FAFB]">Sign in to TaskPilot</h1>
           <p className="text-sm text-[#9CA3AF] mt-2">
-            We&apos;ll email you a magic link — no password needed.
+            We&apos;ll email you a magic link. No password needed.
           </p>
         </div>
 
