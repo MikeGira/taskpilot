@@ -171,7 +171,7 @@ function BreakdownCard({
                 </div>
                 <div className="h-1.5 rounded-full bg-white/6 overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-white/70 transition-all"
+                    className="h-full rounded-full bg-emerald-400/70 transition-all"
                     style={{ width: `${pct}%` }}
                   />
                 </div>

@@ -199,7 +199,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="grid sm:grid-cols-3 gap-5">
               {STEPS.map((step, i) => (
                 <FadeInSection key={step.num} delay={i * 100}>
-                  <Card className="p-6 flex flex-col items-center text-center hover:border-white/35 transition-all duration-200 group">
+                  <Card className="p-6 h-full flex flex-col items-center text-center hover:border-white/35 transition-all duration-200 group">
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-white/5 text-white font-bold text-lg mb-5 group-hover:border-white/40 group-hover:bg-white/8 transition-all duration-200">
                       {step.num}
                     </div>
@@ -359,16 +359,18 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
 
         {/* Newsletter */}
         <section className="py-20 border-t border-white/12 bg-black">
-          <div className="mx-auto max-w-xl px-4 sm:px-6 text-center">
+          <div className="mx-auto max-w-lg px-4 sm:px-6">
             <FadeInSection>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/4 px-4 py-1.5 text-xs font-medium text-white mb-6">
-                Free weekly tips
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-                1 automation tip every week
-              </h2>
-              <p className="text-[#888] mb-8">Short, practical, and ready to use. No fluff. Unsubscribe any time.</p>
-              <NewsletterForm />
+              <Card className="p-8 sm:p-10 text-center hover:border-white/30 transition-colors duration-300">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/4 px-4 py-1.5 text-xs font-medium text-white mb-6">
+                  Free weekly tips
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+                  1 automation tip every week
+                </h2>
+                <p className="text-[#888] mb-8">Short, practical, and ready to use. No fluff. Unsubscribe any time.</p>
+                <NewsletterForm />
+              </Card>
             </FadeInSection>
           </div>
         </section>
@@ -377,14 +379,16 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         <section id="contact" className="py-20 border-t border-white/12">
           <div className="mx-auto max-w-xl px-4 sm:px-6">
             <FadeInSection>
-              <div className="text-center mb-12">
+              <div className="text-center mb-10">
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Need custom automation?</h2>
                 <p className="text-[#888]">
                   Describe your environment and the problem. I&apos;ll give you an honest answer within one business day.
                 </p>
               </div>
+              <Card className="p-6 sm:p-8 hover:border-white/30 transition-colors duration-300">
+                <ContactForm />
+              </Card>
             </FadeInSection>
-            <ContactForm />
           </div>
         </section>
 
