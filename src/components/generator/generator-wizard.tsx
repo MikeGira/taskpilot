@@ -9,7 +9,7 @@ import {
   ArrowRight, ArrowLeft, Wand2, Copy, Download, CheckCircle2,
   RefreshCw, Loader2, AlertCircle, Check, ChevronRight, ThumbsUp, ThumbsDown,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, copyToClipboard, downloadTextFile } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -123,14 +123,14 @@ function SelectionCard<T extends { id: string; label: string; desc: string; icon
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
-  function handleCopy() {
-    navigator.clipboard.writeText(text);
+  async function handleCopy() {
+    await copyToClipboard(text);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), 2500);
   }
   return (
-    <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5">
-      {copied ? <Check className="h-3.5 w-3.5 text-white" /> : <Copy className="h-3.5 w-3.5" />}
+    <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 min-w-[80px]">
+      {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
       {copied ? 'Copied!' : 'Copy'}
     </Button>
   );
@@ -604,15 +604,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
             <Button
               onClick={() => {
                 if (!result.script) return;
-                const blob = new Blob([result.script], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = result.filename ?? 'script.txt';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(url), 100);
+                downloadTextFile(result.script, result.filename ?? 'script.txt');
               }}
               variant="outline"
               className="flex-1 gap-2"

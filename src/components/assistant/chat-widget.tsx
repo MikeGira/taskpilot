@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Send, Loader2, ChevronDown, Wand2, MessageSquare, Download, Copy, Check, ArrowLeft } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, copyToClipboard, downloadTextFile } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
@@ -170,24 +170,16 @@ export function ChatWidget() {
     setGenError('');
   }
 
-  function copyScript() {
+  async function copyScript() {
     if (!genResult?.script) return;
-    navigator.clipboard.writeText(genResult.script);
+    await copyToClipboard(genResult.script);
     setGenCopied(true);
-    setTimeout(() => setGenCopied(false), 2000);
+    setTimeout(() => setGenCopied(false), 2500);
   }
 
   function downloadScript() {
     if (!genResult?.script) return;
-    const blob = new Blob([genResult.script], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = genResult.filename ?? 'script.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 100);
+    downloadTextFile(genResult.script, genResult.filename ?? 'script.txt');
   }
 
   const showStarters = messages.length <= 1 && !chatLoading;
