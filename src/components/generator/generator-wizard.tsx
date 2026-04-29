@@ -497,15 +497,24 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <CheckCircle2 className="h-5 w-5 text-white shrink-0" />
-                <h2 className="font-bold text-[#F9FAFB]">{result.title ?? 'Your script is ready'}</h2>
+                {result.script
+                  ? <CheckCircle2 className="h-5 w-5 text-white shrink-0" />
+                  : <AlertCircle className="h-5 w-5 text-[#9CA3AF] shrink-0" />}
+                <h2 className="font-bold text-[#F9FAFB]">
+                  {result.script ? (result.title ?? 'Your script is ready') : 'Generation incomplete'}
+                </h2>
               </div>
-              {result.explanation && (
+              {result.script && result.explanation && (
                 <p className="text-sm text-[#9CA3AF] leading-relaxed pl-7">{result.explanation}</p>
+              )}
+              {!result.script && (
+                <p className="text-sm text-[#9CA3AF] leading-relaxed pl-7 mt-1">
+                  The AI could not produce a complete script. Add more detail: specify the OS, exact tools or systems involved, and what each step should do.
+                </p>
               )}
             </div>
             <Button variant="ghost" size="sm" onClick={reset} className="shrink-0 gap-1.5">
-              <RefreshCw className="h-3.5 w-3.5" /> New
+              <RefreshCw className="h-3.5 w-3.5" /> {result.script ? 'New' : 'Try again'}
             </Button>
           </div>
 
@@ -606,6 +615,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
                 if (!result.script) return;
                 downloadTextFile(result.script, result.filename ?? 'script.txt');
               }}
+              disabled={!result.script}
               variant="outline"
               className="flex-1 gap-2"
             >
