@@ -135,8 +135,11 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-function ScriptBlock({ script, filename, language }: { script: string; filename: string | null; language: string | null }) {
+function ScriptBlock({ script, filename, language, locked = false }: {
+  script: string; filename: string | null; language: string | null; locked?: boolean;
+}) {
   const langLabel = language ? (LANG_LABELS[language] ?? language) : 'Script';
+  const displayScript = locked ? script.split('\n').slice(0, 18).join('\n') : script;
   return (
     <div className="rounded-xl border border-white/10 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 bg-white/4 border-b border-white/8">
@@ -150,12 +153,26 @@ function ScriptBlock({ script, filename, language }: { script: string; filename:
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-[#4B5563] border border-white/10 px-2 py-0.5 rounded">{langLabel}</span>
-          <CopyButton text={script} />
+          {!locked && <CopyButton text={script} />}
         </div>
       </div>
-      <pre className="overflow-x-auto p-5 text-sm text-[#E2E8F0] font-mono leading-relaxed scrollbar-hidden max-h-[480px] overflow-y-auto">
-        <code>{script}</code>
-      </pre>
+      <div className="relative">
+        <pre className={cn(
+          'p-5 text-sm text-[#E2E8F0] font-mono leading-relaxed scrollbar-hidden',
+          locked ? 'overflow-hidden max-h-[200px] select-none' : 'overflow-x-auto max-h-[480px] overflow-y-auto'
+        )}>
+          <code>{displayScript}</code>
+        </pre>
+        {locked && (
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/70 to-transparent flex flex-col items-center justify-end pb-5 gap-1.5">
+            <p className="text-sm font-semibold text-[#F9FAFB]">Pro script — upgrade to unlock</p>
+            <p className="text-xs text-[#6B7280]">Copy, download and save to history with Pro</p>
+            <Button asChild size="sm" className="mt-1">
+              <a href="/checkout">Upgrade to Pro — $12/mo</a>
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -591,8 +608,10 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = result.filename ?? 'script.txt';
+                document.body.appendChild(a);
                 a.click();
-                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 100);
               }}
               variant="outline"
               className="flex-1 gap-2"

@@ -8,7 +8,7 @@ import type { GenerateResult } from '@/app/api/generate/route';
 /* ── Types ────────────────────────────────────────────────────────────────── */
 interface Message { role: 'user' | 'assistant'; content: string; }
 type Panel = 'chat' | 'generate';
-type GenStep = 'os' | 'env' | 'task' | 'loading' | 'result';
+type GenStep = 'os' | 'env' | 'task' | 'clarify' | 'loading' | 'result';
 
 const OS_OPTS = [
   { id: 'windows',        label: 'Windows',        emoji: '⊞' },
@@ -94,6 +94,9 @@ export function ChatWidget() {
   const [genTask, setGenTask] = useState('');
   const [genResult, setGenResult] = useState<GenerateResult | null>(null);
   const [genCopied, setGenCopied] = useState(false);
+  const [genClarifyQuestion, setGenClarifyQuestion] = useState('');
+  const [genClarifyAnswer, setGenClarifyAnswer] = useState('');
+  const [genError, setGenError] = useState('');
 
   useEffect(() => {
     if (open && panel === 'chat') setTimeout(() => chatInputRef.current?.focus(), 150);
@@ -126,26 +129,40 @@ export function ChatWidget() {
   }, [messages, chatLoading]);
 
   /* ── Script generate ───────────────────────────────────────────────────── */
-  async function runGenerate() {
+  async function runGenerate(clarificationAnswer?: string) {
     setGenStep('loading');
     setGenResult(null);
+    setGenError('');
     try {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ os: genOs, environment: genEnv, taskDescription: genTask }),
+        body: JSON.stringify({
+          os: genOs,
+          environment: genEnv,
+          taskDescription: genTask,
+          clarificationAnswer,
+          previousQuestion: clarificationAnswer ? genClarifyQuestion : undefined,
+        }),
       });
       const data: GenerateResult & { error?: string } = await res.json();
-      if (!res.ok) { setGenStep('task'); return; }
-      if (data.needsClarification && data.question) {
-        // Treat clarification as another task description update
-        setGenTask(prev => prev + '\n\n' + data.question);
+      if (!res.ok) {
+        setGenError(data.error ?? 'Generation failed. Please try again.');
         setGenStep('task');
+        return;
+      }
+      if (data.needsClarification && data.question) {
+        setGenClarifyQuestion(data.question);
+        setGenClarifyAnswer('');
+        setGenStep('clarify');
         return;
       }
       setGenResult(data);
       setGenStep('result');
-    } catch { setGenStep('task'); }
+    } catch {
+      setGenError('Network error. Please try again.');
+      setGenStep('task');
+    }
   }
 
   function resetGenerate() {
@@ -155,6 +172,9 @@ export function ChatWidget() {
     setGenTask('');
     setGenResult(null);
     setGenCopied(false);
+    setGenClarifyQuestion('');
+    setGenClarifyAnswer('');
+    setGenError('');
   }
 
   function copyScript() {
@@ -171,8 +191,10 @@ export function ChatWidget() {
     const a = document.createElement('a');
     a.href = url;
     a.download = genResult.filename ?? 'script.txt';
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
   }
 
   const showStarters = messages.length <= 1 && !chatLoading;
@@ -361,13 +383,47 @@ export function ChatWidget() {
                     ))}
                   </div>
                 </div>
+                {genError && (
+                  <p className="text-[11px] text-red-400 bg-red-950/30 border border-red-500/20 rounded-lg px-3 py-2">{genError}</p>
+                )}
                 <button
-                  onClick={runGenerate}
+                  onClick={() => runGenerate()}
                   disabled={genTask.trim().length < 10}
                   className="flex items-center justify-center gap-2 w-full rounded-full py-2.5 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-30 transition-all active:scale-95"
                 >
                   <Wand2 className="h-4 w-4" />
                   Generate Script
+                </button>
+              </div>
+            )}
+
+            {/* STEP: Clarify */}
+            {genStep === 'clarify' && (
+              <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-3">
+                <button onClick={() => setGenStep('task')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit">
+                  <ArrowLeft className="h-3 w-3" /> Back
+                </button>
+                <div className="rounded-xl border border-indigo-500/25 bg-indigo-950/20 p-3 flex gap-2">
+                  <Wand2 className="h-3.5 w-3.5 text-indigo-400 shrink-0 mt-0.5" />
+                  <p className="text-xs text-[#E4E4E7] leading-relaxed">{genClarifyQuestion}</p>
+                </div>
+                <textarea
+                  value={genClarifyAnswer}
+                  onChange={(e) => setGenClarifyAnswer(e.target.value)}
+                  placeholder="Your answer…"
+                  rows={3}
+                  maxLength={1000}
+                  className="w-full rounded-xl text-white placeholder:text-[#999] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-3 leading-relaxed"
+                  style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.35)', fontSize: '16px' }}
+                  autoFocus
+                />
+                <button
+                  onClick={() => runGenerate(genClarifyAnswer.trim())}
+                  disabled={!genClarifyAnswer.trim()}
+                  className="flex items-center justify-center gap-2 w-full rounded-full py-2.5 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-30 transition-all active:scale-95"
+                >
+                  <Wand2 className="h-4 w-4" />
+                  Answer &amp; Generate
                 </button>
               </div>
             )}
