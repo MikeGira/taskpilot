@@ -171,6 +171,8 @@ NON-NEGOTIABLE SCRIPT STANDARDS:
    - AWS → AWS CLI v2 (assume installed and configured with appropriate IAM role/profile)
    - Azure → Azure CLI (az) or Az PowerShell module
    - GCP → gcloud CLI (assume authenticated)
+   - Supabase → supabase-py (Python) or @supabase/supabase-js (Node); use SUPABASE_URL and SUPABASE_KEY from CONFIG; never hardcode credentials; use service role key for server-side scripts
+   - DigitalOcean → doctl CLI or DigitalOcean API via requests/curl
    - On-premises → native OS tools, AD cmdlets (Get-ADUser etc.) where applicable
 
 SUPPORTED AUTOMATION CATEGORIES — generate complete, production-quality scripts for any of these:

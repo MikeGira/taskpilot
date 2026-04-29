@@ -42,6 +42,7 @@ const CLOUD_PROVIDERS: Cloud[] = [
   { id: 'GCP', label: 'Google Cloud', short: 'GCP' },
   { id: 'DigitalOcean', label: 'DigitalOcean', short: 'DO' },
   { id: 'Linode', label: 'Akamai / Linode', short: 'Linode' },
+  { id: 'Supabase', label: 'Supabase', short: 'Supabase' },
 ];
 
 const TASK_EXAMPLES = [

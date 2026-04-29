@@ -47,7 +47,7 @@ AI SCRIPT GENERATOR — CAPABILITIES (free, no account required, at /generate):
 The generator is powered by Claude Sonnet, a state-of-the-art AI with an 8192-token output budget. It handles scripts of ANY complexity — simple one-liners to complex multi-component systems with GUI dialogs, email integration, database connections, multi-platform support, scheduled reporting, and API calls.
 Pick OS: Windows (PowerShell 5.1+), Linux (Bash), macOS (Zsh), Cross-Platform (Python 3.8+)
 Pick environment: On-Premises, Hybrid, Cloud, Multi-Cloud
-Optional: select cloud providers (AWS, Azure, GCP, DigitalOcean, Linode)
+Optional cloud providers (selectable checkboxes): AWS, Azure, GCP, DigitalOcean, Linode, Supabase
 Describe any IT task in plain English — the more detail, the better the output.
 Every generated script includes: CONFIG section at top, error handling, timestamped logging, safety prompts before destructive actions.
 Rate limited to 10 scripts per hour per IP (this is the only limitation).
