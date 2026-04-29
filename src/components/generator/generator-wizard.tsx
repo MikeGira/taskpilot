@@ -376,7 +376,8 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
               placeholder="e.g. I want to automatically disable user accounts that haven't logged in for 90 days and send an email to IT with the list of disabled accounts."
               rows={5}
               maxLength={2000}
-              className="resize-none"
+              className="resize-none text-base sm:text-sm"
+              style={{ fontSize: 'max(16px, 1rem)' }}
               autoFocus
             />
             <div className="flex items-center justify-between mt-1.5">

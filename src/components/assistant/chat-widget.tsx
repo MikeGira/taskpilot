@@ -182,13 +182,20 @@ export function ChatWidget() {
     <>
       {/* ── Panel ─────────────────────────────────────────────────────────── */}
       <div className={cn(
-        'fixed bottom-[88px] right-4 sm:right-6 z-50',
-        'w-[calc(100vw-2rem)] sm:w-[400px] max-h-[580px]',
-        'flex flex-col rounded-2xl border border-indigo-500/20',
-        'bg-[#070710] shadow-2xl shadow-indigo-900/20',
+        // Position: above trigger button, full-width on mobile, 400px on desktop
+        'fixed bottom-[88px] right-2 left-2 sm:left-auto sm:right-6 z-50',
+        'sm:w-[400px]',
+        // Height: caps at viewport height minus space for trigger + safe area
+        'flex flex-col rounded-2xl border border-indigo-500/30',
+        // Brighter background so it's visible on mobile screens
+        'shadow-2xl shadow-black/80',
         'transition-all duration-300 ease-out origin-bottom-right',
         open ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
-      )}>
+      )}
+      style={{
+        background: '#0f0f20',
+        maxHeight: 'min(580px, calc(100dvh - 104px))',
+      }}>
 
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-white/8 bg-indigo-950/20 rounded-t-2xl shrink-0">
@@ -270,8 +277,8 @@ export function ChatWidget() {
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   placeholder="Ask Pilot anything…"
-                  className="flex-1 min-w-0 rounded-full px-4 py-2 text-sm text-white placeholder:text-[#777] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 transition-all"
-                  style={{ backgroundColor: '#0f0f1a', border: '1px solid rgba(99,102,241,0.2)' }}
+                  className="flex-1 min-w-0 rounded-full px-4 py-2.5 text-white placeholder:text-[#999] focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all"
+                  style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.35)', fontSize: '16px' }}
                   disabled={chatLoading}
                 />
                 <button type="submit" disabled={!chatInput.trim() || chatLoading}
@@ -340,8 +347,8 @@ export function ChatWidget() {
                   placeholder="e.g. Offboard a leaving employee disable their AD account, remove from all groups, archive their home folder, and send a report to HR..."
                   rows={4}
                   maxLength={2000}
-                  className="w-full rounded-xl text-sm text-white placeholder:text-[#777] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/40 p-3"
-                  style={{ backgroundColor: '#0f0f1a', border: '1px solid rgba(99,102,241,0.2)' }}
+                  className="w-full rounded-xl text-white placeholder:text-[#999] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-3 leading-relaxed"
+                  style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.35)', fontSize: '16px' }}
                 />
                 <div>
                   <p className="text-[10px] text-[#aaa] mb-1.5 uppercase tracking-wider">Examples</p>

@@ -18,8 +18,28 @@
     background-color: #000000;
     color: var(--text-primary);
     font-feature-settings: 'ss01', 'cv01';
+    -webkit-text-size-adjust: 100%;
   }
   ::selection { background-color: rgba(99,102,241,0.35); color: #fff; }
+
+  /*
+   * CRITICAL: Prevent iOS Safari from auto-zooming when an input receives focus.
+   * iOS zooms whenever an input's font-size is below 16px.
+   * Setting font-size: 16px on mobile inputs stops this without disabling user zoom.
+   */
+  @media screen and (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="number"],
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
 }
 
 @layer utilities {
@@ -77,14 +97,12 @@
   75%, 100% { transform: scale(2); opacity: 0; }
 }
 
-/* Pilot button orbital glow */
 @keyframes pilot-orbit {
   0%   { box-shadow: 0 0 0 0 rgba(99,102,241,0.4), 0 0 0 0 rgba(99,102,241,0.15); }
   50%  { box-shadow: 0 0 0 8px rgba(99,102,241,0.0), 0 0 20px 4px rgba(99,102,241,0.2); }
   100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.0), 0 0 0 0 rgba(99,102,241,0.0); }
 }
 
-/* Colored hero radial glow shift */
 @keyframes glow-drift-indigo {
   0%, 100% { opacity: 0.12; transform: translateX(0) translateY(0) scale(1); }
   33%       { opacity: 0.2; transform: translateX(30px) translateY(-20px) scale(1.1); }
@@ -96,7 +114,6 @@
   66%       { opacity: 0.1; transform: translateX(15px) translateY(-20px) scale(1.1); }
 }
 
-/* Nav pill pop-up */
 @keyframes nav-pop {
   0%   { transform: scaleX(0.6) scaleY(0.5); opacity: 0; }
   60%  { transform: scaleX(1.05) scaleY(1.05); }

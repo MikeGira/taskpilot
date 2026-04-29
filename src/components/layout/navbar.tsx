@@ -82,18 +82,16 @@ export function Navbar() {
           ))}
         </div>
 
-        {/* Desktop auth */}
-        <div className="hidden md:flex items-center gap-2">
+        {/* Desktop auth — Sign In uses NavItem (same spring pill), CTA uses Button */}
+        <div className="hidden md:flex items-center gap-1">
           {user ? (
             <Button asChild size="sm">
               <Link href="/dashboard">Dashboard</Link>
             </Button>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/login">Sign In</Link>
-              </Button>
-              <Button asChild size="sm">
+              <NavItem href="/login" label="Sign In" />
+              <Button asChild size="sm" className="ml-1">
                 <Link href="/checkout">Get the Kit $19</Link>
               </Button>
             </>

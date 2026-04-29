@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { ChatWidget } from '@/components/assistant/chat-widget';
@@ -9,6 +9,14 @@ const inter = Inter({
   variable: '--font-inter',
   display: 'swap',
 });
+
+// Proper mobile viewport — no zoom restriction (user can still pinch-zoom for accessibility).
+// iOS auto-zoom on input focus is prevented by font-size: 16px in globals.css instead.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',   // respect iPhone notch/home-indicator safe areas
+};
 
 export const metadata: Metadata = {
   title: {
