@@ -22,6 +22,14 @@ const ENV_OPTS = [
   { id: 'cloud',       label: 'Cloud'       },
   { id: 'multi-cloud', label: 'Multi-Cloud' },
 ];
+const CLOUD_PROVIDER_OPTS = [
+  { id: 'AWS',          label: 'AWS'          },
+  { id: 'Azure',        label: 'Azure'        },
+  { id: 'GCP',          label: 'GCP'          },
+  { id: 'DigitalOcean', label: 'DigitalOcean' },
+  { id: 'Linode',       label: 'Linode'       },
+  { id: 'Supabase',     label: 'Supabase'     },
+];
 const GEN_EXAMPLES = [
   'Onboard a new employee create AD account, assign groups, set temp password',
   'Offboard a departing employee disable account, revoke access, archive data',
@@ -87,6 +95,7 @@ export function ChatWidget() {
   const [genTask, setGenTask] = useState('');
   const [genResult, setGenResult] = useState<GenerateResult | null>(null);
   const [genCopied, setGenCopied] = useState(false);
+  const [genCloudProviders, setGenCloudProviders] = useState<string[]>([]);
   const [genClarifyQuestion, setGenClarifyQuestion] = useState('');
   const [genClarifyAnswer, setGenClarifyAnswer] = useState('');
   const [genError, setGenError] = useState('');
@@ -133,6 +142,7 @@ export function ChatWidget() {
         body: JSON.stringify({
           os: genOs,
           environment: genEnv,
+          cloudProviders: genCloudProviders.length > 0 ? genCloudProviders : undefined,
           taskDescription: genTask,
           clarificationAnswer,
           previousQuestion: clarificationAnswer ? genClarifyQuestion : undefined,
@@ -158,10 +168,15 @@ export function ChatWidget() {
     }
   }
 
+  function toggleGenCloud(id: string) {
+    setGenCloudProviders(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
+  }
+
   function resetGenerate() {
     setGenStep('os');
     setGenOs('');
     setGenEnv('');
+    setGenCloudProviders([]);
     setGenTask('');
     setGenResult(null);
     setGenCopied(false);
@@ -321,20 +336,66 @@ export function ChatWidget() {
 
             {/* STEP: Environment */}
             {genStep === 'env' && (
-              <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden">
-                <button onClick={() => setGenStep('os')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white mb-3 transition-colors">
+              <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-3">
+                <button onClick={() => setGenStep('os')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit">
                   <ArrowLeft className="h-3 w-3" /> Back
                 </button>
-                <p className="text-xs font-semibold text-white mb-1">What&apos;s your environment?</p>
-                <p className="text-[11px] text-[#888] mb-4">Determines which tools and APIs the script uses.</p>
+                <div>
+                  <p className="text-xs font-semibold text-white mb-0.5">What&apos;s your environment?</p>
+                  <p className="text-[11px] text-[#888]">Determines which tools and APIs the script uses.</p>
+                </div>
                 <div className="grid grid-cols-2 gap-2">
                   {ENV_OPTS.map((e) => (
-                    <button key={e.id} onClick={() => { setGenEnv(e.id); setGenStep('task'); }}
-                      className="rounded-xl border border-white/10 bg-white/3 hover:border-indigo-500/40 hover:bg-indigo-950/30 px-3 py-3 text-sm font-medium text-white transition-all">
+                    <button
+                      key={e.id}
+                      onClick={() => { setGenEnv(e.id); setGenCloudProviders([]); }}
+                      className={cn(
+                        'rounded-xl border px-3 py-3 text-sm font-medium text-white transition-all',
+                        genEnv === e.id
+                          ? 'border-indigo-500/60 bg-indigo-950/40'
+                          : 'border-white/10 bg-white/3 hover:border-indigo-500/40 hover:bg-indigo-950/30'
+                      )}
+                    >
                       {e.label}
                     </button>
                   ))}
                 </div>
+
+                {/* Cloud providers — shown for Cloud / Hybrid / Multi-Cloud */}
+                {genEnv && genEnv !== 'on-premises' && (
+                  <div>
+                    <p className="text-[10px] text-[#aaa] mb-2 uppercase tracking-wider">
+                      Cloud providers <span className="normal-case text-[#555]">(select all that apply)</span>
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {CLOUD_PROVIDER_OPTS.map((c) => (
+                        <button
+                          key={c.id}
+                          onClick={() => toggleGenCloud(c.id)}
+                          className={cn(
+                            'px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all',
+                            genCloudProviders.includes(c.id)
+                              ? 'border-indigo-500/50 bg-indigo-950/50 text-indigo-300'
+                              : 'border-white/10 bg-white/3 text-[#999] hover:border-white/20 hover:text-white'
+                          )}
+                        >
+                          {genCloudProviders.includes(c.id) && <span className="mr-1 text-emerald-400">✓</span>}
+                          {c.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Continue — visible once an environment is selected */}
+                {genEnv && (
+                  <button
+                    onClick={() => setGenStep('task')}
+                    className="flex items-center justify-center gap-2 w-full rounded-full py-2.5 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-all active:scale-95"
+                  >
+                    <Wand2 className="h-3.5 w-3.5" /> Continue
+                  </button>
+                )}
               </div>
             )}
 
