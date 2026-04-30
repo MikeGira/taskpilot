@@ -222,7 +222,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* How it works */}
-        <section className="py-20 border-t border-white/12 bg-black">
+        <section className="py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
             <FadeInSection>
               <div className="text-center mb-14">
@@ -329,7 +329,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="py-20 border-t border-white/12 bg-black">
+        <section id="pricing" className="py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
           <div className="mx-auto max-w-md px-4 sm:px-6 text-center">
             <FadeInSection>
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Simple pricing</h2>
@@ -400,7 +400,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Newsletter */}
-        <section className="py-20 border-t border-white/12 bg-black">
+        <section className="py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
           <div className="mx-auto max-w-lg px-4 sm:px-6">
             <FadeInSection>
               <Card className="p-8 sm:p-10 text-center hover:border-white/30 transition-colors duration-300">
