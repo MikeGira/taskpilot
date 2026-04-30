@@ -508,17 +508,22 @@ export function ChatWidget() {
                     <div className="flex items-center justify-between px-3 py-2 bg-white/4 border-b border-white/8">
                       <span className="text-[11px] font-mono text-[#888]">{genResult.filename ?? 'script'}</span>
                       <div className="flex gap-1.5">
-                        <button onClick={copyScript} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white px-2 py-1 rounded-md hover:bg-white/8 transition-colors">
-                          {genCopied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+                        <button onClick={copyScript} className={cn(
+                          'flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-md border transition-colors',
+                          genCopied
+                            ? 'border-emerald-500/40 bg-emerald-950/40 text-emerald-400'
+                            : 'border-white/20 bg-white/5 text-[#ccc] hover:border-white/30 hover:text-white hover:bg-white/10'
+                        )}>
+                          {genCopied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                           {genCopied ? 'Copied!' : 'Copy'}
                         </button>
-                        <button onClick={downloadScript} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white px-2 py-1 rounded-md hover:bg-white/8 transition-colors">
+                        <button onClick={downloadScript} className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-md border border-indigo-500/30 bg-indigo-950/30 text-indigo-300 hover:border-indigo-500/50 hover:bg-indigo-950/50 hover:text-white transition-colors">
                           <Download className="h-3 w-3" />
                           Download
                         </button>
                       </div>
                     </div>
-                    <pre className="overflow-auto p-3 text-[11px] text-[#C9D1D9] font-mono leading-relaxed scrollbar-hidden max-h-[180px]">
+                    <pre className="overflow-auto p-3 text-[11px] text-[#C9D1D9] font-mono leading-relaxed scrollbar-hidden max-h-[240px]">
                       <code>{genResult.script}</code>
                     </pre>
                   </div>
