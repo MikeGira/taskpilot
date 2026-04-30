@@ -680,7 +680,8 @@ export function ChatWidget() {
           <X className="h-5 w-5" />
         ) : (
           <div className="relative flex items-center justify-center">
-            <span className="text-xl select-none" role="img" aria-label="Pilot">👨‍✈️</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/pilot.svg" alt="Pilot" width={36} height={36} className="h-9 w-9 object-cover rounded-full" />
             <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-emerald-400 border-2 border-white animate-ping-slow" />
             <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-emerald-400 border-2 border-white" />
           </div>
