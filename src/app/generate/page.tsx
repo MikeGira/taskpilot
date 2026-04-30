@@ -4,6 +4,7 @@ import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { GeneratorWizard } from '@/components/generator/generator-wizard';
 import { Wand2, Zap, ArrowLeft } from 'lucide-react';
+import { WizardBackButton } from '@/components/generator/wizard-back-button';
 
 export const metadata: Metadata = {
   title: 'Script Generator',
@@ -28,9 +29,10 @@ export default function GeneratePage({
           <div className="absolute inset-0 bg-gradient-radial from-white/3 via-transparent to-transparent pointer-events-none" />
 
           <div className="relative mx-auto max-w-3xl px-4 sm:px-6">
-            {/* Back link — top-left of header, before the page title (Linear/Stripe pattern) */}
+            {/* Back link — top-left of header. id is watched by WizardBackButton below. */}
             <div className="pt-6 pb-0">
               <Link
+                id="header-back-btn"
                 href="/"
                 className="inline-flex items-center gap-1.5 text-sm text-[#9CA3AF] hover:text-white transition-colors"
               >
@@ -71,6 +73,8 @@ export default function GeneratePage({
 
         {/* Wizard */}
         <section className="py-12 px-4 sm:px-6">
+          {/* Appears only when the header back button has scrolled out of view */}
+          <WizardBackButton />
           <GeneratorWizard initialTask={initialTask} />
         </section>
       </main>
