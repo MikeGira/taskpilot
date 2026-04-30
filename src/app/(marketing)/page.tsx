@@ -161,18 +161,21 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           {/* Metrics strip */}
           <div className="relative border-t border-white/8 py-6">
             <div className="mx-auto max-w-4xl px-4 sm:px-6">
-              <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-16">
+              <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
                 {[
-                  { stat: '9', label: 'Scripts included' },
-                  { stat: '< 1 hr', label: 'Time to first run' },
-                  { stat: '$19', label: 'One-time, no sub' },
-                  { stat: '∞', label: 'Runs on your server' },
-                ].map(({ stat, label }) => (
+                  { stat: '9',      label: 'Scripts included',   accent: false },
+                  { stat: '< 1 hr', label: 'Time to first run',  accent: false },
+                  { stat: '$19',    label: 'One-time, no sub',   accent: true  },
+                  { stat: '∞',      label: 'Runs on your server', accent: false },
+                ].flatMap(({ stat, label, accent }, i, arr) => [
                   <div key={label} className="text-center">
-                    <div className="text-2xl font-bold text-white leading-none">{stat}</div>
+                    <div className={`text-2xl font-bold leading-none ${accent ? 'text-emerald-400' : 'text-white'}`}>{stat}</div>
                     <div className="text-[11px] text-[#555] mt-1 tracking-wide uppercase">{label}</div>
-                  </div>
-                ))}
+                  </div>,
+                  i < arr.length - 1
+                    ? <div key={`sep-${i}`} className="hidden sm:block h-8 w-px bg-white/10 shrink-0" />
+                    : null,
+                ])}
               </div>
             </div>
           </div>
