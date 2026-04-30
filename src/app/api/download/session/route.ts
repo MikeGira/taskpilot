@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
 import { getAdminClient } from '@/lib/supabase/admin';
+import { getResend, FROM, logEmail } from '@/lib/resend';
+import { renderPurchaseConfirmationEmail } from '@/emails/purchase-confirmation';
 
 export const runtime = 'nodejs';
 
@@ -50,10 +52,17 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
 
-  // 3 — Backfill purchase record so it shows in dashboard
-  //     (idempotent via onConflict — safe to call on every download)
+  // 3 — Backfill purchase record so it shows in dashboard.
+  //     Check existence first: if this is a new record the webhook didn't create,
+  //     send the confirmation email now as a fallback (webhook may not have fired).
   if (customerEmail && product.id) {
     try {
+      const { data: existing } = await db
+        .from('purchases')
+        .select('id')
+        .eq('stripe_session_id', sessionId)
+        .maybeSingle();
+
       await db.from('purchases').upsert({
         email: customerEmail,
         product_id: product.id,
@@ -64,6 +73,25 @@ export async function GET(request: Request) {
         currency: session.currency ?? 'usd',
         status: 'completed',
       }, { onConflict: 'stripe_session_id' });
+
+      // Send confirmation email only when webhook didn't already do it
+      if (!existing) {
+        try {
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://taskpilot.vercel.app';
+          const resend = getResend();
+          const { html, subject } = renderPurchaseConfirmationEmail({
+            email: customerEmail,
+            dashboardUrl: `${siteUrl}/dashboard`,
+            downloadUrl: `${siteUrl}/api/download/session?session_id=${sessionId}`,
+          });
+          await resend.emails.send({ from: FROM, to: [customerEmail], subject, html });
+          await logEmail(db, customerEmail, subject, 'purchase_confirmation');
+          console.log('[download/session] Confirmation email sent (webhook fallback) to', customerEmail);
+        } catch (emailErr) {
+          // Non-fatal: don't block the download if email fails
+          console.error('[download/session] Confirmation email error:', emailErr);
+        }
+      }
     } catch (err) {
       // Non-fatal: log but don't block the download
       console.error('[download/session] purchase backfill failed:', err);

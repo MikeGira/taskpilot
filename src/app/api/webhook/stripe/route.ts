@@ -80,16 +80,18 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     return;
   }
 
-  // Send confirmation email
+  // Send confirmation email with direct download link
   try {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://taskpilot.vercel.app';
     const resend = getResend();
     const { html, subject } = renderPurchaseConfirmationEmail({
       email: customerEmail,
       dashboardUrl: `${siteUrl}/dashboard`,
+      downloadUrl: `${siteUrl}/api/download/session?session_id=${session.id}`,
     });
     await resend.emails.send({ from: FROM, to: [customerEmail], subject, html });
     await logEmail(db, customerEmail, subject, 'purchase_confirmation');
+    console.log('[webhook] Confirmation email sent to', customerEmail);
   } catch (err) {
     console.error('[webhook] Confirmation email error:', err);
   }
