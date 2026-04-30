@@ -6,7 +6,7 @@ const VALID_TOOLS = [
   // Scripting
   'powershell', 'bash', 'python',
   // Infrastructure as Code
-  'terraform', 'pulumi', 'aws-cdk', 'packer',
+  'terraform', 'pulumi', 'aws-cdk', 'azure-bicep', 'arm-templates', 'packer',
   // Configuration Management
   'ansible', 'puppet',
   // CI/CD & GitOps
@@ -40,7 +40,7 @@ export interface GenerateResult {
   question: string | null;
   script: string | null;
   filename: string | null;
-  language: 'powershell' | 'bash' | 'python' | 'zsh' | 'terraform' | 'yaml' | 'puppet' | 'dockerfile' | 'groovy' | 'typescript' | null;
+  language: 'powershell' | 'bash' | 'python' | 'zsh' | 'terraform' | 'yaml' | 'puppet' | 'dockerfile' | 'groovy' | 'typescript' | 'bicep' | 'json' | null;
   title: string | null;
   explanation: string | null;
   configNotes: string[] | null;
@@ -204,6 +204,49 @@ STANDARDS:
 - Tags: cdk.Tags.of(this).add('Environment', props.env) pattern for all stacks
 - CfnOutput for all values needed post-deploy (endpoints, ARNs, queue URLs)
 - configNotes: cdk bootstrap <account>/<region>, cdk synth, cdk deploy; required npm packages`;
+
+    case 'azure-bicep':
+      return `TOOL: Azure Bicep (Azure-native IaC)
+LANGUAGE VALUE: "bicep" | FILE EXTENSION: .bicep (main.bicep)
+STANDARDS:
+- targetScope declaration at top when scope is not resourceGroup (subscription/managementGroup/tenant)
+- @description() decorator on every parameter and output — Bicep is self-documenting
+- @secure() decorator on every sensitive parameter (passwords, keys, connection strings, tokens)
+- @minLength/@maxLength/@allowed decorators for input validation
+- Parameterize everything: no hardcoded resource names, locations, SKUs, or tier values
+- Naming: use uniqueString(resourceGroup().id, deployment().name) for globally unique names (storage, Key Vault)
+- Tags: define a tags parameter object; apply to every resource — Environment, Owner, Project, CostCenter
+- Module structure: main.bicep orchestrates; modules/<resource>.bicep for reusable, composable components
+- Conditions: resource foo 'Microsoft.Type/resource@version' = if(condition) { ... } for optional resources
+- Loops: [for item in items: { ... }] with index when needed for multiple similar resources
+- Outputs: export all values consumers need — resource IDs, endpoints, connection strings
+- existing keyword: reference pre-existing resources (Key Vaults, VNets) without re-deploying them
+- Security: deploy Key Vault with enableSoftDelete and purgeProtection; use references not inline secrets
+- configNotes: "az bicep install", "az login --tenant <tenantId>", required RBAC role (Contributor minimum),
+  "az deployment group create --resource-group <rg> --template-file main.bicep --parameters @params.json",
+  parameter file format: { "paramName": { "value": "..." } }`;
+
+    case 'arm-templates':
+      return `TOOL: Azure ARM Templates (Azure Resource Manager JSON)
+LANGUAGE VALUE: "json" | FILE EXTENSION: azuredeploy.json
+STANDARDS:
+- Full canonical structure: $schema, contentVersion, parameters, variables, resources, outputs
+- $schema: "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#"
+- parameters: every param needs type, defaultValue (where safe), allowedValues (where applicable),
+  minValue/maxValue for numbers, and metadata.description — treat parameters as the API surface
+- Sensitive parameters: "type": "securestring" or "secureObject" — NEVER "string" for passwords/keys
+- variables: compute derived values, resource names, and repeated expressions to reduce duplication;
+  use ARM functions: concat(), resourceId(), reference(), uniqueString(), substring(), toLower()
+- resources: apiVersion pinned to a specific stable date (e.g., "2023-09-01") — never "latest";
+  dependsOn array for explicit ordering; condition property for optional resources
+- Copy loops: "copy" element with "name", "count", and "input" for creating multiple similar resources
+- Linked/nested templates: use nested deployments (type: Microsoft.Resources/deployments) for modularity
+- Tags: parameters.tags object of type object; applied consistently to every top-level resource
+- outputs: use resourceId(), reference().primaryEndpoints, listKeys() to export consumed values
+- What-if before deploy: az deployment group what-if validates before making changes
+- configNotes: "az login", required RBAC role (Contributor or custom), az deployment group create command,
+  azuredeploy.parameters.json template: { "$schema": "...", "contentVersion": "1.0.0.0", "parameters": {} },
+  note: consider migrating to Bicep for new projects — Bicep is the modern Azure IaC standard`;
 
     case 'packer':
       return `TOOL: HashiCorp Packer (HCL2)
@@ -570,7 +613,7 @@ OUTPUT FORMAT — STRICT:
 - Return a single raw JSON object. No markdown, no prose, nothing outside the JSON.
 - Escape all newlines as \\n, double-quotes as \\", backslashes as \\\\ inside string values.
 - The "script" field is a single JSON string — never embed literal newline characters.
-- language values: "powershell" | "bash" | "python" | "terraform" | "yaml" | "puppet" | "dockerfile" | "groovy" | "typescript" | null
+- language values: "powershell" | "bash" | "python" | "terraform" | "bicep" | "json" | "yaml" | "puppet" | "dockerfile" | "groovy" | "typescript" | null
 
 If generating:
 {"needsClarification":false,"question":null,"script":"# full content — newlines as \\n","filename":"descriptive-kebab-name.ext","language":"bash","title":"Short description","explanation":"2-3 sentences on what this does and key design decisions.","configNotes":["Prerequisite or note 1","Prerequisite or note 2"]}

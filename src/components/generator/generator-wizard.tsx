@@ -60,6 +60,8 @@ const TOOL_OPTIONS: Tool[] = [
   { category: 'Infrastructure as Code',     id: 'terraform',          label: 'Terraform',           desc: 'IaC — provision VMs, networks, cloud resources',               icon: Server,    color: 'border-violet-500/60  bg-violet-500/20  hover:border-violet-400  hover:bg-violet-500/30',  accent: 'text-violet-300'  },
   { category: 'Infrastructure as Code',     id: 'pulumi',             label: 'Pulumi',              desc: 'IaC in TypeScript/Python — modern Terraform alternative',       icon: Code,      color: 'border-fuchsia-500/60 bg-fuchsia-500/20 hover:border-fuchsia-400 hover:bg-fuchsia-500/30', accent: 'text-fuchsia-300' },
   { category: 'Infrastructure as Code',     id: 'aws-cdk',            label: 'AWS CDK',             desc: 'AWS Cloud Development Kit — TypeScript/Python IaC',             icon: Cloud,     color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
+  { category: 'Infrastructure as Code',     id: 'azure-bicep',        label: 'Azure Bicep',         desc: 'Azure-native IaC DSL — modern replacement for ARM JSON',        icon: Cloud,     color: 'border-sky-500/60     bg-sky-500/20     hover:border-sky-400     hover:bg-sky-500/30',     accent: 'text-sky-300'     },
+  { category: 'Infrastructure as Code',     id: 'arm-templates',      label: 'ARM Templates',       desc: 'Azure Resource Manager JSON — enterprise legacy & marketplace', icon: Code,      color: 'border-slate-400/60   bg-slate-400/15   hover:border-slate-300   hover:bg-slate-400/25',  accent: 'text-slate-300'   },
   { category: 'Infrastructure as Code',     id: 'packer',             label: 'Packer',              desc: 'Build hardened VM and container images across providers',        icon: Package,   color: 'border-teal-500/60    bg-teal-500/20    hover:border-teal-400    hover:bg-teal-500/30',    accent: 'text-teal-300'    },
   // Configuration Management
   { category: 'Configuration Management',   id: 'ansible',            label: 'Ansible',             desc: 'YAML playbooks — agentless SSH config management',             icon: Settings,  color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
@@ -135,6 +137,8 @@ const LANG_LABELS: Record<string, string> = {
   dockerfile: 'Dockerfile',
   groovy: 'Groovy (Jenkinsfile)',
   typescript: 'TypeScript',
+  bicep: 'Azure Bicep',
+  json: 'ARM Template (JSON)',
 };
 
 // ── Sub-components ────────────────────────────────────────────────────────────

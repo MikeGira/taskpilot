@@ -32,6 +32,8 @@ const TOOL_CATEGORIES_PILOT = [
     { id: 'terraform',         label: 'Terraform',          emoji: '🏗' },
     { id: 'pulumi',            label: 'Pulumi',             emoji: '🔷' },
     { id: 'aws-cdk',           label: 'AWS CDK',            emoji: '☁' },
+    { id: 'azure-bicep',       label: 'Azure Bicep',        emoji: '🔵' },
+    { id: 'arm-templates',     label: 'ARM Templates',      emoji: '{}' },
     { id: 'packer',            label: 'Packer',             emoji: '📦' },
   ]},
   { label: 'Config Management', tools: [
