@@ -48,20 +48,20 @@
   .scrollbar-hidden { scrollbar-width: none; -ms-overflow-style: none; }
   .scrollbar-hidden::-webkit-scrollbar { display: none; }
 
-  /* Dot grid — secondary sections, quick fade at very top/bottom edges only */
+  /* Dot grid — secondary sections */
   .bg-grid-pattern-subtle {
-    background-image: radial-gradient(circle, rgba(255,255,255,0.11) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(255,255,255,0.22) 1.5px, transparent 1.5px);
     background-size: 30px 30px;
-    mask-image: linear-gradient(to bottom, transparent 0%, black 4%, black 96%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 4%, black 96%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 3%, black 97%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 3%, black 97%, transparent 100%);
   }
 
-  /* Dot grid — visible across the hero, fades toward the bottom */
+  /* Dot grid — hero, fades toward the bottom */
   .bg-grid-pattern {
-    background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(255,255,255,0.22) 1.5px, transparent 1.5px);
     background-size: 30px 30px;
-    mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 30%, transparent 85%);
-    -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 30%, transparent 85%);
+    mask-image: radial-gradient(ellipse 110% 100% at 50% 0%, black 55%, transparent 92%);
+    -webkit-mask-image: radial-gradient(ellipse 110% 100% at 50% 0%, black 55%, transparent 92%);
   }
 }
 
