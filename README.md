@@ -14,8 +14,8 @@ IT helpdesk automation platform — sells production-ready PowerShell scripts fo
 
 | Product | Price | What it is |
 |---------|-------|-----------|
-| Starter Kit | $19 one-time | 11 production scripts + config + scheduler + setup guide |
-| AI Generator | Free | Generate any IT automation script for any OS + environment |
+| Starter Kit | $19 one-time | 9 production-ready PowerShell scripts + config.json + scheduler.xml + setup guide |
+| AI Generator | Free | Generate any IT automation script for any OS + environment — no account needed |
 | Pro Generator | Coming soon | Unlimited generation + script history + download library |
 
 ---
@@ -26,7 +26,7 @@ IT helpdesk automation platform — sells production-ready PowerShell scripts fo
 |-------|-----------|-------|
 | Framework | Next.js 14 App Router, TypeScript | Strict mode, @/* alias |
 | UI | Tailwind CSS + shadcn/ui | True-black + colorful glows theme |
-| Auth | Supabase Auth (magic link) | @supabase/ssr, getUser() only |
+| Auth | Supabase Auth (magic link + password) | @supabase/ssr, getUser() only |
 | Database | Supabase PostgreSQL | RLS on all tables |
 | Storage | Supabase Storage | Private `products` bucket |
 | Payments | Stripe Checkout (hosted) | PCI SAQ A — never touch card data |
@@ -75,7 +75,7 @@ Full checklist in `CLAUDE.md`. Summary:
 4. Supabase Storage: upload kit ZIP to `products` bucket as `taskpilot-kit.zip`
 5. Supabase Auth: set Site URL + redirect URLs to production domain
 6. Resend SMTP in Supabase: host `smtp.resend.com`, port 465, username `resend`
-7. Pilot avatar: copy pilot image to `public/pilot.png` and push
+7. Run `npm run setup:webhook` after Stripe is configured to fix the webhook URL and signing secret
 
 ---
 
@@ -85,9 +85,11 @@ Full checklist in `CLAUDE.md`. Summary:
 - GDPR — data export + deletion in account settings
 - Gitleaks + CodeQL on every push
 - Supabase RLS on all tables
-- Rate limiting on all public API endpoints (IP-based)
-- Input validation (Zod) on all routes
+- Rate limiting on all public API endpoints (IP-based, x-real-ip spoofing protected)
+- Input validation (Zod) on all routes, productSlug restricted to known enum
 - HMAC-SHA256 signed unsubscribe tokens
+- HTML-escaping on all user input rendered in email/HTML output
+- X-XSS-Protection, X-Content-Type-Options, X-Frame-Options headers
 - Middleware excludes /api/ routes (API routes handle their own auth)
 
 ---

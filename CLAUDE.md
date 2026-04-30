@@ -10,14 +10,15 @@ script. Admin analytics + AI-powered prompt improvement at `/dashboard/analytics
 |-------|-----------|-------|
 | Framework | Next.js 14 App Router, TypeScript | Strict mode, @/* path alias |
 | UI | Tailwind CSS + shadcn/ui | True-black + Supabase green (`#3ECF8E`) theme |
-| Auth | Supabase Auth (magic link) | @supabase/ssr package |
+| Auth | Supabase Auth (magic link + password) | @supabase/ssr package |
 | Database | Supabase PostgreSQL | RLS on all tables |
 | Storage | Supabase Storage | Private bucket `products` for kit ZIP |
 | Payments | Stripe Checkout (hosted) | Never touch card data → PCI SAQ A |
 | Email | Resend (+ custom SMTP in Supabase) | Custom HTML templates in src/emails/ |
 | Hosting | Vercel | Auto-deploy from GitHub main branch |
 | CI/CD | GitHub Actions | Gitleaks + CodeQL + build check + smoke test |
-| AI Generation | Anthropic claude-sonnet-4-6 | Direct fetch (no SDK), server-side only, 8192 max_tokens |
+| AI Generation | Anthropic claude-sonnet-4-6 | Direct fetch (no SDK), server-side only, 16384 max_tokens |
+| AI Chat | Anthropic claude-haiku-4-5-20251001 | Pilot assistant, 800 max_tokens, 30/hr/IP rate limit |
 
 ## Commands
 ```bash
@@ -41,7 +42,7 @@ STRIPE_PRICE_ID               # price_1TQtQj2...
 RESEND_API_KEY
 RESEND_FROM_EMAIL             # hello@blog.h0m3labs.store
 UNSUB_HMAC_SECRET
-ADMIN_EMAIL                   # autokitadmin@email.com
+ADMIN_EMAIL                   # autokitadmin@gmail.com — unlocks /dashboard/analytics
 ANTHROPIC_API_KEY
 ```
 

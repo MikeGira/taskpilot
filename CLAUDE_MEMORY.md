@@ -1,164 +1,165 @@
 # TaskPilot — Claude Session Memory
 
-_Last updated: 2026-04-29 (second major session)_
+_Last updated: 2026-04-30 (third major session)_
 _Resume guide: read this file → PLAN.md → CLAUDE.md → `git log --oneline -10`_
 
 ---
 
-## Current Status: LIVE & FUNCTIONAL ✅
+## Current Status: LIVE, SECURE & NEARLY LAUNCH-READY ✅
 
 **URL:** https://taskpilot-umber.vercel.app
 **Repo:** https://github.com/MikeGira/taskpilot (public)
-**Stripe:** TEST mode — switch to live keys before real revenue
-**Last commits:** setup-webhook script, confirmation email fix, 5 new PS scripts
+**Stripe:** TEST mode — see URGENT section below before going live
+**Admin email:** autokitadmin@gmail.com (confirmed working)
+**Last commits:** security audit fixes, password auth, globe animation, dot grid, visual polish
 
 ---
 
-## URGENT — Action Required Before Next Sale
+## URGENT — Two Manual Actions Required Before Launch
 
-### 1. Fix Stripe Webhook (CRITICAL)
-The webhook URL in Stripe points to `/api/webhook` instead of `/api/webhook/stripe`.
-All 105 webhook deliveries this week failed. This means NO confirmation emails
-and NO purchase records were created via webhook (session download fallback worked).
+### 1. Fix Stripe Webhook + Rebuild ZIP
+These were flagged in the previous session and are STILL pending (require user action, not code):
 
-**Fix:**
+**Fix webhook:**
 ```bash
 npm run setup:webhook
 ```
-This script auto-finds the webhook, fixes the URL, and strips events to only
-`checkout.session.completed`. After running, Stripe will show a new signing secret.
-Update `STRIPE_WEBHOOK_SECRET` in Vercel → Settings → Environment Variables, then redeploy.
+Update `STRIPE_WEBHOOK_SECRET` in Vercel after running.
 
-### 2. Rebuild and Re-upload the Kit ZIP
-The kit ZIP in Supabase Storage (`products/taskpilot-kit.zip`) still has 4 scripts.
-The project now has 9 scripts in `scripts/ps/`. You need to:
-1. Zip all files in `scripts/ps/` → `taskpilot-kit.zip`
-2. Go to Supabase Dashboard → Storage → products bucket
-3. Delete old `taskpilot-kit.zip`, upload new one at same path
+**Rebuild ZIP:**
+Zip all files in `scripts/ps/` (9 scripts) → upload to Supabase Storage → `products/taskpilot-kit.zip` (replace old 4-script version).
+
+### 2. Switch Stripe to Live Mode (when ready for real revenue)
+1. Stripe Dashboard → Test → Live toggle
+2. Developers → API Keys → copy `pk_live_...` and `sk_live_...`
+3. Create live product → $19 → copy `price_live_...`
+4. Update Vercel: `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_PRICE_ID`
+5. Redeploy → run `npm run setup:webhook` → get new `whsec_live_...` → update `STRIPE_WEBHOOK_SECRET` → redeploy again
 
 ---
 
-## What's Fully Built and Shipped
+## What Was Done This Session (2026-04-30)
+
+### Visual / UI
+- Dot grid pattern — defined `bg-grid-pattern` (hero) and `bg-grid-pattern-subtle` (secondary sections)
+- Dot grid applied to: hero, "How it works", Pricing, Newsletter, Login page (with radial mask to clear card area), Generator header already had it
+- Opacity raised to 22% / 11% with section glows to make dots visible
+- Center spotlight in hero (street light from above effect)
+- Gradient headline "Start automating it." (indigo→cyan→emerald)
+- Trust icon strip below hero CTAs
+- Metrics bar in hero (9 scripts / < 1hr / $19 / ∞)
+- Pricing card: indigo glow, accent top line, colored border, emerald checkmarks
+- CTA button white glow on hover
+- Environment cards: Linux→yellow, Cloud→emerald, brighter borders
+- Nav hover spring animation cleaned up (scale 0.82, no translateY, 0.28s cubic bezier)
+- Pilot button: replaced 👨‍✈️ emoji with pilot.svg (matches panel header)
+
+### Globe Animation (AnimatedArcs)
+- Rewrote twice: first to hemisphere dome (abandoned — looked unfinished in 2-col layout), then to full rotating globe
+- Final version: elevation-angle orthographic projection (latitude rings bow inward = 3D), 7 lat rings, 7 meridians, 9 animated arcs spanning full globe including southern hemisphere, 12 triangle node markers
+- Slow self-rotation: 0.15°/50ms = 3°/s = 1 revolution per ~2 minutes. Only meridians and nodes rotate; latitude rings fixed (identical when rotated)
+
+### Authentication
+- Login page: tab switcher (Password | Magic link), password is default tab, show/hide password toggle
+- Password sign-in uses `signInWithPassword`, on success `router.push + router.refresh()`
+- Account page: new "Password" card with `ChangePasswordForm` client component using `supabase.auth.updateUser({ password })`
+- Auth callback: handles both `token_hash` (OTP flow) and `code` (PKCE flow) — fixes cross-browser magic link failures
+
+### Security Audit (2026-04-30)
+Fixed 6 issues:
+1. IP spoofing: `x-real-ip` now prioritised over `x-forwarded-for` in `getClientIp()`
+2. XSS in admin feedback emails: HTML-escape `language`, `os`, `environment`, `comment`
+3. XSS in GDPR data export: `esc()` function applied to all user data in HTML output
+4. No rate limiting on `/api/admin/improve-prompt`: added 10/hr per user ID
+5. No rate limiting on `/api/account/export`: added 5/hr per user ID
+6. `productSlug` now `z.enum(['it-helpdesk-starter-kit'])` instead of open string
+
+Added `X-XSS-Protection: 1; mode=block` header in `next.config.mjs`.
+
+NOT fixed (post-launch):
+- Next.js 14.2.35 CVEs: mitigated by config (no `rewrites`, no `remotePatterns`)
+- In-memory rate limiter: upgrade to Upstash Redis when scaling
+
+### Pilot Panel
+- Copy/Download buttons now in a STICKY bar at the top of the result panel (never scrolls away with long config notes)
+- 👍/👎 feedback widget added to Pilot generate result (same API as main generator)
+- Copy button: shows visual feedback after clipboard write, not before
+- Download: `application/octet-stream` MIME type forces download instead of opening in browser
+
+### Other Fixes
+- `analytics/page.tsx` admin check: `ADMIN_EMAIL` was `autokitadmin@email.com`, corrected to `autokitadmin@gmail.com`
+- Forced empty commit to ensure Vercel rebuild picks up env var change
+- `bg-grid-pattern` previously referenced but undefined in CSS — now properly defined
+
+---
+
+## What's Fully Built
 
 ### Core Product
-- Landing page (9-script count throughout), animations, HeroBeams, AnimatedTerminal (fixed height — no layout shift), AnimatedArcs, FadeInSection
-- Stripe checkout (TEST mode), magic link auth, dashboard downloads (server-side signed URLs)
-- Supabase Storage: `products` bucket, `products/taskpilot-kit.zip`
-- Account management + GDPR deletion + HTML data export (replaces raw JSON)
-- Newsletter + HMAC unsubscribe tokens
+- Landing page: hero spotlight, dot grid, gradient headline, metrics bar, trust strip, animated globe
+- 9 PowerShell scripts in `scripts/ps/`
+- Stripe checkout (TEST mode), magic link + password auth, dashboard downloads
+- Supabase Storage: `products/taskpilot-kit.zip` (NEEDS REBUILD with 9 scripts)
+- Account: GDPR export (HTML), account deletion, newsletter unsub, set/change password
 
 ### AI Script Generator (/generate)
-- 3-step wizard: OS → Environment (+cloud providers) → Task description
-- Scroll-aware back button: shows in header on load, second copy fades in above wizard when user scrolls past header (IntersectionObserver, no arbitrary thresholds)
-- Clarification loop + robust JSON parser (handles Python `"""` docstrings)
-- Feedback widget (👍/👎) → saved to Supabase + emails admin
-- Rate limiting: 10/hr per IP
-- max_tokens: 16384 (raised from 8192 to prevent truncation of complex scripts)
-- Null-script error state: shows "Generation incomplete" + AlertCircle icon when script field is null (not a misleading success state)
+- 3-step wizard: OS → Environment (+cloud providers) → Task
+- Clarification loop, robust JSON parser, feedback widget
+- Rate limiting: 10/hr per IP, max_tokens: 16384
+- Null-script error state: shows error, not misleading success
 
 ### Pilot AI Assistant
-- Floating chat widget with pilot helmet SVG avatar
-- Two tabs: Ask Pilot (chat) + Generate Script (mini wizard)
-- Generate tab now has cloud provider selection (AWS, Azure, GCP, DigitalOcean, Linode, **Supabase**) that appears inline when Cloud/Hybrid/Multi-Cloud is selected
-- Copy/download: uses shared `copyToClipboard` + `downloadTextFile` utilities from `lib/utils.ts` (reliable cross-browser pattern, navigator.clipboard with execCommand fallback, application/octet-stream MIME type)
-- Null-script error state in result step: shows error message + Try Again, hides config notes and "Ask Pilot" link
-- "Ask Pilot" template string: uses `title ?? filename ?? 'a custom IT script'` fallback (no more "null" in message)
-- Clarification: proper clarify step with question display + answer input (no longer appends question to task text)
-- Error handling: genError state shown above Generate button (rate limit, network errors visible)
-- System prompt: no em-dashes, no "Perfect/Great/Absolutely" openers, one compound requirements question before task description, updates full task desc when user adds requirements
+- Floating widget: Ask Pilot tab + Generate Script tab
+- Sticky Copy/Download bar in result step (always visible)
+- Thumbs up/down feedback → same Supabase table as main generator
+- System prompt: no em-dashes, no markdown, no affirmation openers
 
 ### Dashboard
-- Mobile bottom tab nav (DashboardNav client component with active state via usePathname)
-- Download card: fixed download bug (document.body.appendChild before click)
-- Empty state: border-white/20
-- Analytics: emerald green progress bar for positive rate (was red — inverted meaning)
+- Downloads, Account (password form, data export, GDPR delete), Analytics (admin only)
+- Mobile bottom tab nav with active state
 
-### UI / Design
-- Pure black (#000) + white theme
-- All cards: border-white/20 globally (raised from border-white/8)
-- Nav: spring cubic-bezier pill animation on hover (NavItem)
-- Sign In button uses NavItem (same animation)
-- Step cards: h-full for equal height in CSS grid
-- Newsletter section wrapped in Card
-- Contact form wrapped in Card
-- Environment cards (Works Everywhere): 2x2 card grid, border opacity /40
-- Before/After cards: brighter colored borders
-- Scroll-to-top button: bottom-left fixed (avoids Pilot button), appears after 400px scroll
-- Footer logo: clickable Link to home (was plain div)
-- Generator back button: top-left of header + scroll-aware second copy above wizard
-
-### Confirmation Email
-- Webhook path: fires immediately when Stripe delivers the event
-- Fallback path: fires from `/api/download/session` when purchase record doesn't exist yet (webhook didn't fire). Checks existence BEFORE upsert — only sends once.
-- Email includes: direct "Download Kit Now" button with session URL (no login needed) + secondary Dashboard link
-
-### Security
-- Rate limiting on ALL public API routes
-- Zod validation on all POST endpoints
-- Supabase RLS on all tables
-- Middleware excludes /api/ routes (API routes handle own auth)
-
-### Scripts in Kit (scripts/ps/)
-1. reset-password.ps1 — Reset AD passwords, audit log, force change on next login
-2. disk-cleanup.ps1 — Temp file cleanup, disk space alerts by threshold
-3. new-user.ps1 — Create AD account from params, assign groups, set temp password
-4. health-check.ps1 — CPU/RAM/disk monitoring, scheduled email summary
-5. offboard-user.ps1 — Disable account, remove groups, archive home folder, email HR (**NEW**)
-6. account-deactivation.ps1 — Disable accounts inactive >90 days, move to disabled OU, CSV audit (**NEW**)
-7. security-report.ps1 — Failed logins (4625) + lockouts (4740), CSV export + email (**NEW**)
-8. provision-device.ps1 — Pre-stage AD computer account, device group, asset inventory (**NEW**)
-9. decommission-device.ps1 — Safety confirm, remove from AD, update asset inventory (**NEW**)
-   Plus: config.json (updated with 11 new fields), scheduler.xml, setup-guide.md
+### Security (post-audit state)
+- Rate limiting on ALL public endpoints, x-real-ip spoofing prevention
+- Zod validation + productSlug allowlist
+- HTML-escaping on all user data in emails and HTML output
+- Security headers: CSP, HSTS, X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy
 
 ---
 
 ## What's Next (priority order)
 
-### 1. Fix Webhook + Rebuild ZIP (URGENT — see above)
-Do this before the next test purchase.
+### Pre-Launch (user action required)
+1. Run `npm run setup:webhook` → update STRIPE_WEBHOOK_SECRET in Vercel
+2. Rebuild and re-upload kit ZIP (9 scripts) to Supabase Storage
+3. Switch Stripe to live mode (see steps above)
+4. Test full purchase flow with real card
 
-### 2. Switch Stripe to Live Mode
-When ready for real revenue:
-- Stripe Dashboard → switch Test to Live
-- Get live keys (`sk_live_...`, `pk_live_...`)
-- Create live product + price → new `STRIPE_PRICE_ID`
-- Update all 4 Stripe vars in Vercel → redeploy
-- Run `npm run setup:webhook` again with live secret key
-
-### 3. Pro Generator Tier (Option 2)
-Full spec in PLAN.md. Requires running SQL in Supabase first.
-- Tables: `subscriptions`, `generated_scripts`
-- New Stripe product: $12/month recurring → `STRIPE_PRO_PRICE_ID`
-- New files: `api/subscription/create`, `api/subscription/portal`, `dashboard/billing/page.tsx`, `lib/subscription.ts`
-- Modify: `api/generate/route.ts` (gate unlimited use), `dashboard/layout.tsx` (add Billing nav)
-- When Pro is live: run `npm run setup:webhook -- --pro` to add subscription webhook events
-
-### 4. Dynamic Kit Builder (Option 3)
-User picks script types → AI generates custom ZIP → $25 one-time
+### Post-Launch
+5. Upgrade Next.js 14 → 15 (CVE mitigation, breaking changes need careful testing)
+6. Upgrade in-memory rate limiter to Upstash Redis (needed at scale)
+7. Pro Generator Tier — full spec in PLAN.md (SQL ready, file specs ready)
+8. Dynamic Kit Builder (Option 3 in PLAN.md)
 
 ---
 
 ## Critical File Map
 
 ```
-src/app/api/generate/route.ts           ← Script generator (claude-sonnet-4-6, 16384 tokens)
-src/app/api/assistant/route.ts          ← Pilot chat (claude-haiku-4-5, 800 tokens)
-src/app/api/download/session/route.ts   ← Post-purchase download + email fallback
-src/app/api/download/[product]/route.ts ← Dashboard download (server-side URL)
-src/app/api/webhook/stripe/route.ts     ← Stripe webhook (purchase record + email)
-src/app/api/account/export/route.ts     ← GDPR export (HTML format)
-src/app/auth/callback/route.ts          ← Magic link callback
-src/middleware.ts                       ← Auth guard for /dashboard
-src/lib/utils.ts                        ← copyToClipboard(), downloadTextFile() shared utils
-src/components/assistant/chat-widget.tsx   ← Pilot widget (chat + generate tabs)
-src/components/generator/generator-wizard.tsx  ← Main generator
-src/components/generator/wizard-back-button.tsx  ← Scroll-aware back button (IntersectionObserver)
-src/components/dashboard/dashboard-nav.tsx       ← Dashboard nav (active state + mobile tabs)
-src/components/animations/animated-terminal.tsx  ← h-[240px] fixed height (no layout shift)
-src/app/(marketing)/page.tsx            ← Landing page (9 scripts, cards, environment grid)
-scripts/ps/                             ← All 9 PowerShell scripts + config + guide
-scripts/setup-webhook.js               ← npm run setup:webhook (fixes URL + events)
-PLAN.md                                ← Full monetization roadmap (SQL + file specs)
+src/app/api/generate/route.ts              ← claude-sonnet-4-6, 16384 max_tokens
+src/app/api/assistant/route.ts             ← claude-haiku-4-5, 800 max_tokens
+src/app/api/download/session/route.ts      ← post-purchase download + email fallback
+src/app/api/download/[product]/route.ts    ← dashboard download (server-side signed URL)
+src/app/api/webhook/stripe/route.ts        ← Stripe webhook (purchase + email)
+src/app/auth/callback/route.ts             ← handles both token_hash and code flows
+src/middleware.ts                          ← auth guard, getUser() not getSession()
+src/lib/rate-limit.ts                      ← x-real-ip priority (spoofing protected)
+src/lib/validations.ts                     ← productSlug z.enum allowlist
+src/components/assistant/chat-widget.tsx   ← Pilot (sticky Copy/Download, feedback)
+src/components/animations/animated-arcs.tsx ← rotating globe (elevation projection)
+src/components/dashboard/change-password-form.tsx ← set/change password
+src/app/(auth)/login/page.tsx              ← tab switcher: Password | Magic link
+src/app/dashboard/account/page.tsx        ← includes ChangePasswordForm
+next.config.mjs                           ← all security headers including X-XSS-Protection
 ```
 
 ---
@@ -169,10 +170,10 @@ PLAN.md                                ← Full monetization roadmap (SQL + file
 |-----|-----------------|
 | `NEXT_PUBLIC_SITE_URL` | https://taskpilot-umber.vercel.app |
 | `SUPABASE_SERVICE_ROLE_KEY` | In Vercel dashboard |
-| `STRIPE_SECRET_KEY` | Test key (`sk_test_...`) — in Vercel |
+| `STRIPE_SECRET_KEY` | Test key (`sk_test_...`) — switch to live before launch |
 | `STRIPE_WEBHOOK_SECRET` | **NEEDS UPDATE** after running setup:webhook |
 | `ANTHROPIC_API_KEY` | In Vercel dashboard |
-| `ADMIN_EMAIL` | `autokitadmin@email.com` — unlocks /dashboard/analytics |
+| `ADMIN_EMAIL` | `autokitadmin@gmail.com` — confirmed working 2026-04-30 |
 
 ---
 
@@ -180,17 +181,8 @@ PLAN.md                                ← Full monetization roadmap (SQL + file
 
 | Issue | Status | Fix |
 |-------|--------|-----|
-| Stripe webhook URL wrong | **URGENT** | Run `npm run setup:webhook`, update STRIPE_WEBHOOK_SECRET in Vercel |
-| Kit ZIP still has 4 scripts | **URGENT** | Rebuild ZIP from scripts/ps/, re-upload to Supabase |
+| Stripe webhook URL wrong | **URGENT** | Run `npm run setup:webhook`, update STRIPE_WEBHOOK_SECRET |
+| Kit ZIP has 4 scripts | **URGENT** | Rebuild from scripts/ps/, re-upload to Supabase |
 | Stripe in TEST mode | Open | Switch to live keys when ready |
-| Rate limiter in-memory | MVP-OK | Upgrade to Upstash Redis when scaling |
-
----
-
-## Open Decisions
-
-1. **Pro tier price:** $9/mo vs $12/mo vs $15/mo — not decided
-2. **Script history storage:** Supabase table vs Vercel KV
-3. **Pro gate:** hard block free users or soft-nudge CTA
-4. **Custom domain:** taskpilot.dev (not yet set up)
-5. **Pilot real photo:** user has pilot helmet image but hasn't copied to `public/pilot.png`
+| Rate limiter in-memory | Post-launch | Upgrade to Upstash Redis |
+| Next.js 14 CVEs | Post-launch | Mitigated by config; upgrade to v15 in new session |
