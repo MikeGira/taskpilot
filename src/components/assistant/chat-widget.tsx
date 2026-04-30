@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { X, Send, Loader2, ChevronDown, Wand2, MessageSquare, Download, Copy, Check, ArrowLeft } from 'lucide-react';
+import { X, Send, Loader2, ChevronDown, Wand2, MessageSquare, Download, Copy, Check, ArrowLeft, ThumbsUp, ThumbsDown, CheckCircle2 } from 'lucide-react';
 import { cn, copyToClipboard, downloadTextFile } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
 
@@ -109,6 +109,10 @@ export function ChatWidget() {
   const [genClarifyQuestion, setGenClarifyQuestion] = useState('');
   const [genClarifyAnswer, setGenClarifyAnswer] = useState('');
   const [genError, setGenError] = useState('');
+  const [genFeedbackRating, setGenFeedbackRating] = useState<1 | -1 | null>(null);
+  const [genFeedbackComment, setGenFeedbackComment] = useState('');
+  const [genFeedbackSubmitted, setGenFeedbackSubmitted] = useState(false);
+  const [genFeedbackSubmitting, setGenFeedbackSubmitting] = useState(false);
 
   useEffect(() => {
     if (open && panel === 'chat') setTimeout(() => chatInputRef.current?.focus(), 150);
@@ -193,6 +197,31 @@ export function ChatWidget() {
     setGenClarifyQuestion('');
     setGenClarifyAnswer('');
     setGenError('');
+    setGenFeedbackRating(null);
+    setGenFeedbackComment('');
+    setGenFeedbackSubmitted(false);
+    setGenFeedbackSubmitting(false);
+  }
+
+  async function submitGenFeedback(rating: 1 | -1) {
+    if (genFeedbackSubmitted || genFeedbackSubmitting) return;
+    setGenFeedbackRating(rating);
+    setGenFeedbackSubmitting(true);
+    try {
+      await fetch('/api/generate/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          os: genOs,
+          environment: genEnv,
+          language: genResult?.language ?? undefined,
+          rating,
+          comment: genFeedbackComment.trim() || undefined,
+        }),
+      });
+    } catch { /* non-fatal */ }
+    setGenFeedbackSubmitting(false);
+    setGenFeedbackSubmitted(true);
   }
 
   async function copyScript() {
@@ -571,6 +600,67 @@ export function ChatWidget() {
                     >
                       Ask Pilot about this script →
                     </button>
+                  )}
+
+                  {/* Feedback */}
+                  {genResult.script && (
+                    genFeedbackSubmitted ? (
+                      <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/3 px-3 py-2.5">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                        <p className="text-[11px] text-[#9CA3AF]">Thanks, your feedback helps improve the AI.</p>
+                      </div>
+                    ) : (
+                      <div className="rounded-xl border border-white/10 bg-white/3 p-3">
+                        <p className="text-[10px] text-[#666] mb-2 uppercase tracking-wider">Was this script useful?</p>
+                        {genFeedbackRating === null && (
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => submitGenFeedback(1)}
+                              disabled={genFeedbackSubmitting}
+                              className="flex-1 flex items-center justify-center gap-1.5 text-[11px] font-medium py-1.5 rounded-lg border border-white/15 bg-white/4 text-[#ccc] hover:border-emerald-500/40 hover:bg-emerald-950/30 hover:text-emerald-400 transition-colors disabled:opacity-40"
+                            >
+                              <ThumbsUp className="h-3 w-3" /> Worked great
+                            </button>
+                            <button
+                              onClick={() => setGenFeedbackRating(-1)}
+                              disabled={genFeedbackSubmitting}
+                              className="flex-1 flex items-center justify-center gap-1.5 text-[11px] font-medium py-1.5 rounded-lg border border-white/15 bg-white/4 text-[#ccc] hover:border-red-500/40 hover:bg-red-950/30 hover:text-red-400 transition-colors disabled:opacity-40"
+                            >
+                              <ThumbsDown className="h-3 w-3" /> Needs work
+                            </button>
+                          </div>
+                        )}
+                        {genFeedbackRating === -1 && (
+                          <div className="flex flex-col gap-2">
+                            <textarea
+                              value={genFeedbackComment}
+                              onChange={(e) => setGenFeedbackComment(e.target.value)}
+                              placeholder="What went wrong? (optional)"
+                              rows={2}
+                              className="w-full rounded-lg text-[11px] text-white placeholder:text-[#555] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-2 leading-relaxed"
+                              style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.25)', fontSize: '16px' }}
+                            />
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => submitGenFeedback(-1)}
+                                disabled={genFeedbackSubmitting}
+                                className="flex-1 flex items-center justify-center gap-1.5 text-[11px] font-medium py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-colors disabled:opacity-40"
+                              >
+                                {genFeedbackSubmitting && <Loader2 className="h-3 w-3 animate-spin" />}
+                                Submit
+                              </button>
+                              <button
+                                onClick={() => setGenFeedbackRating(null)}
+                                disabled={genFeedbackSubmitting}
+                                className="text-[11px] text-[#666] hover:text-[#999] px-3 transition-colors disabled:opacity-40"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )
                   )}
                 </div>
               </div>
