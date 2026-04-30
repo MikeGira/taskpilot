@@ -39,7 +39,15 @@ export default function LoginPage({
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center bg-[#000000] bg-grid-pattern-subtle px-4 overflow-hidden">
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-[#000000] px-4 overflow-hidden">
+      {/* Dots — visible at edges/top, masked out in the centre where the card sits */}
+      <div className="pointer-events-none absolute inset-0" style={{
+        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.22) 1.5px, transparent 1.5px)',
+        backgroundSize: '30px 30px',
+        maskImage: 'radial-gradient(ellipse 60% 50% at 50% 52%, transparent 28%, black 62%)',
+        WebkitMaskImage: 'radial-gradient(ellipse 60% 50% at 50% 52%, transparent 28%, black 62%)',
+      }} />
+      {/* Indigo spotlight from above */}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center">
         <div className="h-64 w-[600px] rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at top, rgba(99,102,241,0.15) 0%, transparent 65%)' }} />
       </div>
