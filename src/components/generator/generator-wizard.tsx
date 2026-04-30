@@ -179,7 +179,7 @@ function SelectionCard<T extends { id: string; label: string; desc: string; icon
       )}
       <Icon className={cn('h-6 w-6 mb-3', option.accent)} />
       <div className="font-semibold text-[#F9FAFB] mb-1">{option.label}</div>
-      <div className="text-xs text-[#6B7280] leading-relaxed">{option.desc}</div>
+      <div className="text-xs text-[#9CA3AF] leading-relaxed">{option.desc}</div>
     </button>
   );
 }
@@ -213,7 +213,7 @@ function ScriptBlock({ script, filename, language, locked = false }: {
             <div className="h-3 w-3 rounded-full bg-yellow-500/60" />
             <div className="h-3 w-3 rounded-full bg-white/5" />
           </div>
-          <span className="text-xs text-[#6B7280] ml-2 font-mono">{filename ?? 'script'}</span>
+          <span className="text-xs text-[#9CA3AF] ml-2 font-mono">{filename ?? 'script'}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-[#4B5563] border border-white/10 px-2 py-0.5 rounded">{langLabel}</span>
@@ -230,7 +230,7 @@ function ScriptBlock({ script, filename, language, locked = false }: {
         {locked && (
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/70 to-transparent flex flex-col items-center justify-end pb-5 gap-1.5">
             <p className="text-sm font-semibold text-[#F9FAFB]">Pro script: upgrade to unlock</p>
-            <p className="text-xs text-[#6B7280]">Copy, download and save to history with Pro</p>
+            <p className="text-xs text-[#9CA3AF]">Copy, download and save to history with Pro</p>
             <Button asChild size="sm" className="mt-1">
               <a href="/checkout">Upgrade to Pro, $12/mo</a>
             </Button>
@@ -454,7 +454,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
             const tools = TOOL_OPTIONS.filter((t) => t.category === category);
             return (
               <div key={category} className="mb-6">
-                <p className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wider mb-3">{category}</p>
+                <p className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">{category}</p>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {tools.map((t) => (
                     <SelectionCard
@@ -505,7 +505,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           </div>
 
           <div className="mb-6">
-            <p className="text-xs text-[#6B7280] mb-2 font-medium">Need inspiration?</p>
+            <p className="text-xs text-[#9CA3AF] mb-2 font-medium">Need inspiration?</p>
             <div className="flex flex-wrap gap-2">
               {TASK_EXAMPLES.map((ex) => (
                 <button

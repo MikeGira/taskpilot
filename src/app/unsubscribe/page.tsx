@@ -54,7 +54,7 @@ function UnsubscribeContent() {
           </span>
         </Link>
 
-        <div className="rounded-xl border border-white/8 bg-[#0D0D0D] p-8">
+        <div className="rounded-xl border border-white/20 bg-[#0D0D0D] p-8">
           {status === 'loading' && (
             <>
               <Loader2 className="h-10 w-10 text-[#9CA3AF] mx-auto mb-4 animate-spin" />

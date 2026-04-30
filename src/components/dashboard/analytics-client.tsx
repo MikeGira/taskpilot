@@ -72,7 +72,7 @@ export function AnalyticsClient({ negativeCount }: { negativeCount: number }) {
       </div>
 
       {negativeCount === 0 && !loading && (
-        <p className="text-xs text-[#4B5563] italic">No negative feedback to analyze yet.</p>
+        <p className="text-xs text-[#6B7280] italic">No negative feedback to analyze yet.</p>
       )}
 
       {error && (
@@ -145,7 +145,7 @@ export function AnalyticsClient({ negativeCount }: { negativeCount: number }) {
             </div>
           )}
 
-          <p className="text-xs text-[#4B5563]">
+          <p className="text-xs text-[#6B7280]">
             Based on {result.analyzedCount} negative {result.analyzedCount === 1 ? 'rating' : 'ratings'}.
             Apply changes manually to{' '}
             <code className="text-white/80 text-[11px]">src/app/api/generate/route.ts</code>.

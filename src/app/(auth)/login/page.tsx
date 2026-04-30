@@ -108,16 +108,16 @@ export default function LoginPage({
             <p className="text-sm text-[#9CA3AF]">
               Sent a sign-in link to <strong className="text-[#F9FAFB]">{email}</strong>. Click it to sign in.
             </p>
-            <p className="text-xs text-[#4B5563] mt-4">
+            <p className="text-xs text-[#6B7280] mt-4">
               Didn&apos;t get it? Check spam or{' '}
               <button onClick={() => { setStatus('idle'); setEmail(''); }}
                 className="text-white hover:underline">try again</button>.
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-white/8 bg-[#0D0D0D] overflow-hidden">
+          <div className="rounded-xl border border-white/20 bg-[#0D0D0D] overflow-hidden">
             {/* Tab switcher */}
-            <div className="flex border-b border-white/8">
+            <div className="flex border-b border-white/12">
               {(['password', 'magic'] as const).map((m) => (
                 <button
                   key={m}
@@ -150,7 +150,7 @@ export default function LoginPage({
                         value={password} onChange={(e) => setPassword(e.target.value)}
                         required className="pr-10" />
                       <button type="button" onClick={() => setShowPw(v => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-white transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-white transition-colors"
                         tabIndex={-1} aria-label={showPw ? 'Hide password' : 'Show password'}>
                         {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
@@ -160,7 +160,7 @@ export default function LoginPage({
                   <Button type="submit" size="lg" className="w-full" disabled={status === 'loading'}>
                     {status === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Sign in'}
                   </Button>
-                  <p className="text-xs text-[#4B5563] text-center">
+                  <p className="text-xs text-[#6B7280] text-center">
                     No password yet?{' '}
                     <button type="button" onClick={() => switchMode('magic')} className="text-[#9CA3AF] hover:text-white underline underline-offset-2">
                       Sign in with magic link
@@ -176,7 +176,7 @@ export default function LoginPage({
                     <Input id="ml-email" type="email" placeholder="you@company.com"
                       value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
                   </div>
-                  <p className="text-xs text-[#4B5563]">
+                  <p className="text-xs text-[#6B7280]">
                     We&apos;ll email you a one-time sign-in link. No password needed.
                   </p>
                   {errorMsg && <p className="text-sm text-red-400">{errorMsg}</p>}
@@ -189,7 +189,7 @@ export default function LoginPage({
           </div>
         )}
 
-        <p className="text-center text-xs text-[#4B5563] mt-4">
+        <p className="text-center text-xs text-[#6B7280] mt-4">
           Don&apos;t have an account?{' '}
           <Link href="/checkout" className="text-white hover:underline">Buy the kit first</Link>
           {' '}and your account is created automatically.

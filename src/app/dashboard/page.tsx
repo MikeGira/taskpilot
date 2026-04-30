@@ -80,7 +80,7 @@ export default async function DashboardPage() {
         </div>
       ) : (
         <div className="rounded-xl border border-white/20 bg-[#0D0D0D] p-10 text-center">
-          <ShoppingBag className="h-10 w-10 text-[#4B5563] mx-auto mb-4" />
+          <ShoppingBag className="h-10 w-10 text-[#6B7280] mx-auto mb-4" />
           <h2 className="font-semibold text-[#F9FAFB] mb-2">No purchases yet</h2>
           <p className="text-sm text-[#9CA3AF] mb-6">
             Get the IT Helpdesk Automation Starter Kit and automate your most repetitive tasks.

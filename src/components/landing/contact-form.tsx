@@ -107,7 +107,7 @@ export function ContactForm() {
           placeholder="E.g., I need to auto-disable accounts that haven't logged in for 90 days and notify the manager..."
         />
       </div>
-      <p className="text-xs text-[#4B5563]">
+      <p className="text-xs text-[#6B7280]">
         By submitting, you agree to our{' '}
         <a href="/privacy" className="text-[#6B7280] hover:text-[#9CA3AF] underline">privacy policy</a>.
       </p>

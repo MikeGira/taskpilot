@@ -54,12 +54,12 @@ export default function GeneratePage({
                 in your environment
               </h1>
 
-              <p className="text-[#888] max-w-xl mx-auto leading-relaxed animate-slide-up">
+              <p className="text-[#A0A0A0] max-w-xl mx-auto leading-relaxed animate-slide-up">
                 Tell us your OS and infrastructure. Describe what you want to automate.
                 Get a production-ready script with error handling, logging, and a config section. Ready in under 10 seconds.
               </p>
 
-              <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs text-[#888]">
+              <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs text-[#A0A0A0]">
                 {['Windows · Linux · macOS', 'On-Prem · Hybrid · Cloud · Multi-Cloud', '10 free scripts per hour', 'No sign-up required'].map((t) => (
                   <span key={t} className="flex items-center gap-1.5">
                     <Zap className="h-3 w-3 text-white/40" />

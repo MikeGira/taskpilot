@@ -67,7 +67,7 @@ export function ChangePasswordForm() {
               <button
                 type="button"
                 onClick={() => setShowPw(v => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-white transition-colors"
                 tabIndex={-1}
                 aria-label={showPw ? 'Hide password' : 'Show password'}
               >

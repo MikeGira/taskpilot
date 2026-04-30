@@ -40,3 +40,7 @@ next-env.d.ts
 # Editor
 .vscode/
 .idea/
+
+# Playwright
+/test-results/
+/playwright-report/

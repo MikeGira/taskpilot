@@ -99,12 +99,12 @@ export default async function AnalyticsPage() {
       {/* Recent feedback */}
       <div className="mb-8">
         <h2 className="text-sm font-semibold text-[#F9FAFB] mb-3">
-          Recent Feedback {total > 0 && <span className="text-[#4B5563] font-normal">(last {recent.length})</span>}
+          Recent Feedback {total > 0 && <span className="text-[#6B7280] font-normal">(last {recent.length})</span>}
         </h2>
         {recent.length === 0 ? (
           <div className="rounded-xl border border-white/20 bg-[#0D0D0D] p-8 text-center">
             <p className="text-sm text-[#6B7280]">No feedback submitted yet.</p>
-            <p className="text-xs text-[#4B5563] mt-1">Ratings will appear here after users try the script generator.</p>
+            <p className="text-xs text-[#6B7280] mt-1">Ratings will appear here after users try the script generator.</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -122,7 +122,7 @@ export default async function AnalyticsPage() {
                         <span className="text-xs text-[#9CA3AF]">{f.language}</span>
                       </>
                     )}
-                    <span className="text-xs text-[#4B5563] ml-auto">
+                    <span className="text-xs text-[#6B7280] ml-auto">
                       {new Date(f.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </span>
                   </div>
@@ -167,7 +167,7 @@ function BreakdownCard({
               <div key={key}>
                 <div className="flex justify-between items-center text-xs mb-1">
                   <span className="text-[#9CA3AF]">{labels[key] ?? key}</span>
-                  <span className="text-[#4B5563]">{tot} · {pct}% 👍</span>
+                  <span className="text-[#6B7280]">{tot} · {pct}% 👍</span>
                 </div>
                 <div className="h-1.5 rounded-full bg-white/6 overflow-hidden">
                   <div

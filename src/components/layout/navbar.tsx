@@ -100,7 +100,7 @@ export function Navbar() {
 
         {/* Mobile */}
         <button
-          className="md:hidden p-2 text-[#888] hover:text-white transition-colors"
+          className="md:hidden p-2 text-[#A0A0A0] hover:text-white transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -112,7 +112,7 @@ export function Navbar() {
         <div className="md:hidden border-t border-white/8 bg-black px-4 py-4 flex flex-col gap-1">
           {NAV_LINKS.map(({ href, label }) => (
             <Link key={href} href={href} onClick={() => setMobileOpen(false)}
-              className="text-sm text-[#888] hover:text-white font-medium px-3 py-2.5 rounded-full hover:bg-white/7 transition-all duration-200">
+              className="text-sm text-[#A0A0A0] hover:text-white font-medium px-3 py-2.5 rounded-full hover:bg-white/7 transition-all duration-200">
               {label}
             </Link>
           ))}

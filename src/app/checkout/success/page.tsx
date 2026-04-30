@@ -33,10 +33,10 @@ export default function CheckoutSuccessPage({
 
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-white mb-3">You&apos;re all set!</h1>
-            <p className="text-[#888] leading-relaxed mb-2">
+            <p className="text-[#A0A0A0] leading-relaxed mb-2">
               Your purchase is confirmed. Download your kit right now, no account needed.
             </p>
-            <p className="text-sm text-[#888]">
+            <p className="text-sm text-[#A0A0A0]">
               A backup download link was also sent to your inbox.
             </p>
           </div>
@@ -85,9 +85,9 @@ export default function CheckoutSuccessPage({
           </div>
 
           {sessionId && (
-            <p className="mt-6 text-center text-xs text-[#777]">
+            <p className="mt-6 text-center text-xs text-[#9CA3AF]">
               Want to re-download later?{' '}
-              <Link href="/login" className="text-[#888] hover:text-white underline underline-offset-2 transition-colors">
+              <Link href="/login" className="text-[#A0A0A0] hover:text-white underline underline-offset-2 transition-colors">
                 Sign in
               </Link>{' '}
               to access your dashboard any time.

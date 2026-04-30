@@ -46,10 +46,10 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
               href={href}
               className={cn(
                 'flex-1 flex flex-col items-center gap-1 py-3 text-[11px] font-medium transition-colors',
-                pathname === href ? 'text-white' : 'text-[#555] hover:text-[#999]'
+                pathname === href ? 'text-white' : 'text-[#9CA3AF] hover:text-white'
               )}
             >
-              <Icon className={cn('h-5 w-5', pathname === href ? 'text-white' : 'text-[#555]')} />
+              <Icon className={cn('h-5 w-5', pathname === href ? 'text-white' : 'text-[#9CA3AF]')} />
               {label}
             </Link>
           ))}

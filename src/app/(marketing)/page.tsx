@@ -117,7 +117,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               </span>
             </h1>
 
-            <p className="text-lg sm:text-xl text-[#888] max-w-2xl mx-auto mb-10 text-balance animate-slide-up">
+            <p className="text-lg sm:text-xl text-[#A0A0A0] max-w-2xl mx-auto mb-10 text-balance animate-slide-up">
               9 production-ready PowerShell scripts that handle your most repetitive helpdesk
               tasks: password resets, disk cleanup, user onboarding, and more.
               Configure once, run forever.
@@ -140,7 +140,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
               {['9 production-ready scripts', 'Instant download', 'One-time $19', 'No subscription'].map((item) => (
-                <span key={item} className="flex items-center gap-1.5 text-xs text-[#555]">
+                <span key={item} className="flex items-center gap-1.5 text-xs text-[#9CA3AF]">
                   <CheckCircle2 className="h-3 w-3 text-emerald-500/50 shrink-0" />
                   {item}
                 </span>
@@ -150,8 +150,8 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <HeroBeams />
             <AnimatedTerminal />
 
-            <p className="mt-6 text-xs text-[#777]">
-              <Link href="/generate" className="text-[#888] hover:text-white underline underline-offset-2 transition-colors">
+            <p className="mt-6 text-xs text-[#9CA3AF]">
+              <Link href="/generate" className="text-[#A0A0A0] hover:text-white underline underline-offset-2 transition-colors">
                 Try the AI script generator
               </Link>
               {' '}to pick your OS, describe your task, and get a working script in seconds.
@@ -170,10 +170,10 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 ].flatMap(({ stat, label, accent }, i, arr) => [
                   <div key={label} className="text-center">
                     <div className={`text-2xl font-bold leading-none ${accent ? 'text-emerald-400' : 'text-white'}`}>{stat}</div>
-                    <div className="text-[11px] text-[#555] mt-1 tracking-wide uppercase">{label}</div>
+                    <div className="text-[11px] text-[#9CA3AF] mt-1 tracking-wide uppercase">{label}</div>
                   </div>,
                   i < arr.length - 1
-                    ? <div key={`sep-${i}`} className="hidden sm:block h-8 w-px bg-white/10 shrink-0" />
+                    ? <div key={`sep-${i}`} className="hidden sm:block h-8 w-px bg-white/25 shrink-0" />
                     : null,
                 ])}
               </div>
@@ -187,7 +187,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <FadeInSection>
               <div className="text-center mb-14">
                 <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Everything in the kit</h2>
-                <p className="text-[#888] max-w-xl mx-auto">
+                <p className="text-[#A0A0A0] max-w-xl mx-auto">
                   9 scripts. Ready to deploy. No assembly required beyond editing 6 config values.
                 </p>
               </div>
@@ -202,9 +202,9 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     </div>
                     <h3 className="font-semibold text-white mb-1.5 flex items-center gap-2">
                       {s.name}
-                      {s.task && <span className="text-[10px] text-[#555] font-normal group-hover:text-[#888] transition-colors">Generate →</span>}
+                      {s.task && <span className="text-[10px] text-[#9CA3AF] font-normal group-hover:text-[#A0A0A0] transition-colors">Generate →</span>}
                     </h3>
-                    <p className="text-sm text-[#777] leading-relaxed">{s.desc}</p>
+                    <p className="text-sm text-[#9CA3AF] leading-relaxed">{s.desc}</p>
                   </Card>
                 );
                 return (
@@ -240,7 +240,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                       {step.num}
                     </div>
                     <h3 className="font-semibold text-white mb-2">{step.title}</h3>
-                    <p className="text-sm text-[#888] leading-relaxed">{step.desc}</p>
+                    <p className="text-sm text-[#A0A0A0] leading-relaxed">{step.desc}</p>
                   </Card>
                 </FadeInSection>
               ))}
@@ -261,7 +261,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     One kit.<br />
                     <span className="text-white/50">Every environment.</span>
                   </h2>
-                  <p className="text-[#888] leading-relaxed mb-6">
+                  <p className="text-[#A0A0A0] leading-relaxed mb-6">
                     Whether your servers are on-premises, in Azure, AWS, or spread across a hybrid estate. TaskPilot scripts adapt to your environment with a single config file.
                   </p>
                   <div className="grid grid-cols-2 gap-3">
@@ -269,7 +269,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                       <div key={title} className={`rounded-xl border ${border} ${bg} p-3.5`}>
                         <div className={`inline-block h-2.5 w-2.5 rounded-full ${color} mb-2.5`} />
                         <div className="text-sm font-semibold text-white mb-1">{title}</div>
-                        <div className="text-xs text-[#777] leading-relaxed">{desc}</div>
+                        <div className="text-xs text-[#9CA3AF] leading-relaxed">{desc}</div>
                       </div>
                     ))}
                   </div>
@@ -301,7 +301,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   </h3>
                   <ul className="space-y-3">
                     {WITHOUT.map((item) => (
-                      <li key={item} className="flex items-start gap-3 text-sm text-[#888]">
+                      <li key={item} className="flex items-start gap-3 text-sm text-[#A0A0A0]">
                         <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400/60" />
                         {item}
                       </li>
@@ -339,7 +339,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           <div className="mx-auto max-w-md px-4 sm:px-6 text-center">
             <FadeInSection>
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Simple pricing</h2>
-              <p className="text-[#888] mb-10">One price. Everything included. No subscription.</p>
+              <p className="text-[#A0A0A0] mb-10">One price. Everything included. No subscription.</p>
 
               <div className="relative">
                 {/* Glow above the pricing card */}
@@ -352,7 +352,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/80 to-transparent" />
                   <div className="mb-6">
                     <div className="text-5xl font-extrabold bg-gradient-to-b from-white to-white/80 bg-clip-text text-transparent mb-1">$19</div>
-                    <div className="text-sm text-[#888]">one-time · instant download</div>
+                    <div className="text-sm text-[#A0A0A0]">one-time · instant download</div>
                   </div>
                   <ul className="space-y-3 mb-8 text-left">
                     {[
@@ -375,7 +375,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
-                  <p className="mt-4 text-xs text-[#777]">
+                  <p className="mt-4 text-xs text-[#9CA3AF]">
                     Secure checkout via Stripe. We never see your card details.
                   </p>
                 </Card>
@@ -397,7 +397,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <FadeInSection key={faq.q} delay={i * 50}>
                   <Card className="p-6 hover:border-white/30 transition-colors duration-200">
                     <h3 className="font-semibold text-white mb-3">{faq.q}</h3>
-                    <p className="text-sm text-[#888] leading-relaxed">{faq.a}</p>
+                    <p className="text-sm text-[#A0A0A0] leading-relaxed">{faq.a}</p>
                   </Card>
                 </FadeInSection>
               ))}
@@ -419,7 +419,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
                   1 automation tip every week
                 </h2>
-                <p className="text-[#888] mb-8">Short, practical, and ready to use. No fluff. Unsubscribe any time.</p>
+                <p className="text-[#A0A0A0] mb-8">Short, practical, and ready to use. No fluff. Unsubscribe any time.</p>
                 <NewsletterForm />
               </Card>
             </FadeInSection>
@@ -432,7 +432,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <FadeInSection>
               <div className="text-center mb-10">
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Need custom automation?</h2>
-                <p className="text-[#888]">
+                <p className="text-[#A0A0A0]">
                   Describe your environment and the problem. I&apos;ll give you an honest answer within one business day.
                 </p>
               </div>

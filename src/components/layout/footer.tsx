@@ -27,7 +27,7 @@ export function Footer() {
             </Link>
           </nav>
 
-          <p className="text-xs text-[#4B5563]">
+          <p className="text-xs text-[#6B7280]">
             &copy; {new Date().getFullYear()} TaskPilot. Built in Toronto.
           </p>
         </div>

@@ -300,9 +300,8 @@ export function ChatWidget() {
         'fixed bottom-[88px] right-2 left-2 sm:left-auto sm:right-6 z-50',
         'sm:w-[400px]',
         // Height: caps at viewport height minus space for trigger + safe area
-        'flex flex-col rounded-2xl border border-indigo-500/30',
-        // Brighter background so it's visible on mobile screens
-        'shadow-2xl shadow-black/80',
+        'flex flex-col rounded-2xl border border-indigo-500/50',
+        'shadow-2xl shadow-black/80 shadow-indigo-950/40',
         'transition-all duration-300 ease-out origin-bottom-right',
         open ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
       )}
@@ -312,7 +311,7 @@ export function ChatWidget() {
       }}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/8 bg-indigo-950/20 rounded-t-2xl shrink-0">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/15 bg-indigo-950/20 rounded-t-2xl shrink-0">
           <div className="flex items-center gap-2.5">
             <PilotAvatar />
             <div>
@@ -329,14 +328,14 @@ export function ChatWidget() {
         </div>
 
         {/* Tab bar */}
-        <div className="flex border-b border-white/8 shrink-0">
+        <div className="flex border-b border-white/15 shrink-0">
           {(['chat', 'generate'] as Panel[]).map((p) => (
             <button
               key={p}
               onClick={() => setPanel(p)}
               className={cn(
                 'flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium transition-colors',
-                panel === p ? 'text-white border-b-2 border-indigo-500' : 'text-[#888] hover:text-[#ccc]'
+                panel === p ? 'text-white border-b-2 border-indigo-500' : 'text-[#A0A0A0] hover:text-[#ccc]'
               )}
             >
               {p === 'chat' ? <MessageSquare className="h-3.5 w-3.5" /> : <Wand2 className="h-3.5 w-3.5" />}
@@ -372,7 +371,7 @@ export function ChatWidget() {
               )}
               {showStarters && (
                 <div className="space-y-1.5 pt-1">
-                  <p className="text-[10px] text-[#888] px-1 uppercase tracking-wider font-medium">Quick questions</p>
+                  <p className="text-[10px] text-[#A0A0A0] px-1 uppercase tracking-wider font-medium">Quick questions</p>
                   {STARTERS.map((q) => (
                     <button key={q} onClick={() => sendChat(q)} className="w-full text-left text-xs text-[#aaa] border border-indigo-500/25 bg-indigo-950/30 hover:bg-indigo-950/60 hover:text-white rounded-xl px-3 py-2 transition-colors">{q}</button>
                   ))}
@@ -384,14 +383,14 @@ export function ChatWidget() {
               {chatError && <p className="text-[11px] text-red-400/60 text-center">{chatError}</p>}
               <div ref={bottomRef} />
             </div>
-            <div className="p-3 border-t border-white/8 shrink-0">
+            <div className="p-3 border-t border-white/15 shrink-0">
               <form onSubmit={(e) => { e.preventDefault(); sendChat(chatInput); }} className="flex gap-2">
                 <input
                   ref={chatInputRef}
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   placeholder="Ask Pilot anything…"
-                  className="flex-1 min-w-0 rounded-full px-4 py-2.5 text-white placeholder:text-[#999] focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all"
+                  className="flex-1 min-w-0 rounded-full px-4 py-2.5 text-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all"
                   style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.35)', fontSize: '16px' }}
                   disabled={chatLoading}
                 />
@@ -413,7 +412,7 @@ export function ChatWidget() {
             {genStep === 'os' && (
               <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden">
                 <p className="text-xs font-semibold text-white mb-1">What OS are you targeting?</p>
-                <p className="text-[11px] text-[#888] mb-4">Determines the scripting language used.</p>
+                <p className="text-[11px] text-[#A0A0A0] mb-4">Determines the scripting language used.</p>
                 <div className="grid grid-cols-2 gap-2">
                   {OS_OPTS.map((o) => (
                     <button key={o.id} onClick={() => { setGenOs(o.id); setGenStep('env'); }}
@@ -429,12 +428,12 @@ export function ChatWidget() {
             {/* STEP: Environment */}
             {genStep === 'env' && (
               <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-3">
-                <button onClick={() => setGenStep('os')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit">
+                <button onClick={() => setGenStep('os')} className="flex items-center gap-1 text-[11px] text-[#A0A0A0] hover:text-white transition-colors w-fit">
                   <ArrowLeft className="h-3 w-3" /> Back
                 </button>
                 <div>
                   <p className="text-xs font-semibold text-white mb-0.5">What&apos;s your environment?</p>
-                  <p className="text-[11px] text-[#888]">Determines which tools and APIs the script uses.</p>
+                  <p className="text-[11px] text-[#A0A0A0]">Determines which tools and APIs the script uses.</p>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {ENV_OPTS.map((e) => (
@@ -457,7 +456,7 @@ export function ChatWidget() {
                 {genEnv && genEnv !== 'on-premises' && (
                   <div>
                     <p className="text-[10px] text-[#aaa] mb-2 uppercase tracking-wider">
-                      Cloud providers <span className="normal-case text-[#555]">(select all that apply)</span>
+                      Cloud providers <span className="normal-case text-[#9CA3AF]">(select all that apply)</span>
                     </p>
                     <div className="flex flex-wrap gap-1.5">
                       {CLOUD_PROVIDER_OPTS.map((c) => (
@@ -468,7 +467,7 @@ export function ChatWidget() {
                             'px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all',
                             genCloudProviders.includes(c.id)
                               ? 'border-indigo-500/50 bg-indigo-950/50 text-indigo-300'
-                              : 'border-white/10 bg-white/3 text-[#999] hover:border-white/20 hover:text-white'
+                              : 'border-white/10 bg-white/3 text-[#9CA3AF] hover:border-white/20 hover:text-white'
                           )}
                         >
                           {genCloudProviders.includes(c.id) && <span className="mr-1 text-emerald-400">✓</span>}
@@ -494,14 +493,14 @@ export function ChatWidget() {
             {/* STEP: Tool */}
             {genStep === 'tool' && (
               <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-2">
-                <button onClick={() => setGenStep('env')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit mb-1">
+                <button onClick={() => setGenStep('env')} className="flex items-center gap-1 text-[11px] text-[#A0A0A0] hover:text-white transition-colors w-fit mb-1">
                   <ArrowLeft className="h-3 w-3" /> Back
                 </button>
                 <p className="text-xs font-semibold text-white mb-0.5">What tool or language?</p>
-                <p className="text-[11px] text-[#888] mb-2">Determines script format and best practices applied.</p>
+                <p className="text-[11px] text-[#A0A0A0] mb-2">Determines script format and best practices applied.</p>
                 {TOOL_CATEGORIES_PILOT.map((cat) => (
                   <div key={cat.label} className="mb-3">
-                    <p className="text-[9px] font-semibold text-[#555] uppercase tracking-wider mb-1.5">{cat.label}</p>
+                    <p className="text-[9px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-1.5">{cat.label}</p>
                     <div className="grid grid-cols-2 gap-1.5">
                       {cat.tools.map((t) => (
                         <button key={t.id} onClick={() => { setGenTool(t.id); setGenStep('task'); }}
@@ -524,12 +523,12 @@ export function ChatWidget() {
             {/* STEP: Task */}
             {genStep === 'task' && (
               <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-3">
-                <button onClick={() => setGenStep('tool')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit">
+                <button onClick={() => setGenStep('tool')} className="flex items-center gap-1 text-[11px] text-[#A0A0A0] hover:text-white transition-colors w-fit">
                   <ArrowLeft className="h-3 w-3" /> Back
                 </button>
                 <div>
                   <p className="text-xs font-semibold text-white mb-0.5">What do you want to automate?</p>
-                  <p className="text-[11px] text-[#888]">Describe in plain English. More detail = better script.</p>
+                  <p className="text-[11px] text-[#A0A0A0]">Describe in plain English. More detail = better script.</p>
                 </div>
                 <textarea
                   value={genTask}
@@ -537,7 +536,7 @@ export function ChatWidget() {
                   placeholder="e.g. Offboard a leaving employee disable their AD account, remove from all groups, archive their home folder, and send a report to HR..."
                   rows={4}
                   maxLength={2000}
-                  className="w-full rounded-xl text-white placeholder:text-[#999] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-3 leading-relaxed"
+                  className="w-full rounded-xl text-white placeholder:text-[#9CA3AF] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-3 leading-relaxed"
                   style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.35)', fontSize: '16px' }}
                 />
                 <div>
@@ -545,7 +544,7 @@ export function ChatWidget() {
                   <div className="flex flex-col gap-1">
                     {GEN_EXAMPLES.slice(0, 4).map((ex) => (
                       <button key={ex} onClick={() => setGenTask(ex)}
-                        className="text-left text-[11px] text-[#999] hover:text-white px-2 py-1.5 rounded-lg hover:bg-white/5 transition-colors truncate">
+                        className="text-left text-[11px] text-[#9CA3AF] hover:text-white px-2 py-1.5 rounded-lg hover:bg-white/5 transition-colors truncate">
                         → {ex}
                       </button>
                     ))}
@@ -568,7 +567,7 @@ export function ChatWidget() {
             {/* STEP: Clarify */}
             {genStep === 'clarify' && (
               <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-3">
-                <button onClick={() => setGenStep('task')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit">
+                <button onClick={() => setGenStep('task')} className="flex items-center gap-1 text-[11px] text-[#A0A0A0] hover:text-white transition-colors w-fit">
                   <ArrowLeft className="h-3 w-3" /> Back
                 </button>
                 <div className="rounded-xl border border-indigo-500/25 bg-indigo-950/20 p-3 flex gap-2">
@@ -581,7 +580,7 @@ export function ChatWidget() {
                   placeholder="Your answer…"
                   rows={3}
                   maxLength={1000}
-                  className="w-full rounded-xl text-white placeholder:text-[#999] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-3 leading-relaxed"
+                  className="w-full rounded-xl text-white placeholder:text-[#9CA3AF] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-3 leading-relaxed"
                   style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.35)', fontSize: '16px' }}
                   autoFocus
                 />
@@ -608,7 +607,7 @@ export function ChatWidget() {
                 </div>
                 <div className="text-center">
                   <p className="text-sm font-medium text-white">Generating your script…</p>
-                  <p className="text-xs text-[#888] mt-1">Adding error handling, logging & config section</p>
+                  <p className="text-xs text-[#A0A0A0] mt-1">Adding error handling, logging & config section</p>
                 </div>
               </div>
             )}
@@ -622,7 +621,7 @@ export function ChatWidget() {
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-white truncate">{genResult.title ?? 'Script ready'}</p>
                     {genResult.explanation && (
-                      <p className="text-[11px] text-[#999] leading-relaxed mt-0.5 line-clamp-1">{genResult.explanation}</p>
+                      <p className="text-[11px] text-[#9CA3AF] leading-relaxed mt-0.5 line-clamp-1">{genResult.explanation}</p>
                     )}
                   </div>
                   <button onClick={resetGenerate} className="text-[11px] text-indigo-400 hover:text-indigo-300 shrink-0 whitespace-nowrap">New script</button>
@@ -631,7 +630,7 @@ export function ChatWidget() {
                 {/* ── Sticky action bar: always visible Copy + Download ── */}
                 {genResult.script ? (
                   <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-white/8 bg-white/[0.02]">
-                    <span className="text-[11px] font-mono text-[#555] flex-1 truncate">{genResult.filename ?? 'script'}</span>
+                    <span className="text-[11px] font-mono text-[#9CA3AF] flex-1 truncate">{genResult.filename ?? 'script'}</span>
                     <button onClick={copyScript} className={cn(
                       'flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-md border transition-colors',
                       genCopied
@@ -720,7 +719,7 @@ export function ChatWidget() {
                               onChange={(e) => setGenFeedbackComment(e.target.value)}
                               placeholder="What went wrong? (optional)"
                               rows={2}
-                              className="w-full rounded-lg text-[11px] text-white placeholder:text-[#555] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-2 leading-relaxed"
+                              className="w-full rounded-lg text-[11px] text-white placeholder:text-[#9CA3AF] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-2 leading-relaxed"
                               style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.25)', fontSize: '16px' }}
                             />
                             <div className="flex gap-2">
@@ -735,7 +734,7 @@ export function ChatWidget() {
                               <button
                                 onClick={() => setGenFeedbackRating(null)}
                                 disabled={genFeedbackSubmitting}
-                                className="text-[11px] text-[#666] hover:text-[#999] px-3 transition-colors disabled:opacity-40"
+                                className="text-[11px] text-[#666] hover:text-[#9CA3AF] px-3 transition-colors disabled:opacity-40"
                               >
                                 Cancel
                               </button>
