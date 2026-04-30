@@ -1,13 +1,31 @@
 {
   "_comment": "Edit ALL_CAPS values before running any script. Do not share this file — it contains your environment details.",
-  "domain": "YOURDOMAIN",
-  "dc": "DC=YOURDOMAIN,DC=LOCAL",
-  "adminOU": "OU=IT,DC=YOURDOMAIN,DC=LOCAL",
-  "usersOU": "OU=Users,DC=YOURDOMAIN,DC=LOCAL",
-  "defaultGroups": ["Domain Users", "Remote Desktop Users"],
+
+  "domain":              "YOURDOMAIN.LOCAL",
+  "dc":                  "DC=YOURDOMAIN,DC=LOCAL",
+
+  "usersOU":             "OU=Users,DC=YOURDOMAIN,DC=LOCAL",
+  "adminOU":             "OU=IT,DC=YOURDOMAIN,DC=LOCAL",
+  "disabledOU":          "OU=Disabled,DC=YOURDOMAIN,DC=LOCAL",
+  "deviceOU":            "OU=Workstations,DC=YOURDOMAIN,DC=LOCAL",
+  "deviceGroup":         "Domain Computers",
+
+  "defaultGroups":       ["Domain Users", "Remote Desktop Users"],
   "defaultTempPassword": "CHANGE_THIS_TempP@ss1!",
-  "logPath": "C:\\IT-Automation\\Logs",
+
+  "homeBasePath":        "\\\\FILESERVER\\Users",
+  "archivePath":         "\\\\FILESERVER\\Archive\\OffboardedUsers",
+  "logPath":             "C:\\IT-Automation\\Logs",
+  "reportPath":          "C:\\IT-Automation\\Reports",
+  "assetInventoryPath":  "C:\\IT-Automation\\asset-inventory.csv",
+
   "diskAlertThresholdPercent": 20,
-  "drivesToMonitor": ["C", "D"],
-  "maxLogAgeDays": 90
+  "drivesToMonitor":     ["C", "D"],
+  "maxLogAgeDays":       90,
+  "inactivityDays":      90,
+
+  "smtpServer":          "SMTP.YOURDOMAIN.LOCAL",
+  "emailFrom":           "it-automation@YOURDOMAIN.LOCAL",
+  "adminEmail":          "itadmin@YOURDOMAIN.LOCAL",
+  "hrEmail":             "hr@YOURDOMAIN.LOCAL"
 }
