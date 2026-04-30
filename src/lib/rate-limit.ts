@@ -27,9 +27,12 @@ export function rateLimit(
 }
 
 export function getClientIp(request: Request): string {
+  // x-real-ip is set by Vercel's infrastructure to the actual visitor IP and cannot
+  // be spoofed by clients. x-forwarded-for's first entry IS client-controlled, so
+  // we only fall back to it when x-real-ip is absent (e.g. local dev).
   return (
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
     request.headers.get('x-real-ip') ??
+    request.headers.get('x-forwarded-for')?.split(',').at(-1)?.trim() ??
     'unknown'
   );
 }

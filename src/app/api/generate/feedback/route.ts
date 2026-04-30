@@ -70,6 +70,11 @@ export async function POST(request: Request) {
   return NextResponse.json({ success: true });
 }
 
+function esc(s: string | null | undefined): string {
+  if (!s) return '';
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function buildEmail({
   os, environment, language, rating, comment,
 }: {
@@ -91,15 +96,15 @@ function buildEmail({
       <span style="font-size:15px;font-weight:700;color:${color}">${emoji} ${label}</span>
     </div>
     <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:20px">
-      <tr><td style="padding:5px 0;color:#9CA3AF;width:120px">OS</td><td style="color:#F9FAFB;font-weight:500">${OS_LABELS[os] ?? os}</td></tr>
-      <tr><td style="padding:5px 0;color:#9CA3AF">Environment</td><td style="color:#F9FAFB;font-weight:500">${ENV_LABELS[environment] ?? environment}</td></tr>
-      ${language ? `<tr><td style="padding:5px 0;color:#9CA3AF">Language</td><td style="color:#F9FAFB;font-weight:500">${language}</td></tr>` : ''}
-      <tr><td style="padding:5px 0;color:#9CA3AF">Time</td><td style="color:#6B7280;font-size:12px">${now}</td></tr>
+      <tr><td style="padding:5px 0;color:#9CA3AF;width:120px">OS</td><td style="color:#F9FAFB;font-weight:500">${esc(OS_LABELS[os] ?? os)}</td></tr>
+      <tr><td style="padding:5px 0;color:#9CA3AF">Environment</td><td style="color:#F9FAFB;font-weight:500">${esc(ENV_LABELS[environment] ?? environment)}</td></tr>
+      ${language ? `<tr><td style="padding:5px 0;color:#9CA3AF">Language</td><td style="color:#F9FAFB;font-weight:500">${esc(language)}</td></tr>` : ''}
+      <tr><td style="padding:5px 0;color:#9CA3AF">Time</td><td style="color:#6B7280;font-size:12px">${esc(now)}</td></tr>
     </table>
     ${comment
       ? `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 16px;margin-bottom:20px">
            <p style="margin:0 0 6px;font-size:11px;color:#6B7280;text-transform:uppercase;letter-spacing:.05em">User comment</p>
-           <p style="margin:0;font-size:14px;color:#D1D5DB;line-height:1.5">${comment}</p>
+           <p style="margin:0;font-size:14px;color:#D1D5DB;line-height:1.5">${esc(comment)}</p>
          </div>`
       : `<p style="font-size:13px;color:#6B7280;margin-bottom:20px;font-style:italic">No comment provided.</p>`}
     <a href="${siteUrl}/dashboard/analytics" style="display:inline-block;background:#ffffff;color:#000;font-size:13px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px">View Analytics →</a>

@@ -23,7 +23,7 @@ export const ContactSchema = z.object({
 });
 
 export const CheckoutSchema = z.object({
-  productSlug: z.string().trim().max(100),
+  productSlug: z.enum(['it-helpdesk-starter-kit']),
 });
 
 export const DeleteAccountSchema = z.object({

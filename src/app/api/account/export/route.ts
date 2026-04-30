@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getAdminClient } from '@/lib/supabase/admin';
+import { rateLimit } from '@/lib/rate-limit';
+
+function esc(s: string | null | undefined): string {
+  if (!s) return '';
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
 export async function GET() {
   const supabase = createClient();
@@ -8,6 +14,10 @@ export async function GET() {
 
   if (!user) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+  }
+
+  if (!rateLimit(`export:${user.id}`, 5, 60 * 60 * 1000).allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
   const db = getAdminClient();
@@ -27,7 +37,7 @@ export async function GET() {
   });
 
   function row(label: string, value: string | null | undefined) {
-    return `<tr><td class="label">${label}</td><td>${value ?? '<span class="none">Not set</span>'}</td></tr>`;
+    return `<tr><td class="label">${esc(label)}</td><td>${value != null ? esc(value) : '<span class="none">Not set</span>'}</td></tr>`;
   }
 
   const purchasesHtml = purchases.length === 0
@@ -36,10 +46,10 @@ export async function GET() {
         <thead><tr><th>Product</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
         <tbody>
           ${purchases.map(p => `<tr>
-            <td>${p.product_slug ?? 'N/A'}</td>
-            <td>$${((p.amount_cents ?? 0) / 100).toFixed(2)} ${(p.currency ?? 'USD').toUpperCase()}</td>
-            <td>${p.status ?? 'N/A'}</td>
-            <td>${p.created_at ? new Date(p.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}</td>
+            <td>${esc(p.product_slug ?? 'N/A')}</td>
+            <td>$${((p.amount_cents ?? 0) / 100).toFixed(2)} ${esc((p.currency ?? 'USD').toUpperCase())}</td>
+            <td>${esc(p.status ?? 'N/A')}</td>
+            <td>${p.created_at ? esc(new Date(p.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })) : 'N/A'}</td>
           </tr>`).join('')}
         </tbody>
       </table>`;
