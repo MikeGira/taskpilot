@@ -96,6 +96,10 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-64 w-96 pointer-events-none"
             style={{ background: 'radial-gradient(ellipse, rgba(167,139,250,0.06) 0%, transparent 70%)' }} />
 
+          {/* Center spotlight — the main overhead glow */}
+          <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-20 h-[700px] w-[900px] rounded-full"
+            style={{ background: 'radial-gradient(ellipse at top, rgba(99,102,241,0.2) 0%, rgba(34,211,238,0.07) 28%, transparent 60%)' }} />
+
           <div className="absolute inset-y-0 left-0 w-full h-full pointer-events-none overflow-hidden">
             <div className="absolute inset-y-0 w-[2px] bg-gradient-to-b from-transparent via-indigo-400/20 to-transparent animate-beam" />
           </div>
@@ -108,7 +112,9 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white text-balance leading-[1.1] mb-6 animate-fade-in">
               Stop doing IT busywork.{' '}
-              <span className="text-white/80">Start automating it.</span>
+              <span className="bg-gradient-to-r from-indigo-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">
+                Start automating it.
+              </span>
             </h1>
 
             <p className="text-lg sm:text-xl text-[#888] max-w-2xl mx-auto mb-10 text-balance animate-slide-up">
@@ -132,9 +138,14 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               </Button>
             </div>
 
-            <p className="mt-5 text-sm text-[#888]">
-              Instant download · Windows Server 2016+ · One-time purchase
-            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+              {['9 production-ready scripts', 'Instant download', 'One-time $19', 'No subscription'].map((item) => (
+                <span key={item} className="flex items-center gap-1.5 text-xs text-[#555]">
+                  <CheckCircle2 className="h-3 w-3 text-emerald-500/50 shrink-0" />
+                  {item}
+                </span>
+              ))}
+            </div>
 
             <HeroBeams />
             <AnimatedTerminal />
@@ -145,6 +156,25 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               </Link>
               {' '}to pick your OS, describe your task, and get a working script in seconds.
             </p>
+          </div>
+
+          {/* Metrics strip */}
+          <div className="relative border-t border-white/8 py-6">
+            <div className="mx-auto max-w-4xl px-4 sm:px-6">
+              <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-16">
+                {[
+                  { stat: '9', label: 'Scripts included' },
+                  { stat: '< 1 hr', label: 'Time to first run' },
+                  { stat: '$19', label: 'One-time, no sub' },
+                  { stat: '∞', label: 'Runs on your server' },
+                ].map(({ stat, label }) => (
+                  <div key={label} className="text-center">
+                    <div className="text-2xl font-bold text-white leading-none">{stat}</div>
+                    <div className="text-[11px] text-[#555] mt-1 tracking-wide uppercase">{label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -302,36 +332,45 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Simple pricing</h2>
               <p className="text-[#888] mb-10">One price. Everything included. No subscription.</p>
 
-              <Card className="p-8 border-white/25 bg-gradient-to-b from-white/3 to-transparent hover:border-white/35 transition-colors duration-300">
-                <div className="mb-6">
-                  <div className="text-5xl font-extrabold text-white mb-1">$19</div>
-                  <div className="text-sm text-[#888]">one-time · instant download</div>
+              <div className="relative">
+                {/* Glow above the pricing card */}
+                <div className="pointer-events-none absolute inset-x-0 -top-20 flex justify-center">
+                  <div className="h-40 w-80 rounded-full blur-3xl opacity-75"
+                    style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.3) 0%, transparent 70%)' }} />
                 </div>
-                <ul className="space-y-3 mb-8 text-left">
-                  {[
-                    '9 production-ready PowerShell scripts',
-                    'Config template (edit 6 fields)',
-                    'Windows Task Scheduler XML',
-                    'Step-by-step setup guide',
-                    'Works on Windows Server 2016+',
-                    'Email support',
-                  ].map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-sm text-white">
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-white/70" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Button asChild size="lg" className="w-full">
-                  <Link href="/checkout">
-                    Buy Now $19
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-                <p className="mt-4 text-xs text-[#777]">
-                  Secure checkout via Stripe. We never see your card details.
-                </p>
-              </Card>
+                <Card className="relative overflow-hidden p-8 border-indigo-500/30 bg-gradient-to-b from-indigo-950/20 to-transparent hover:border-indigo-500/50 transition-colors duration-300">
+                  {/* Top gradient accent line */}
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/80 to-transparent" />
+                  <div className="mb-6">
+                    <div className="text-5xl font-extrabold bg-gradient-to-b from-white to-white/80 bg-clip-text text-transparent mb-1">$19</div>
+                    <div className="text-sm text-[#888]">one-time · instant download</div>
+                  </div>
+                  <ul className="space-y-3 mb-8 text-left">
+                    {[
+                      '9 production-ready PowerShell scripts',
+                      'Config template (edit 6 fields)',
+                      'Windows Task Scheduler XML',
+                      'Step-by-step setup guide',
+                      'Works on Windows Server 2016+',
+                      'Email support',
+                    ].map((item) => (
+                      <li key={item} className="flex items-center gap-3 text-sm text-white">
+                        <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400/70" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button asChild size="lg" className="w-full">
+                    <Link href="/checkout">
+                      Buy Now $19
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <p className="mt-4 text-xs text-[#777]">
+                    Secure checkout via Stripe. We never see your card details.
+                  </p>
+                </Card>
+              </div>
             </FadeInSection>
           </div>
         </section>

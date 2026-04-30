@@ -10,9 +10,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Vercel primary — white pill
+        // Vercel primary — white pill with hover glow
         default:
-          'bg-white text-black hover:bg-zinc-100 active:bg-zinc-200 shadow-sm',
+          'bg-white text-black hover:bg-zinc-100 active:bg-zinc-200 shadow-sm hover:shadow-[0_0_22px_rgba(255,255,255,0.22)] transition-shadow',
         // Dark outlined pill — secondary CTA
         outline:
           'border border-white/20 bg-transparent text-white hover:bg-white/6 hover:border-white/30',
