@@ -503,70 +503,76 @@ export function ChatWidget() {
 
             {/* STEP: Result */}
             {genStep === 'result' && genResult && (
-              <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-3">
-                <div className="flex items-start justify-between gap-2">
+              <div className="flex-1 flex flex-col overflow-hidden">
+
+                {/* ── Sticky header: title + New script ── */}
+                <div className="shrink-0 px-4 pt-4 pb-3 border-b border-white/8 flex items-start gap-2">
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-white truncate">{genResult.title ?? 'Script ready'}</p>
-                    {genResult.explanation && <p className="text-[11px] text-[#999] leading-relaxed mt-0.5 line-clamp-2">{genResult.explanation}</p>}
+                    {genResult.explanation && (
+                      <p className="text-[11px] text-[#999] leading-relaxed mt-0.5 line-clamp-1">{genResult.explanation}</p>
+                    )}
                   </div>
                   <button onClick={resetGenerate} className="text-[11px] text-indigo-400 hover:text-indigo-300 shrink-0 whitespace-nowrap">New script</button>
                 </div>
 
-                {/* Script block */}
+                {/* ── Sticky action bar: always visible Copy + Download ── */}
                 {genResult.script ? (
-                  <div className="rounded-xl border border-white/10 overflow-hidden">
-                    <div className="flex items-center justify-between px-3 py-2 bg-white/4 border-b border-white/8">
-                      <span className="text-[11px] font-mono text-[#888]">{genResult.filename ?? 'script'}</span>
-                      <div className="flex gap-1.5">
-                        <button onClick={copyScript} className={cn(
-                          'flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-md border transition-colors',
-                          genCopied
-                            ? 'border-emerald-500/40 bg-emerald-950/40 text-emerald-400'
-                            : 'border-white/20 bg-white/5 text-[#ccc] hover:border-white/30 hover:text-white hover:bg-white/10'
-                        )}>
-                          {genCopied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                          {genCopied ? 'Copied!' : 'Copy'}
-                        </button>
-                        <button onClick={downloadScript} className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-md border border-indigo-500/30 bg-indigo-950/30 text-indigo-300 hover:border-indigo-500/50 hover:bg-indigo-950/50 hover:text-white transition-colors">
-                          <Download className="h-3 w-3" />
-                          Download
-                        </button>
-                      </div>
-                    </div>
-                    <pre className="overflow-auto p-3 text-[11px] text-[#C9D1D9] font-mono leading-relaxed scrollbar-hidden max-h-[240px]">
-                      <code>{genResult.script}</code>
-                    </pre>
+                  <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-white/8 bg-white/[0.02]">
+                    <span className="text-[11px] font-mono text-[#555] flex-1 truncate">{genResult.filename ?? 'script'}</span>
+                    <button onClick={copyScript} className={cn(
+                      'flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-md border transition-colors',
+                      genCopied
+                        ? 'border-emerald-500/40 bg-emerald-950/40 text-emerald-400'
+                        : 'border-white/20 bg-white/5 text-[#ccc] hover:border-white/30 hover:text-white hover:bg-white/10'
+                    )}>
+                      {genCopied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                      {genCopied ? 'Copied!' : 'Copy'}
+                    </button>
+                    <button onClick={downloadScript} className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-md border border-indigo-500/30 bg-indigo-950/30 text-indigo-300 hover:border-indigo-500/50 hover:bg-indigo-950/50 hover:text-white transition-colors">
+                      <Download className="h-3 w-3" />
+                      Download
+                    </button>
                   </div>
                 ) : (
-                  <div className="rounded-xl border border-white/10 bg-white/3 p-4 text-center space-y-2">
-                    <p className="text-[11px] text-[#9CA3AF]">The script could not be extracted. Add more detail to your task description and try again.</p>
-                    <button onClick={resetGenerate} className="text-[11px] text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1 mx-auto">
-                      <ArrowLeft className="h-3 w-3" /> Try again
+                  <div className="shrink-0 px-4 py-3 border-b border-white/8 flex items-center gap-2">
+                    <p className="text-[11px] text-[#9CA3AF] flex-1">Script could not be extracted. Add more detail and try again.</p>
+                    <button onClick={resetGenerate} className="text-[11px] text-indigo-400 hover:text-indigo-300 shrink-0 flex items-center gap-1">
+                      <ArrowLeft className="h-3 w-3" /> Retry
                     </button>
                   </div>
                 )}
 
-                {/* Config notes and Ask Pilot — only shown when script was successfully generated */}
-                {genResult.script && (
-                  <>
-                    {genResult.configNotes && genResult.configNotes.length > 0 && (
-                      <div className="rounded-xl border border-amber-500/15 bg-amber-950/10 p-3">
-                        <p className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-1.5">Before you run</p>
-                        <ul className="space-y-1">
-                          {genResult.configNotes.map((n, i) => (
-                            <li key={i} className="text-[11px] text-[#C9A84C] flex gap-1.5 leading-relaxed">
-                              <span className="shrink-0 text-amber-500/60">→</span>{n}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    <button onClick={() => { setPanel('chat'); sendChat(`I just generated a script: "${genResult.title ?? genResult.filename ?? 'a custom IT script'}". Can you help me understand how to configure it?`); }}
-                      className="text-[11px] text-indigo-400 hover:text-indigo-300 transition-colors text-center py-1">
+                {/* ── Scrollable body: script preview + config notes ── */}
+                <div className="flex-1 overflow-y-auto scrollbar-hidden flex flex-col gap-3 p-4">
+                  {genResult.script && (
+                    <pre className="overflow-auto rounded-xl border border-white/10 p-3 text-[11px] text-[#C9D1D9] font-mono leading-relaxed scrollbar-hidden max-h-[200px]">
+                      <code>{genResult.script}</code>
+                    </pre>
+                  )}
+
+                  {genResult.script && genResult.configNotes && genResult.configNotes.length > 0 && (
+                    <div className="rounded-xl border border-amber-500/15 bg-amber-950/10 p-3">
+                      <p className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-1.5">Before you run</p>
+                      <ul className="space-y-1">
+                        {genResult.configNotes.map((n, i) => (
+                          <li key={i} className="text-[11px] text-[#C9A84C] flex gap-1.5 leading-relaxed">
+                            <span className="shrink-0 text-amber-500/60">→</span>{n}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {genResult.script && (
+                    <button
+                      onClick={() => { setPanel('chat'); sendChat(`I just generated a script: "${genResult.title ?? genResult.filename ?? 'a custom IT script'}". Can you help me understand how to configure it?`); }}
+                      className="text-[11px] text-indigo-400 hover:text-indigo-300 transition-colors text-center py-1"
+                    >
                       Ask Pilot about this script →
                     </button>
-                  </>
-                )}
+                  )}
+                </div>
               </div>
             )}
           </div>
