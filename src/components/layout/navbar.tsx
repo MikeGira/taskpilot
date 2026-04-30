@@ -39,10 +39,10 @@ function NavItem({ href, label }: { href: string; label: string }) {
             : 'transparent',
           border: hovered ? '1px solid rgba(255,255,255,0.18)' : '1px solid transparent',
           boxShadow: hovered ? '0 2px 12px rgba(0,0,0,0.3)' : 'none',
-          transform: hovered ? 'scale(1) translateY(0)' : 'scale(0.7) translateY(3px)',
+          transform: hovered ? 'scale(1)' : 'scale(0.82)',
           transformOrigin: 'center',
           opacity: hovered ? 1 : 0,
-          transition: 'transform 0.22s cubic-bezier(0.34,1.56,0.64,1), opacity 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease',
+          transition: 'transform 0.28s cubic-bezier(0.34,1.56,0.64,1), opacity 0.14s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease',
         }}
       />
       <span className="relative z-10">{label}</span>

@@ -47,10 +47,10 @@ const WITH = [
 ];
 
 const ENVIRONMENTS = [
-  { color: 'bg-blue-400',   border: 'border-blue-500/40',   bg: 'bg-blue-500/8',   title: 'Windows',  desc: 'Server 2016 to 2022, plus Windows 10 and 11' },
-  { color: 'bg-orange-400', border: 'border-orange-500/40', bg: 'bg-orange-500/8', title: 'Linux',    desc: 'Ubuntu, RHEL, Amazon Linux' },
-  { color: 'bg-cyan-400',   border: 'border-cyan-500/40',   bg: 'bg-cyan-500/8',   title: 'Cloud',    desc: 'AWS, Azure, GCP, DigitalOcean' },
-  { color: 'bg-violet-400', border: 'border-violet-500/40', bg: 'bg-violet-500/8', title: 'Hybrid',   desc: 'On-premises Active Directory' },
+  { color: 'bg-blue-400',    border: 'border-blue-500/50',    bg: 'bg-blue-500/10',    title: 'Windows', desc: 'Server 2016 to 2022, plus Windows 10 and 11' },
+  { color: 'bg-yellow-400',  border: 'border-yellow-500/50',  bg: 'bg-yellow-500/10',  title: 'Linux',   desc: 'Ubuntu, RHEL, Amazon Linux' },
+  { color: 'bg-emerald-400', border: 'border-emerald-500/50', bg: 'bg-emerald-500/10', title: 'Cloud',   desc: 'AWS, Azure, GCP, DigitalOcean' },
+  { color: 'bg-violet-400',  border: 'border-violet-500/50',  bg: 'bg-violet-500/10',  title: 'Hybrid',  desc: 'On-premises Active Directory' },
 ];
 
 const STEPS = [

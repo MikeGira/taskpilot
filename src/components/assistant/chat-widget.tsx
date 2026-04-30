@@ -61,16 +61,26 @@ function PilotAvatar({ size = 'md' }: { size?: 'sm' | 'md' }) {
 
 function stripMarkdown(text: string): string {
   return text
+    // Bold/italic asterisks and underscores
     .replace(/\*{1,3}([^*\n]+)\*{1,3}/g, '$1')
     .replace(/_{1,2}([^_\n]+)_{1,2}/g, '$1')
+    // Headers
     .replace(/^#{1,6}\s+/gm, '')
+    // Bullet points (-, *, +) and numbered lists
     .replace(/^[\-\*\+]\s+/gm, '')
-    .replace(/^\d+\.\s+/gm, (_, offset, str) => {
-      return offset === 0 || str[offset - 1] === '\n' ? '' : '';
-    })
-    .replace(/`{1,3}([^`]*)`{1,3}/g, '$1')
+    .replace(/^\d+\.\s+/gm, '')
+    // Code fences and inline code
+    .replace(/```[\s\S]*?```/g, (m) => m.replace(/```\w*\n?/g, '').trim())
+    .replace(/`([^`]+)`/g, '$1')
+    // Links
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/\s*—\s*/g, ', ')
+    // Horizontal rules
+    .replace(/^[-*_]{3,}\s*$/gm, '')
+    // Blockquotes
+    .replace(/^>\s*/gm, '')
+    // Em-dashes (long dash)
+    .replace(/\s*[—–]\s*/g, ', ')
+    // Collapse excess blank lines
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
