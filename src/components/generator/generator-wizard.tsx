@@ -8,16 +8,18 @@ import {
   Monitor, Terminal, Apple, Layers, Server, GitMerge, Cloud,
   ArrowRight, ArrowLeft, Wand2, Copy, Download, CheckCircle2,
   RefreshCw, Loader2, AlertCircle, Check, ChevronRight, ThumbsUp, ThumbsDown,
+  Code, Box, GitBranch, Settings,
 } from 'lucide-react';
 import { cn, copyToClipboard, downloadTextFile } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-type Step = 'os' | 'environment' | 'task' | 'generating' | 'clarify' | 'result';
+type Step = 'os' | 'environment' | 'tool' | 'task' | 'generating' | 'clarify' | 'result';
 
 interface OS { id: string; label: string; desc: string; icon: React.ElementType; color: string; accent: string; }
 interface Env { id: string; label: string; desc: string; icon: React.ElementType; color: string; accent: string; }
+interface Tool { id: string; label: string; desc: string; icon: React.ElementType; color: string; accent: string; }
 interface Cloud { id: string; label: string; short: string; }
 
 // ── Data ─────────────────────────────────────────────────────────────────────
@@ -34,6 +36,19 @@ const ENV_OPTIONS: Env[] = [
   { id: 'hybrid',      label: 'Hybrid',      desc: 'On-prem + cloud · Best of both worlds',       icon: GitMerge, color: 'border-cyan-500/60    bg-cyan-500/20    hover:border-cyan-400     hover:bg-cyan-500/30',    accent: 'text-cyan-300'    },
   { id: 'cloud',       label: 'Cloud',       desc: 'AWS · Azure · GCP · Fully managed',           icon: Cloud,    color: 'border-emerald-500/60 bg-emerald-500/20 hover:border-emerald-400  hover:bg-emerald-500/30', accent: 'text-emerald-300' },
   { id: 'multi-cloud', label: 'Multi-Cloud', desc: 'Multiple providers · Complex infrastructure', icon: Layers,   color: 'border-amber-500/60   bg-amber-500/20   hover:border-amber-400    hover:bg-amber-500/30',   accent: 'text-amber-300'   },
+];
+
+const TOOL_OPTIONS: Tool[] = [
+  { id: 'powershell',     label: 'PowerShell',         desc: 'Windows automation, Active Directory, Exchange',              icon: Terminal,  color: 'border-blue-500/60   bg-blue-500/20   hover:border-blue-400     hover:bg-blue-500/30',   accent: 'text-blue-300'   },
+  { id: 'bash',           label: 'Bash / Shell',        desc: 'Linux/Unix system admin, cron jobs, pipelines',               icon: Terminal,  color: 'border-green-500/60  bg-green-500/20  hover:border-green-400    hover:bg-green-500/30',  accent: 'text-green-300'  },
+  { id: 'python',         label: 'Python',              desc: 'Cross-platform automation, APIs, data processing',            icon: Code,      color: 'border-yellow-500/60 bg-yellow-500/20 hover:border-yellow-400   hover:bg-yellow-500/30', accent: 'text-yellow-300' },
+  { id: 'terraform',      label: 'Terraform',           desc: 'Infrastructure as Code — provision VMs, networks, cloud',     icon: Server,    color: 'border-violet-500/60 bg-violet-500/20 hover:border-violet-400   hover:bg-violet-500/30', accent: 'text-violet-300' },
+  { id: 'ansible',        label: 'Ansible',             desc: 'Config management — YAML playbooks, agentless SSH',           icon: Settings,  color: 'border-red-500/60    bg-red-500/20    hover:border-red-400      hover:bg-red-500/30',    accent: 'text-red-300'    },
+  { id: 'puppet',         label: 'Puppet',              desc: 'Config management — manifests, Hiera, agent-based',           icon: Settings,  color: 'border-orange-500/60 bg-orange-500/20 hover:border-orange-400   hover:bg-orange-500/30', accent: 'text-orange-300' },
+  { id: 'github-actions', label: 'GitHub Actions',      desc: 'CI/CD pipelines with security scanning built in',             icon: GitBranch, color: 'border-white/30      bg-white/8       hover:border-white/50     hover:bg-white/12',      accent: 'text-white'      },
+  { id: 'gitlab-ci',      label: 'GitLab CI',           desc: 'CI/CD pipelines — .gitlab-ci.yml with SAST/DAST',             icon: GitBranch, color: 'border-amber-500/60  bg-amber-500/20  hover:border-amber-400    hover:bg-amber-500/30',  accent: 'text-amber-300'  },
+  { id: 'docker',         label: 'Docker',              desc: 'Containerization — Dockerfile, docker-compose.yml',           icon: Box,       color: 'border-cyan-500/60   bg-cyan-500/20   hover:border-cyan-400     hover:bg-cyan-500/30',   accent: 'text-cyan-300'   },
+  { id: 'kubernetes',     label: 'Kubernetes / Helm',   desc: 'Container orchestration — manifests, Helm charts, policies',  icon: Cloud,     color: 'border-emerald-500/60 bg-emerald-500/20 hover:border-emerald-400 hover:bg-emerald-500/30', accent: 'text-emerald-300' },
 ];
 
 const CLOUD_PROVIDERS: Cloud[] = [
@@ -76,6 +91,10 @@ const LANG_LABELS: Record<string, string> = {
   bash: 'Bash',
   python: 'Python',
   zsh: 'Zsh',
+  terraform: 'Terraform HCL',
+  yaml: 'YAML',
+  puppet: 'Puppet',
+  dockerfile: 'Dockerfile',
 };
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -186,6 +205,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
   const [step, setStep] = useState<Step>('os');
   const [os, setOs] = useState('');
   const [env, setEnv] = useState('');
+  const [tool, setTool] = useState('');
   const [cloudProviders, setCloudProviders] = useState<string[]>([]);
   const [task, setTask] = useState(initialTask);
   const [clarifyAnswer, setClarifyAnswer] = useState('');
@@ -227,6 +247,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           os,
           environment: env,
           cloudProviders: cloudProviders.length > 0 ? cloudProviders : undefined,
+          tool: tool || undefined,
           taskDescription: task,
           clarificationAnswer,
           previousQuestion,
@@ -281,6 +302,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
     setStep('os');
     setOs('');
     setEnv('');
+    setTool('');
     setCloudProviders([]);
     setTask('');
     setClarifyAnswer('');
@@ -302,7 +324,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {/* Step: OS selection */}
       {step === 'os' && (
         <div className="animate-slide-up">
-          <StepIndicator current={0} total={3} />
+          <StepIndicator current={0} total={4} />
           <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">What OS are you targeting?</h2>
           <p className="text-sm text-[#9CA3AF] mb-6">This determines the scripting language and available tools.</p>
           <div className="grid sm:grid-cols-2 gap-3">
@@ -321,7 +343,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {/* Step: Environment selection */}
       {step === 'environment' && (
         <div className="animate-slide-up">
-          <StepIndicator current={1} total={3} />
+          <StepIndicator current={1} total={4} />
           <button onClick={() => setStep('os')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/20 rounded-full px-3 py-1.5 mb-5 transition-colors">
             <ArrowLeft className="h-3.5 w-3.5" /> Back
           </button>
@@ -365,7 +387,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           )}
 
           <Button
-            onClick={() => { if (env) setStep('task'); }}
+            onClick={() => { if (env) setStep('tool'); }}
             disabled={!env}
             size="lg"
             className="w-full"
@@ -375,11 +397,33 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
         </div>
       )}
 
+      {/* Step: Tool selection */}
+      {step === 'tool' && (
+        <div className="animate-slide-up">
+          <StepIndicator current={2} total={4} />
+          <button onClick={() => setStep('environment')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/20 rounded-full px-3 py-1.5 mb-5 transition-colors">
+            <ArrowLeft className="h-3.5 w-3.5" /> Back
+          </button>
+          <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">What tool or language?</h2>
+          <p className="text-sm text-[#9CA3AF] mb-6">This determines the script format, file type, and enterprise best practices applied.</p>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {TOOL_OPTIONS.map((t) => (
+              <SelectionCard
+                key={t.id}
+                option={t}
+                selected={tool === t.id}
+                onClick={() => { setTool(t.id); setStep('task'); }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Step: Task description */}
       {step === 'task' && (
         <div className="animate-slide-up">
-          <StepIndicator current={2} total={3} />
-          <button onClick={() => setStep('environment')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/20 rounded-full px-3 py-1.5 mb-5 transition-colors">
+          <StepIndicator current={3} total={4} />
+          <button onClick={() => setStep('tool')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/20 rounded-full px-3 py-1.5 mb-5 transition-colors">
             <ArrowLeft className="h-3.5 w-3.5" /> Back
           </button>
           <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">What do you want to automate?</h2>
@@ -454,7 +498,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {/* Step: Clarification needed */}
       {step === 'clarify' && result?.question && (
         <div className="animate-slide-up">
-          <StepIndicator current={2} total={3} />
+          <StepIndicator current={3} total={4} />
           <div className="rounded-xl border border-white/12 bg-white/5 p-5 mb-6">
             <div className="flex items-start gap-3">
               <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 mt-0.5">

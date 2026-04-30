@@ -8,7 +8,7 @@ import type { GenerateResult } from '@/app/api/generate/route';
 /* ── Types ────────────────────────────────────────────────────────────────── */
 interface Message { role: 'user' | 'assistant'; content: string; }
 type Panel = 'chat' | 'generate';
-type GenStep = 'os' | 'env' | 'task' | 'clarify' | 'loading' | 'result';
+type GenStep = 'os' | 'env' | 'tool' | 'task' | 'clarify' | 'loading' | 'result';
 
 const OS_OPTS = [
   { id: 'windows',        label: 'Windows',        emoji: '⊞' },
@@ -21,6 +21,18 @@ const ENV_OPTS = [
   { id: 'hybrid',      label: 'Hybrid'      },
   { id: 'cloud',       label: 'Cloud'       },
   { id: 'multi-cloud', label: 'Multi-Cloud' },
+];
+const TOOL_OPTS = [
+  { id: 'powershell',     label: 'PowerShell',       emoji: '❯_' },
+  { id: 'bash',           label: 'Bash / Shell',      emoji: '$_' },
+  { id: 'python',         label: 'Python',            emoji: '🐍' },
+  { id: 'terraform',      label: 'Terraform',         emoji: '🏗' },
+  { id: 'ansible',        label: 'Ansible',           emoji: '📋' },
+  { id: 'puppet',         label: 'Puppet',            emoji: '🎭' },
+  { id: 'github-actions', label: 'GitHub Actions',    emoji: '⚙' },
+  { id: 'gitlab-ci',      label: 'GitLab CI',         emoji: '🦊' },
+  { id: 'docker',         label: 'Docker',            emoji: '🐳' },
+  { id: 'kubernetes',     label: 'K8s / Helm',        emoji: '☸' },
 ];
 const CLOUD_PROVIDER_OPTS = [
   { id: 'AWS',          label: 'AWS'          },
@@ -102,6 +114,7 @@ export function ChatWidget() {
   const [genStep, setGenStep] = useState<GenStep>('os');
   const [genOs, setGenOs] = useState('');
   const [genEnv, setGenEnv] = useState('');
+  const [genTool, setGenTool] = useState('');
   const [genTask, setGenTask] = useState('');
   const [genResult, setGenResult] = useState<GenerateResult | null>(null);
   const [genCopied, setGenCopied] = useState(false);
@@ -157,6 +170,7 @@ export function ChatWidget() {
           os: genOs,
           environment: genEnv,
           cloudProviders: genCloudProviders.length > 0 ? genCloudProviders : undefined,
+          tool: genTool || undefined,
           taskDescription: genTask,
           clarificationAnswer,
           previousQuestion: clarificationAnswer ? genClarifyQuestion : undefined,
@@ -190,6 +204,7 @@ export function ChatWidget() {
     setGenStep('os');
     setGenOs('');
     setGenEnv('');
+    setGenTool('');
     setGenCloudProviders([]);
     setGenTask('');
     setGenResult(null);
@@ -429,7 +444,7 @@ export function ChatWidget() {
                 {/* Continue — visible once an environment is selected */}
                 {genEnv && (
                   <button
-                    onClick={() => setGenStep('task')}
+                    onClick={() => setGenStep('tool')}
                     className="flex items-center justify-center gap-2 w-full rounded-full py-2.5 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-all active:scale-95"
                   >
                     <Wand2 className="h-3.5 w-3.5" /> Continue
@@ -438,10 +453,37 @@ export function ChatWidget() {
               </div>
             )}
 
+            {/* STEP: Tool */}
+            {genStep === 'tool' && (
+              <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-3">
+                <button onClick={() => setGenStep('env')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit">
+                  <ArrowLeft className="h-3 w-3" /> Back
+                </button>
+                <div>
+                  <p className="text-xs font-semibold text-white mb-0.5">What tool or language?</p>
+                  <p className="text-[11px] text-[#888]">Determines script format and best practices applied.</p>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {TOOL_OPTS.map((t) => (
+                    <button key={t.id} onClick={() => { setGenTool(t.id); setGenStep('task'); }}
+                      className={cn(
+                        'flex items-center gap-2 rounded-xl border px-3 py-3 text-sm font-medium text-white transition-all',
+                        genTool === t.id
+                          ? 'border-indigo-500/60 bg-indigo-950/40'
+                          : 'border-white/10 bg-white/3 hover:border-indigo-500/40 hover:bg-indigo-950/30'
+                      )}>
+                      <span className="text-base">{t.emoji}</span>
+                      <span className="font-medium text-[12px]">{t.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* STEP: Task */}
             {genStep === 'task' && (
               <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-3">
-                <button onClick={() => setGenStep('env')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit">
+                <button onClick={() => setGenStep('tool')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit">
                   <ArrowLeft className="h-3 w-3" /> Back
                 </button>
                 <div>
