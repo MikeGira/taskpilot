@@ -39,7 +39,10 @@ export default function LoginPage({
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#000000] bg-grid-pattern-subtle px-4">
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-[#000000] bg-grid-pattern-subtle px-4 overflow-hidden">
+      <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center">
+        <div className="h-64 w-[600px] rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at top, rgba(99,102,241,0.15) 0%, transparent 65%)' }} />
+      </div>
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">

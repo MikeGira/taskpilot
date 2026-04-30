@@ -222,7 +222,10 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* How it works */}
-        <section className="py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
+        <section className="relative overflow-hidden py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
+          <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center">
+            <div className="h-48 w-[600px] rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at top, rgba(99,102,241,0.1) 0%, transparent 70%)' }} />
+          </div>
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
             <FadeInSection>
               <div className="text-center mb-14">
@@ -329,7 +332,10 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
+        <section id="pricing" className="relative overflow-hidden py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
+          <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center">
+            <div className="h-48 w-[500px] rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at top, rgba(99,102,241,0.12) 0%, transparent 70%)' }} />
+          </div>
           <div className="mx-auto max-w-md px-4 sm:px-6 text-center">
             <FadeInSection>
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Simple pricing</h2>
@@ -400,7 +406,10 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Newsletter */}
-        <section className="py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
+        <section className="relative overflow-hidden py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
+          <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center">
+            <div className="h-40 w-[500px] rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at top, rgba(34,211,238,0.08) 0%, transparent 70%)' }} />
+          </div>
           <div className="mx-auto max-w-lg px-4 sm:px-6">
             <FadeInSection>
               <Card className="p-8 sm:p-10 text-center hover:border-white/30 transition-colors duration-300">
