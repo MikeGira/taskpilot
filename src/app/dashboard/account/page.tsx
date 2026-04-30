@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { AccountActions } from '@/components/dashboard/account-actions';
+import { ChangePasswordForm } from '@/components/dashboard/change-password-form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export const metadata = { title: 'Account Settings' };
@@ -33,6 +34,8 @@ export default async function AccountPage() {
           </div>
         </CardContent>
       </Card>
+
+      <ChangePasswordForm />
 
       <AccountActions />
     </div>
