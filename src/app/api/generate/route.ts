@@ -3,10 +3,26 @@ import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { z } from 'zod';
 
 const VALID_TOOLS = [
+  // Scripting
   'powershell', 'bash', 'python',
-  'terraform', 'ansible', 'puppet',
-  'github-actions', 'gitlab-ci',
+  // Infrastructure as Code
+  'terraform', 'pulumi', 'aws-cdk', 'packer',
+  // Configuration Management
+  'ansible', 'puppet',
+  // CI/CD & GitOps
+  'github-actions', 'gitlab-ci', 'jenkins', 'azure-devops', 'argocd',
+  // Containers & Orchestration
   'docker', 'kubernetes',
+  // Security & Compliance
+  'cis-hardening', 'vault', 'security-scanning',
+  // AI / ML & Data
+  'mlops', 'langchain',
+  // Monitoring & Observability
+  'prometheus-grafana', 'elk-stack',
+  // Database & Storage
+  'database-admin',
+  // Network Automation
+  'network-automation',
 ] as const;
 
 const GenerateSchema = z.object({
@@ -24,7 +40,7 @@ export interface GenerateResult {
   question: string | null;
   script: string | null;
   filename: string | null;
-  language: 'powershell' | 'bash' | 'python' | 'zsh' | 'terraform' | 'yaml' | 'puppet' | 'dockerfile' | null;
+  language: 'powershell' | 'bash' | 'python' | 'zsh' | 'terraform' | 'yaml' | 'puppet' | 'dockerfile' | 'groovy' | 'typescript' | null;
   title: string | null;
   explanation: string | null;
   configNotes: string[] | null;
@@ -32,42 +48,32 @@ export interface GenerateResult {
 
 function extractJson(raw: string): GenerateResult {
   let text = raw.trim();
-
   const fenced = text.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
   if (fenced) text = fenced[1].trim();
-
   const start = text.indexOf('{');
   const end = text.lastIndexOf('}');
   if (start === -1 || end === -1 || end <= start) throw new Error('No JSON object found');
-
   const candidate = text.slice(start, end + 1);
-
   try { return JSON.parse(candidate) as GenerateResult; } catch { /* continue */ }
-
   try {
     const fixed = fixLiteralNewlinesInJsonStrings(candidate);
     return JSON.parse(fixed) as GenerateResult;
   } catch { /* continue */ }
-
   return extractFieldsByRegex(text);
 }
 
 function extractFieldsByRegex(text: string): GenerateResult {
   const boolMatch = /"needsClarification"\s*:\s*(true|false)/i.exec(text);
   if (!boolMatch) throw new Error('Cannot extract needsClarification');
-
   const needsClarification = boolMatch[1] === 'true';
-
   const getString = (field: string): string | null => {
     const m = new RegExp(`"${field}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`, 'i').exec(text);
     if (!m) return null;
     return m[1].replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
   };
-
   if (needsClarification) {
     return { needsClarification: true, question: getString('question'), script: null, filename: null, language: null, title: null, explanation: null, configNotes: null };
   }
-
   let script: string | null = null;
   const scriptKeyIdx = text.indexOf('"script"');
   if (scriptKeyIdx !== -1) {
@@ -81,24 +87,11 @@ function extractFieldsByRegex(text: string): GenerateResult {
       }
     }
   }
-
-  return {
-    needsClarification: false,
-    question: null,
-    script,
-    filename: getString('filename'),
-    language: getString('language') as GenerateResult['language'],
-    title: getString('title'),
-    explanation: getString('explanation'),
-    configNotes: null,
-  };
+  return { needsClarification: false, question: null, script, filename: getString('filename'), language: getString('language') as GenerateResult['language'], title: getString('title'), explanation: getString('explanation'), configNotes: null };
 }
 
 function fixLiteralNewlinesInJsonStrings(json: string): string {
-  let result = '';
-  let inString = false;
-  let escaped = false;
-
+  let result = ''; let inString = false; let escaped = false;
   for (let i = 0; i < json.length; i++) {
     const ch = json[i];
     if (escaped) { result += ch; escaped = false; continue; }
@@ -128,18 +121,21 @@ const ENV_LABELS: Record<string, string> = {
 
 function buildToolSection(tool: string | undefined): string {
   switch (tool) {
+
+    // ── SCRIPTING ─────────────────────────────────────────────────────────────
+
     case 'powershell':
       return `TOOL: PowerShell (5.1+ or PowerShell 7+)
 LANGUAGE VALUE: "powershell" | FILE EXTENSION: .ps1
 STANDARDS:
 - Open with #Requires -Version 5.1 (or -RunAsAdministrator when needed)
-- CONFIG section at the top: named variables for every customizable value (domain, OU, paths, thresholds, email recipients)
+- CONFIG section at top: named variables for every customizable value (domain, OU, paths, thresholds, email recipients)
 - Strict mode: Set-StrictMode -Version Latest; $ErrorActionPreference = 'Stop'
-- Logging: timestamped entries to a .log file using a Write-Log function
-- Dry-run support: -WhatIf parameter or $DryRun flag before any destructive operation
-- Credentials: use Get-Credential, SecureString, or Windows Credential Manager — never plain-text passwords
+- Logging: timestamped Write-Log function writing to a .log file
+- Dry-run: -WhatIf parameter or $DryRun flag before any destructive operation
+- Credentials: Get-Credential, SecureString, or Windows Credential Manager — never plain-text passwords
 - Use approved PowerShell verbs; prefer cmdlets over calling external executables
-- Wrap operations in try/catch/finally; surface meaningful error messages`;
+- Wrap operations in try/catch/finally with meaningful error messages`;
 
     case 'bash':
       return `TOOL: Bash / Shell Script
@@ -149,10 +145,10 @@ STANDARDS:
 - Strict mode at line 2: set -euo pipefail
 - Trap for cleanup: trap 'cleanup_func' EXIT INT TERM
 - CONFIG section: readonly VARIABLE="value" for all customizable values
-- Logging: log() function that writes "YYYY-MM-DD HH:MM:SS [LEVEL] message" to both stdout and a log file
-- Dependency check: verify all required commands exist (command -v tool || die "tool not found") before doing any work
+- Logging: log() function writing "YYYY-MM-DD HH:MM:SS [LEVEL] message" to stdout and log file
+- Dependency check: command -v tool || { echo "tool not found"; exit 1; } before doing any work
 - Quote all variable expansions: "\${var}" not $var
-- Use mktemp for temp files; clean them up in the trap handler
+- mktemp for temp files; clean them up in trap handler
 - Check return codes explicitly for critical operations
 - Idempotency: check current state before making changes`;
 
@@ -165,24 +161,63 @@ STANDARDS:
 - Specific exception handling (not bare except:); log and re-raise or handle meaningfully
 - All config from environment variables (os.environ.get) or a config dataclass — never hardcoded
 - Use pathlib.Path for all file paths
-- Use dataclasses or TypedDict for structured data
 - argparse for CLI flags (--dry-run, --verbose at minimum)
-- Requirements listed in configNotes (e.g., "pip install boto3 requests")
-- CRITICAL: NEVER use triple-quoted strings (""") anywhere in the script — they break JSON serialization. Use # comments only.`;
+- Requirements listed in configNotes (pip install ...)
+- CRITICAL: NEVER use triple-quoted strings (""") anywhere — they break JSON serialization. Use # comments only.`;
+
+    // ── INFRASTRUCTURE AS CODE ────────────────────────────────────────────────
 
     case 'terraform':
       return `TOOL: Terraform (1.x)
 LANGUAGE VALUE: "terraform" | FILE EXTENSION: .tf
 STANDARDS:
-- Output main.tf as the script field. List variables.tf, outputs.tf, and terraform.tfvars.example content in configNotes.
+- Output main.tf as the script. List variables.tf, outputs.tf, terraform.tfvars.example content in configNotes.
 - Required terraform block with required_providers and version constraints
-- Remote backend block (S3 with DynamoDB lock / Azure Blob / GCS) — commented with instructions to fill in
+- Remote backend block (S3+DynamoDB / Azure Blob / GCS) — commented with instructions to fill in
 - All sensitive variables: sensitive = true
 - Standard resource tags: Environment, Owner, Project, ManagedBy = "terraform"
 - IAM/RBAC: least-privilege — explicit resource ARNs, no wildcards on sensitive actions
-- Use data sources (data "aws_vpc" etc.) instead of hardcoding IDs
-- terraform.tfvars.example in configNotes — never commit real secrets
-- configNotes must include: terraform init, plan, apply commands and required provider versions`;
+- Use data sources instead of hardcoding IDs
+- configNotes must include: terraform init/plan/apply commands, required provider versions, tfvars.example`;
+
+    case 'pulumi':
+      return `TOOL: Pulumi (TypeScript — default; note Python alternative in explanation if relevant)
+LANGUAGE VALUE: "typescript" | FILE EXTENSION: .ts (index.ts)
+STANDARDS:
+- Full Pulumi program: import * as pulumi from "@pulumi/pulumi"; with provider SDKs
+- Config and Secrets: const config = new pulumi.Config(); config.requireSecret() for sensitive values
+- Stack outputs: export const name = resource.property; for all key values consumed by other stacks
+- Resource naming: use pulumi.getProject() and pulumi.getStack() for unique, environment-aware names
+- Resource options: protect: true on stateful resources (databases, storage buckets) in prod
+- Stack references for cross-stack dependencies instead of hardcoding
+- configNotes: pulumi up, pulumi preview, pulumi stack init commands; npm install for required provider packages`;
+
+    case 'aws-cdk':
+      return `TOOL: AWS CDK v2 (TypeScript)
+LANGUAGE VALUE: "typescript" | FILE EXTENSION: .ts
+STANDARDS:
+- CDK v2: import { App, Stack, StackProps, ... } from 'aws-cdk-lib'; single import namespace
+- Full Stack class extending cdk.Stack with typed props interface
+- Use L2/L3 constructs (not Cfn-prefixed L1 escape hatches) wherever available
+- IAM: inline policies with explicit resource ARNs; Grant methods (bucket.grantRead(role)) preferred
+- RemovalPolicy.RETAIN on production databases and S3 buckets; DESTROY only for ephemeral dev resources
+- Tags: cdk.Tags.of(this).add('Environment', props.env) pattern for all stacks
+- CfnOutput for all values needed post-deploy (endpoints, ARNs, queue URLs)
+- configNotes: cdk bootstrap <account>/<region>, cdk synth, cdk deploy; required npm packages`;
+
+    case 'packer':
+      return `TOOL: HashiCorp Packer (HCL2)
+LANGUAGE VALUE: "terraform" | FILE EXTENSION: .pkr.hcl
+STANDARDS:
+- HCL2 format only (not legacy JSON): packer { required_plugins { ... } } block at top
+- source block: fully parameterized — all AMI filters, instance types, regions, and base images as variables
+- build block: chained provisioners in logical order — shell (update/install), shell (harden), file (copy configs)
+- Security hardening in provisioners: remove SSH authorized keys, clear shell history, disable root login, run OS security updates, set strict file permissions
+- variable blocks for all customizable values; sensitive = true for any secret values
+- post-processor: manifest to track build artifact IDs across runs
+- configNotes: packer init, packer validate, packer build commands; required plugin versions; how to use produced AMI/image`;
+
+    // ── CONFIGURATION MANAGEMENT ──────────────────────────────────────────────
 
     case 'ansible':
       return `TOOL: Ansible (2.9+ / ansible-core 2.12+)
@@ -192,99 +227,298 @@ STANDARDS:
 - Use ansible.builtin.* namespaced modules (not short names)
 - Idempotency: prefer Ansible modules over shell/command; use state: present/absent
 - Handlers: triggered via notify for service restarts — never restart services directly in tasks
-- Secrets: reference ansible-vault encrypted vars (note in configNotes how to encrypt)
+- Secrets: reference ansible-vault encrypted vars_files; note vault setup in configNotes
 - Tags on every task for selective execution (--tags deploy, --tags config, etc.)
-- Register task results and assert/check them: failed_when, changed_when
+- Register task results and check them: failed_when, changed_when
 - Block/rescue/always for error handling in complex task groups
-- pre_tasks: verify target OS, free disk space, connectivity
-- post_tasks: smoke-test that the change worked
-- configNotes must list: ansible-galaxy requirements, vault setup, how to run with --check (dry-run)`;
+- pre_tasks: verify OS, disk space; post_tasks: smoke-test the change
+- configNotes: ansible-galaxy requirements, vault setup, --check (dry-run) command`;
 
     case 'puppet':
       return `TOOL: Puppet (7+)
 LANGUAGE VALUE: "puppet" | FILE EXTENSION: .pp
 STANDARDS:
-- Proper class or defined type structure with parameters
-- Resource ordering: require => and before => or Puppet chaining arrows
-- Hiera for all data separation — never hardcode values in manifests; note hiera.yaml structure in configNotes
-- Use Puppet Forge modules where available (declare in Puppetfile) rather than exec resources
+- Proper class or defined type structure with typed parameters
+- Resource ordering: require => and before => or chaining arrows (->)
+- Hiera for all data separation — no hardcoded values in manifests; include hiera.yaml structure in configNotes
+- Use Puppet Forge modules (list in Puppetfile) rather than exec resources wherever possible
 - exec resources: always include onlyif/unless/creates for idempotency
-- File resources: explicit owner, group, mode
+- File resources: explicit owner, group, mode on every file resource
 - notify => Service[] to trigger service restarts from file/package changes
-- configNotes: list required Puppet modules from Forge with exact versions`;
+- configNotes: Puppetfile module list with versions, r10k/librarian-puppet setup, test with --noop`;
+
+    // ── CI/CD & GITOPS ────────────────────────────────────────────────────────
 
     case 'github-actions':
       return `TOOL: GitHub Actions
 LANGUAGE VALUE: "yaml" | FILE EXTENSION: .yml (path: .github/workflows/<name>.yml)
 STANDARDS:
-- Top-level: name, on (triggers), permissions (minimal — default to contents: read)
+- Top-level: name, on (triggers), permissions: { contents: read } as default minimal permission
 - Pin ALL actions to full commit SHAs, not mutable tags (supply chain security)
-  Example: uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+  Format: uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 - Secrets: \${{ secrets.SECRET_NAME }} — never hardcode credentials
-- permissions block: grant only what each job actually needs
-- Security scanning jobs included by default:
-    - Container images: aquasecurity/trivy-action
-    - Code (Python/JS): github/codeql-action/analyze or semgrep
-- Cache dependencies: actions/cache for npm/pip/go modules
-- Separate jobs with clear dependencies (needs:)
-- jobs.<name>.timeout-minutes set on every job
-- configNotes: list required secrets and how to add them in repo settings`;
+- permissions block: grant only what each job actually needs (contents/packages/id-token)
+- Security jobs included: aquasecurity/trivy-action for images, github/codeql-action for code
+- Cache: actions/cache for npm/pip/go/maven dependencies
+- timeout-minutes on every job to prevent runaway builds
+- configNotes: required repository secrets, how to add them, required GitHub permissions`;
 
     case 'gitlab-ci':
       return `TOOL: GitLab CI/CD
 LANGUAGE VALUE: "yaml" | FILE EXTENSION: .gitlab-ci.yml
 STANDARDS:
-- stages: defined at top (e.g., build, test, security, deploy)
-- Variables: use CI/CD project/group variables for secrets — never hardcode
-- Use rules: (not deprecated only:/except:) with appropriate conditions
-- Include GitLab security templates where applicable:
-    include: - template: Security/SAST.gitlab-ci.yml
-             - template: Security/Dependency-Scanning.gitlab-ci.yml
+- stages: at top (build, test, security, deploy)
+- Variables: CI/CD project/group variables for all secrets — never hardcode
+- Use rules: (not deprecated only:/except:) with if/changes conditions
+- Include GitLab security templates:
+    include: [{ template: 'Security/SAST.gitlab-ci.yml' }, { template: 'Security/Dependency-Scanning.gitlab-ci.yml' }]
 - cache: with key and paths for dependencies
-- artifacts: with expire_in and paths for test results
-- retry: 2 on transient failures
-- timeout: set on each job
-- image: pin to specific digest, not :latest
-- configNotes: required CI/CD variables and how to set them`;
+- artifacts: with expire_in and paths for test results and reports
+- retry: 2 on transient failures; timeout: on each job
+- Image: pin to specific digest, not :latest
+- configNotes: required CI/CD variables and how to set them in GitLab project settings`;
+
+    case 'jenkins':
+      return `TOOL: Jenkins (Declarative Pipeline)
+LANGUAGE VALUE: "groovy" | FILE EXTENSION: Jenkinsfile
+STANDARDS:
+- Declarative syntax only: pipeline { agent { ... } stages { stage('...') { steps { ... } } } }
+- withCredentials([usernamePassword(...), string(...)]) for ALL secret access — never hardcode
+- Parallel stages for independent work: parallel { stage('Unit Tests') {...} stage('Lint') {...} }
+- post { always { junit '...'; cleanWs() } success { ... } failure { slackSend(...) } }
+- timeout(time: 30, unit: 'MINUTES') on pipeline and individual stages
+- Security stage: sh 'trivy image ...' for containers; dependencyCheck for libraries; SonarQube for SAST
+- archiveArtifacts and publishHTML for test reports
+- configNotes: required Jenkins plugins (Pipeline, Credentials, SonarQube, etc.), Jenkins credentials to configure`;
+
+    case 'azure-devops':
+      return `TOOL: Azure DevOps Pipelines (YAML)
+LANGUAGE VALUE: "yaml" | FILE EXTENSION: azure-pipelines.yml
+STANDARDS:
+- Full structure: trigger, pr, variables, stages with jobs and steps
+- Variable groups: reference as group: my-variable-group; use \$(variableName) syntax
+- Service connections for Azure subscriptions, ACR, GitHub — never inline credentials
+- Secrets: AzureKeyVault@2 task or library variable groups marked as secret
+- Matrix strategy: for multi-platform or multi-framework testing
+- PublishTestResults and PublishCodeCoverageResults tasks
+- Security: CredScan, OWASP Dependency Check, container image scanning tasks
+- Environment resources with approval gates and branch protection for production
+- configNotes: required service connections, variable groups to create, agent pool requirements`;
+
+    case 'argocd':
+      return `TOOL: ArgoCD (GitOps Continuous Delivery)
+LANGUAGE VALUE: "yaml" | FILE EXTENSION: .yml
+STANDARDS:
+- Application manifest: apiVersion: argoproj.io/v1alpha1; kind: Application with full spec
+- source: repoURL, targetRevision (branch/tag/SHA), path to manifests or Helm chart
+- destination: server, namespace with explicit cluster reference
+- syncPolicy.automated: { prune: true, selfHeal: true } for full GitOps automation
+- syncPolicy.syncOptions: [CreateNamespace=true, PrunePropagationPolicy=foreground]
+- App-of-Apps pattern: root Application pointing to a directory of Application manifests
+- AppProject: sourceRepos allowlist, destinations allowlist, clusterResourceWhitelist for RBAC
+- Sync waves: argocd.argoproj.io/sync-wave annotation for ordered multi-resource deployment
+- configNotes: ArgoCD namespace setup, RBAC roles needed, repo credentials, image updater setup if needed`;
+
+    // ── CONTAINERS & ORCHESTRATION ────────────────────────────────────────────
 
     case 'docker':
       return `TOOL: Docker
 LANGUAGE VALUE: "dockerfile" | FILE EXTENSION: Dockerfile
 STANDARDS:
-- Multi-stage build: separate builder and final runtime stages
-- Pin base image to specific digest or versioned tag — never :latest
-  Example: FROM python:3.12-slim@sha256:<digest>
-- Non-root user: RUN useradd -r -u 1001 appuser && USER appuser
-- COPY --chown=appuser:appuser for file ownership
-- No secrets in any layer — use runtime secrets (Docker secrets, env vars at run time)
-- HEALTHCHECK instruction with appropriate interval/timeout/retries
-- Minimal final image: only runtime dependencies, no build tools
-- .dockerignore: exclude .git, node_modules, tests, docs
-- EXPOSE only needed ports
-- If including docker-compose.yml: put it in configNotes with resource limits (mem_limit), restart policies, and named volumes`;
+- Multi-stage build: separate builder and final runtime stages to minimize image size
+- Pin base image to versioned tag (or digest for maximum reproducibility) — never :latest
+- Non-root user: RUN useradd -r -u 1001 -g 1001 appuser && USER appuser:appuser
+- COPY --chown=appuser:appuser for proper file ownership
+- No secrets in any layer — use runtime secrets (Docker secrets, environment variables at run time only)
+- HEALTHCHECK with appropriate interval/timeout/retries/start-period
+- Minimal final stage: only runtime dependencies, no compilers or build tools
+- .dockerignore: exclude .git, node_modules, tests, .env files
+- EXPOSE only needed ports with comments explaining each
+- docker-compose.yml (in configNotes if needed): resource limits, restart policies, named volumes, health checks`;
 
     case 'kubernetes':
       return `TOOL: Kubernetes / Helm
 LANGUAGE VALUE: "yaml" | FILE EXTENSION: .yml
 STANDARDS:
-- Output a complete manifest set: Deployment (or StatefulSet), Service, ConfigMap, and a Secret template
-- resources: requests and limits on every container (CPU and memory)
-- readinessProbe and livenessProbe on every container
-- securityContext on pod AND container level:
-    runAsNonRoot: true, runAsUser: 1000
-    readOnlyRootFilesystem: true
-    allowPrivilegeEscalation: false
-    capabilities: drop: [ALL]
-- NetworkPolicy to restrict ingress/egress to only required peers
-- PodDisruptionBudget if replicas > 1
-- Labels: app, version, environment, managed-by on all resources
-- Secrets: reference from secretKeyRef — never hardcode values in manifests
-- If Helm: include Chart.yaml, values.yaml with comments, and one sample template
-- configNotes: kubectl apply order, namespace setup, required secrets`;
+- Complete manifest set: Deployment/StatefulSet + Service + ConfigMap + Secret template + HPA
+- resources: requests and limits on every container (both CPU and memory)
+- readinessProbe and livenessProbe on every container; startupProbe for slow-starting apps
+- securityContext at pod AND container level:
+    pod: runAsNonRoot: true, runAsUser: 1000, fsGroup: 2000, seccompProfile: RuntimeDefault
+    container: allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: [ALL] }
+- NetworkPolicy: deny-all ingress/egress by default; allow only required peers
+- PodDisruptionBudget: minAvailable: 1 for any workload with replicas > 1
+- Labels: app.kubernetes.io/name, app.kubernetes.io/version, environment, managed-by on all resources
+- Secrets: reference with secretKeyRef — never plaintext values in manifests (use sealed-secrets or external-secrets)
+- configNotes: kubectl apply order, namespace creation, required CRDs, secrets injection method`;
+
+    // ── SECURITY & COMPLIANCE ─────────────────────────────────────────────────
+
+    case 'cis-hardening':
+      return `TOOL: CIS Security Hardening (Bash for Linux / PowerShell for Windows)
+LANGUAGE VALUE: "bash" or "powershell" based on OS | FILE EXTENSION: .sh or .ps1
+STANDARDS:
+- CIS Benchmark aligned: reference specific CIS control IDs in comments (e.g., # CIS 5.2.4)
+- For Linux: SSH hardening (sshd_config: PermitRootLogin no, MaxAuthTries 4, Protocol 2),
+  file permissions (umask 027, /etc/passwd mode 644), sysctl hardening (net.ipv4.tcp_syncookies=1),
+  auditd rules for sudo/privileged commands, PAM password complexity, disable unused services/protocols
+- For Windows: Account lockout policies, audit policy (AuditPol), registry hardening
+  (SMB signing, NTLM restrictions, LM hash disabled), Windows Firewall baseline,
+  service hardening (disable Telnet/FTP/etc.), PowerShell constrained language mode
+- Backup before modifying: save original config with timestamp before every change
+- Idempotency: read current value, compare, apply only if needed
+- Dry-run flag (--check / -WhatIf): report WOULD-change without making changes
+- Summary report at end: list all changes applied and any skipped items
+- configNotes: CIS Benchmark document version referenced, backup location, rollback procedure`;
+
+    case 'vault':
+      return `TOOL: HashiCorp Vault (Secrets Management)
+LANGUAGE VALUE: "bash" | FILE EXTENSION: .sh
+STANDARDS:
+- Use Vault CLI (vault) with VAULT_ADDR and VAULT_TOKEN from environment — never root token in scripts
+- Auth methods: AppRole (machine auth), AWS IAM, or Kubernetes service account — choose based on environment
+- Policy-first: create minimal Vault policy before provisioning any secrets or tokens
+  path "secret/data/app/*" { capabilities = ["read"] } — never path "*" { capabilities = ["*"] }
+- Secret engines: KV v2 for static secrets, PKI for TLS certificates, database for dynamic DB creds
+- Dynamic secrets preferred over static: database engine rotates credentials automatically
+- Leases and TTLs: set appropriate TTLs; implement lease renewal for long-running processes
+- Audit backend: vault audit enable file file_path=/var/log/vault_audit.log — first step in any setup
+- Token wrapping: use response-wrapping for delivering initial credentials to applications
+- configNotes: Vault initialization/unseal process, required policies, auth method setup steps, renewal procedure`;
+
+    case 'security-scanning':
+      return `TOOL: Security Scanning & SAST Automation
+LANGUAGE VALUE: "bash" | FILE EXTENSION: .sh (standalone) or .yml (CI integration)
+STANDARDS:
+- Multi-layer scanning pipeline:
+    1. Secrets detection: gitleaks detect or trufflehog filesystem for hardcoded credentials
+    2. Dependency vulnerabilities: npm audit / pip-audit / trivy fs for SCA
+    3. SAST: semgrep --config=auto for multi-language static analysis; bandit for Python
+    4. Container images: trivy image <name> or grype for CVE scanning
+    5. IaC misconfigurations: checkov -d . for Terraform/K8s/Docker; tfsec for Terraform
+    6. Web application: OWASP ZAP baseline scan (for running services)
+- Severity gates: exit 1 on CRITICAL or HIGH findings; log MEDIUM for review
+- SARIF output: --format sarif for GitHub/GitLab code scanning UI integration
+- Allowlist/baseline file: maintain .trivyignore / .semgrepignore for accepted false positives with justification
+- Artifact: save JSON report + HTML summary for compliance evidence
+- configNotes: tool installation commands (brew/apt/pip), baseline file location, how to update allowlists, CI integration snippet`;
+
+    // ── AI / ML & DATA ────────────────────────────────────────────────────────
+
+    case 'mlops':
+      return `TOOL: AI/ML Operations (MLOps)
+LANGUAGE VALUE: "python" | FILE EXTENSION: .py
+STANDARDS:
+- MLflow for experiment tracking: mlflow.set_experiment(), log_params(), log_metrics(), log_artifacts()
+- Model registry: mlflow.register_model(); stage transitions (Staging → Production) with validation gate
+- Model serving: FastAPI wrapper with /health and /predict endpoints; Pydantic schemas for input/output
+- Data validation: reject malformed inputs before inference; log rejected samples for analysis
+- Monitoring: log prediction latency, confidence distributions, and data drift metrics each inference
+- Reproducibility: log requirements.txt, random seeds, dataset version/hash with every experiment run
+- Security: authenticate model endpoints (API key or JWT); rate-limit inference endpoints;
+  sanitize text inputs to prevent prompt injection on LLM endpoints
+- GPU resource management: set cuda device explicitly; handle CUDA OOM with graceful error response
+- Cost tracking: log token counts and compute time per request for billing and optimization
+- CRITICAL: NEVER use triple-quoted strings (""") — use # comments only
+- configNotes: pip requirements, MLflow tracking server URI, model registry permissions, GPU requirements`;
+
+    case 'langchain':
+      return `TOOL: AI Pipeline — LangChain / RAG / LLM Integration
+LANGUAGE VALUE: "python" | FILE EXTENSION: .py
+STANDARDS:
+- LangChain v0.3+ imports: from langchain_anthropic import ChatAnthropic (not deprecated paths)
+- RAG pipeline: DocumentLoader → RecursiveCharacterTextSplitter → Embeddings → VectorStore → Retriever → LLM chain
+- Vector stores: Chroma (local dev/test), pgvector/Pinecone/Weaviate (production with persistence)
+- LLM abstraction: model name always from environment variable (ANTHROPIC_MODEL, OPENAI_MODEL) — never hardcoded
+- API keys: ANTHROPIC_API_KEY / OPENAI_API_KEY from os.environ only — never in code
+- Streaming: use .stream() for user-facing responses; async .astream() in async contexts
+- Memory: ConversationBufferWindowMemory with configurable window size from env var
+- Prompt injection defense: separate system/user prompts strictly; validate/sanitize user inputs;
+  never concatenate raw user input into system prompts
+- Cost control: tiktoken for token estimation before call; log usage (prompt_tokens, completion_tokens) per request
+- Error handling: implement retry with exponential backoff for rate limit and transient errors
+- CRITICAL: NEVER use triple-quoted strings (""") — use # comments only
+- configNotes: pip requirements (langchain, langchain-anthropic, chromadb, tiktoken), vector DB setup, API key config`;
+
+    // ── MONITORING & OBSERVABILITY ────────────────────────────────────────────
+
+    case 'prometheus-grafana':
+      return `TOOL: Prometheus & Grafana (Monitoring as Code)
+LANGUAGE VALUE: "yaml" | FILE EXTENSION: .yml
+STANDARDS:
+- Prometheus prometheus.yml: global scrape_interval, scrape_configs with proper job_name,
+  static_configs or service discovery (kubernetes_sd_configs / file_sd_configs), TLS and basic_auth
+- AlertManager alertmanager.yml: route tree with group_by, group_wait, receivers
+  (Slack webhook, PagerDuty, email) with proper inhibit_rules to prevent alert storms
+- PrometheusRule CRDs (for Kubernetes): alert rules with expr (PromQL), for (pending duration),
+  labels.severity, and annotations.summary + annotations.runbook_url
+- Recording rules: pre-compute expensive aggregations as new metric names for dashboard performance
+- Alert fatigue prevention: meaningful for: durations (not instant), actionable severity levels,
+  SLO-based burn rate alerts rather than raw thresholds where possible
+- Grafana dashboard JSON: variables for environment/cluster, templated queries, alerting thresholds on panels
+- Security: Prometheus basic auth + TLS; Grafana API keys with minimal scope; restrict datasource access
+- configNotes: docker-compose or Helm values to deploy the stack, scrape target configuration requirements`;
+
+    case 'elk-stack':
+      return `TOOL: ELK Stack — Elasticsearch, Logstash, Kibana (Elastic Stack 8.x)
+LANGUAGE VALUE: "yaml" | FILE EXTENSION: .yml (.conf for Logstash pipelines)
+STANDARDS:
+- Logstash pipeline (.conf): input (beats/syslog/kafka with TLS) → filter (grok with named patterns,
+  mutate for field normalization, geoip for IP enrichment, date for timestamp parsing) → output
+  (elasticsearch with index template reference, retry on failure)
+- Index template: proper mappings (keyword vs text, date format), index lifecycle policy assignment
+- ILM policy: hot (active write) → warm (replica reduction, force-merge) → cold (frozen) → delete phases
+  with data-appropriate retention per tier
+- Security (Elastic Stack 8 has security enabled by default): TLS between all components;
+  API key auth for Logstash→ES communication; role-based access in Kibana (viewer/analyst/admin)
+- Filebeat/Metricbeat config: modules enabled, output.elasticsearch with API key, processors for enrichment
+- Kibana Alerts: threshold-based and ML anomaly detection rules for security events (failed logins, spike in errors)
+- Performance: JVM heap = 50% of RAM (max 32GB); disable swap; set vm.max_map_count=262144
+- configNotes: resource requirements per node role, TLS certificate generation steps, snapshot repository setup (S3/GCS)`;
+
+    // ── DATABASE & STORAGE ────────────────────────────────────────────────────
+
+    case 'database-admin':
+      return `TOOL: Database Administration (PostgreSQL / MySQL / MariaDB)
+LANGUAGE VALUE: "bash" | FILE EXTENSION: .sh
+STANDARDS:
+- Connection security: SSL/TLS required; connection string ONLY from environment variable (DATABASE_URL or PGPASSWORD)
+- PostgreSQL: use psql with PGPASSWORD env var or .pgpass file — never -p password on command line (visible in ps aux)
+- MySQL/MariaDB: --defaults-extra-file=~/.my.cnf for credentials — never -p on command line
+- Backup: pg_dump / mysqldump with --compress; verify every backup by checking file size and header integrity;
+  test restore to a separate schema/database monthly (note in configNotes)
+- Replication monitoring: check replica lag, replication status, alert when lag exceeds threshold
+- Maintenance windows: VACUUM ANALYZE / REINDEX (PG), OPTIMIZE TABLE / ANALYZE (MySQL) during low traffic
+- User management: CREATE USER with minimum required privileges; GRANT only necessary permissions;
+  document each user's purpose; revoke unused grants
+- Audit logging: enable pg_audit extension (PG) or general_log / audit_log (MySQL) for compliance
+- Connection pooling: PgBouncer pool_mode=transaction (PG) or ProxySQL configuration notes
+- configNotes: DB permissions required to run the script, connection string format, backup storage path, restore test procedure`;
+
+    // ── NETWORK AUTOMATION ────────────────────────────────────────────────────
+
+    case 'network-automation':
+      return `TOOL: Network Automation (Python netmiko / NAPALM / Nornir)
+LANGUAGE VALUE: "python" | FILE EXTENSION: .py
+STANDARDS:
+- Use netmiko for multi-vendor SSH automation; NAPALM for config management and diff/validation;
+  Nornir for parallel execution across device fleets
+- Device inventory: read from YAML or JSON file — never hardcode hostnames/IPs in script
+- Credentials: from environment variables or HashiCorp Vault — never in script or inventory file
+- Connection management: context managers (with ConnectHandler(...) as conn:) for guaranteed session cleanup
+- Idempotency: retrieve current running config, diff against desired state, apply only changed sections
+- Backup before change: save running-config to timestamped local file before any modification
+- Rollback: save rollback config snippet; implement --rollback flag to restore previous state
+- Validation: test connectivity and authentication on all devices before bulk operations; skip and log failures
+- Multi-vendor support: detect OS type (Cisco IOS/NXOS, Junos, EOS, FortiOS) and use correct driver
+- CRITICAL: NEVER use triple-quoted strings (""") — use # comments only
+- configNotes: pip requirements (netmiko, napalm, nornir, pyyaml), inventory file format example, supported vendor OS types`;
+
+    // ── DEFAULT ───────────────────────────────────────────────────────────────
 
     default:
       return `TOOL: Auto-detect from context
-Select the most appropriate scripting language and format based on the OS, environment, and task:
+Select the most appropriate language and format based on the OS, environment, and task:
 - Windows tasks → PowerShell (.ps1)
 - Linux/Unix tasks → Bash (.sh)
 - Cross-platform or API-heavy tasks → Python (.py)
@@ -317,59 +551,44 @@ ${buildToolSection(tool)}
 UNIVERSAL STANDARDS — apply to every output regardless of tool:
 1. SECURITY HARDENING IS NON-NEGOTIABLE:
    - Principle of least privilege: minimal permissions, explicit scopes, no wildcards on sensitive operations
-   - Zero hardcoded secrets: credentials, API keys, tokens, and passwords always come from environment variables, secret managers (AWS Secrets Manager, Azure Key Vault, HashiCorp Vault), or encrypted vaults
+   - Zero hardcoded secrets: credentials, API keys, tokens always come from environment variables, secret managers, or encrypted vaults
    - Encrypted connections everywhere: TLS/HTTPS, no plaintext protocols
-   - Audit logging: every significant action, success, and failure is logged with timestamp and actor
-   - Input validation: validate and sanitize inputs before use
+   - Audit logging: every significant action, success, and failure logged with timestamp
+   - Input validation: validate and sanitize all inputs before use
+2. IDEMPOTENCY: safe to run multiple times without breaking a working system
+3. ERROR HANDLING: never silently ignore errors; fail explicitly with clear messages; clean up partial state
+4. PREREQUISITES IN configNotes: every tool, version, permission, and env var required before running
+5. CLOUD TOOLING (only when environment includes cloud):
+   - AWS → AWS CLI v2 with named profiles or IAM roles (never access key inline)
+   - Azure → Azure CLI or Az PowerShell with service principal or managed identity
+   - GCP → gcloud CLI with service account or Workload Identity Federation
+   - DigitalOcean → doctl CLI with token from environment variable
 
-2. IDEMPOTENCY: the artifact must be safe to run multiple times. Check current state before making changes. Running it twice must not break a working system.
-
-3. ERROR HANDLING: never silently ignore errors. Fail explicitly with a clear message indicating what went wrong and where. Clean up partial state on failure.
-
-4. PREREQUISITES IN configNotes: list every tool, version, permission, and environment variable required before the script can run.
-
-5. CLOUD TOOLING (use only when environment includes cloud):
-   - AWS → AWS CLI v2 with named profiles or IAM roles (never access key in script)
-   - Azure → Azure CLI (az) or Az PowerShell module with service principal or managed identity
-   - GCP → gcloud CLI authenticated via service account or Workload Identity
-   - DigitalOcean → doctl CLI or DO API via curl/requests with token from environment variable
-
-CLARIFICATION RULE: Ask for clarification only if one critical piece of information is missing that makes the script impossible to write. Otherwise make reasonable assumptions, document them in configNotes, and generate the script. One question maximum.
+CLARIFICATION RULE: Ask for clarification only if one critical piece of information is truly missing. Otherwise make reasonable assumptions, document them in configNotes, and generate. One question maximum.
 
 OUTPUT FORMAT — STRICT:
 - Return a single raw JSON object. No markdown, no prose, nothing outside the JSON.
 - Escape all newlines as \\n, double-quotes as \\", backslashes as \\\\ inside string values.
 - The "script" field is a single JSON string — never embed literal newline characters.
-- language values: "powershell" | "bash" | "python" | "terraform" | "yaml" | "puppet" | "dockerfile" | null
+- language values: "powershell" | "bash" | "python" | "terraform" | "yaml" | "puppet" | "dockerfile" | "groovy" | "typescript" | null
 
 If generating:
-{"needsClarification":false,"question":null,"script":"# full content — newlines as \\n","filename":"descriptive-kebab-name.ext","language":"bash","title":"Short description of what this does","explanation":"2-3 sentences on what the script does and any key design decisions.","configNotes":["Prerequisite or config note 1","Prerequisite or config note 2"]}
+{"needsClarification":false,"question":null,"script":"# full content — newlines as \\n","filename":"descriptive-kebab-name.ext","language":"bash","title":"Short description","explanation":"2-3 sentences on what this does and key design decisions.","configNotes":["Prerequisite or note 1","Prerequisite or note 2"]}
 
 If clarification needed:
 {"needsClarification":true,"question":"One specific question","script":null,"filename":null,"language":null,"title":null,"explanation":null,"configNotes":null}`;
 }
 
-function buildUserMessage(
-  taskDescription: string,
-  clarificationAnswer?: string,
-  previousQuestion?: string
-): string {
+function buildUserMessage(taskDescription: string, clarificationAnswer?: string, previousQuestion?: string): string {
   if (clarificationAnswer && previousQuestion) {
-    return `Original request: ${taskDescription}
-
-You asked: ${previousQuestion}
-My answer: ${clarificationAnswer}
-
-Now please generate the script.`;
+    return `Original request: ${taskDescription}\n\nYou asked: ${previousQuestion}\nMy answer: ${clarificationAnswer}\n\nNow please generate the script.`;
   }
   return taskDescription;
 }
 
 export async function POST(request: Request) {
   const raw = await request.text();
-  if (raw.length > 8192) {
-    return NextResponse.json({ error: 'Request too large' }, { status: 413 });
-  }
+  if (raw.length > 8192) return NextResponse.json({ error: 'Request too large' }, { status: 413 });
 
   const ip = getClientIp(request);
   const limit = rateLimit(`generate:${ip}`, 10, 60 * 60 * 1000);
@@ -381,22 +600,16 @@ export async function POST(request: Request) {
   }
 
   let body: unknown;
-  try {
-    body = JSON.parse(raw);
-  } catch {
+  try { body = JSON.parse(raw); } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
   const parsed = GenerateSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: parsed.error.errors[0]?.message ?? 'Invalid request' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: parsed.error.errors[0]?.message ?? 'Invalid request' }, { status: 400 });
   }
 
-  const { os, environment, cloudProviders, tool, taskDescription, clarificationAnswer, previousQuestion } =
-    parsed.data;
+  const { os, environment, cloudProviders, tool, taskDescription, clarificationAnswer, previousQuestion } = parsed.data;
 
   if (!process.env.ANTHROPIC_API_KEY) {
     console.error('[generate] ANTHROPIC_API_KEY not configured');
@@ -425,32 +638,21 @@ export async function POST(request: Request) {
     if (!anthropicResponse.ok) {
       const errData = await anthropicResponse.json().catch(() => ({}));
       console.error('[generate] Anthropic error:', anthropicResponse.status, errData);
-      return NextResponse.json(
-        { error: 'Script generation failed. Please try again.' },
-        { status: 502 }
-      );
+      return NextResponse.json({ error: 'Script generation failed. Please try again.' }, { status: 502 });
     }
 
     const data = await anthropicResponse.json();
     const text: string = data.content?.[0]?.text ?? '';
 
     let result: GenerateResult;
-    try {
-      result = extractJson(text);
-    } catch {
+    try { result = extractJson(text); } catch {
       console.error('[generate] Failed to parse Claude response:', text.slice(0, 300));
-      return NextResponse.json(
-        { error: 'Unexpected response format. Please try again.' },
-        { status: 502 }
-      );
+      return NextResponse.json({ error: 'Unexpected response format. Please try again.' }, { status: 502 });
     }
 
     return NextResponse.json(result);
   } catch (err) {
     console.error('[generate] Fetch error:', err);
-    return NextResponse.json(
-      { error: 'Network error reaching AI service. Please try again.' },
-      { status: 502 }
-    );
+    return NextResponse.json({ error: 'Network error reaching AI service. Please try again.' }, { status: 502 });
   }
 }

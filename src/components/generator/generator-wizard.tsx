@@ -8,7 +8,7 @@ import {
   Monitor, Terminal, Apple, Layers, Server, GitMerge, Cloud,
   ArrowRight, ArrowLeft, Wand2, Copy, Download, CheckCircle2,
   RefreshCw, Loader2, AlertCircle, Check, ChevronRight, ThumbsUp, ThumbsDown,
-  Code, Box, GitBranch, Settings,
+  Code, Box, GitBranch, Settings, Shield, Key, Brain, Database, Activity, Package, Workflow, Network,
 } from 'lucide-react';
 import { cn, copyToClipboard, downloadTextFile } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
@@ -19,7 +19,7 @@ type Step = 'os' | 'environment' | 'tool' | 'task' | 'generating' | 'clarify' | 
 
 interface OS { id: string; label: string; desc: string; icon: React.ElementType; color: string; accent: string; }
 interface Env { id: string; label: string; desc: string; icon: React.ElementType; color: string; accent: string; }
-interface Tool { id: string; label: string; desc: string; icon: React.ElementType; color: string; accent: string; }
+interface Tool { id: string; label: string; desc: string; icon: React.ElementType; color: string; accent: string; category: string; }
 interface Cloud { id: string; label: string; short: string; }
 
 // ── Data ─────────────────────────────────────────────────────────────────────
@@ -38,17 +38,55 @@ const ENV_OPTIONS: Env[] = [
   { id: 'multi-cloud', label: 'Multi-Cloud', desc: 'Multiple providers · Complex infrastructure', icon: Layers,   color: 'border-amber-500/60   bg-amber-500/20   hover:border-amber-400    hover:bg-amber-500/30',   accent: 'text-amber-300'   },
 ];
 
+const TOOL_CATEGORY_ORDER = [
+  'Scripting',
+  'Infrastructure as Code',
+  'Configuration Management',
+  'CI/CD & GitOps',
+  'Containers & Orchestration',
+  'Security & Compliance',
+  'AI / ML & Data',
+  'Monitoring & Observability',
+  'Database & Storage',
+  'Network Automation',
+] as const;
+
 const TOOL_OPTIONS: Tool[] = [
-  { id: 'powershell',     label: 'PowerShell',         desc: 'Windows automation, Active Directory, Exchange',              icon: Terminal,  color: 'border-blue-500/60   bg-blue-500/20   hover:border-blue-400     hover:bg-blue-500/30',   accent: 'text-blue-300'   },
-  { id: 'bash',           label: 'Bash / Shell',        desc: 'Linux/Unix system admin, cron jobs, pipelines',               icon: Terminal,  color: 'border-green-500/60  bg-green-500/20  hover:border-green-400    hover:bg-green-500/30',  accent: 'text-green-300'  },
-  { id: 'python',         label: 'Python',              desc: 'Cross-platform automation, APIs, data processing',            icon: Code,      color: 'border-yellow-500/60 bg-yellow-500/20 hover:border-yellow-400   hover:bg-yellow-500/30', accent: 'text-yellow-300' },
-  { id: 'terraform',      label: 'Terraform',           desc: 'Infrastructure as Code — provision VMs, networks, cloud',     icon: Server,    color: 'border-violet-500/60 bg-violet-500/20 hover:border-violet-400   hover:bg-violet-500/30', accent: 'text-violet-300' },
-  { id: 'ansible',        label: 'Ansible',             desc: 'Config management — YAML playbooks, agentless SSH',           icon: Settings,  color: 'border-red-500/60    bg-red-500/20    hover:border-red-400      hover:bg-red-500/30',    accent: 'text-red-300'    },
-  { id: 'puppet',         label: 'Puppet',              desc: 'Config management — manifests, Hiera, agent-based',           icon: Settings,  color: 'border-orange-500/60 bg-orange-500/20 hover:border-orange-400   hover:bg-orange-500/30', accent: 'text-orange-300' },
-  { id: 'github-actions', label: 'GitHub Actions',      desc: 'CI/CD pipelines with security scanning built in',             icon: GitBranch, color: 'border-white/30      bg-white/8       hover:border-white/50     hover:bg-white/12',      accent: 'text-white'      },
-  { id: 'gitlab-ci',      label: 'GitLab CI',           desc: 'CI/CD pipelines — .gitlab-ci.yml with SAST/DAST',             icon: GitBranch, color: 'border-amber-500/60  bg-amber-500/20  hover:border-amber-400    hover:bg-amber-500/30',  accent: 'text-amber-300'  },
-  { id: 'docker',         label: 'Docker',              desc: 'Containerization — Dockerfile, docker-compose.yml',           icon: Box,       color: 'border-cyan-500/60   bg-cyan-500/20   hover:border-cyan-400     hover:bg-cyan-500/30',   accent: 'text-cyan-300'   },
-  { id: 'kubernetes',     label: 'Kubernetes / Helm',   desc: 'Container orchestration — manifests, Helm charts, policies',  icon: Cloud,     color: 'border-emerald-500/60 bg-emerald-500/20 hover:border-emerald-400 hover:bg-emerald-500/30', accent: 'text-emerald-300' },
+  // Scripting
+  { category: 'Scripting',                  id: 'powershell',         label: 'PowerShell',         desc: 'Windows automation, Active Directory, Exchange',               icon: Terminal,  color: 'border-blue-500/60    bg-blue-500/20    hover:border-blue-400    hover:bg-blue-500/30',    accent: 'text-blue-300'    },
+  { category: 'Scripting',                  id: 'bash',               label: 'Bash / Shell',        desc: 'Linux/Unix system admin, cron jobs, pipelines',                icon: Terminal,  color: 'border-green-500/60   bg-green-500/20   hover:border-green-400   hover:bg-green-500/30',   accent: 'text-green-300'   },
+  { category: 'Scripting',                  id: 'python',             label: 'Python',              desc: 'Cross-platform automation, APIs, data processing',             icon: Code,      color: 'border-yellow-500/60  bg-yellow-500/20  hover:border-yellow-400  hover:bg-yellow-500/30',  accent: 'text-yellow-300'  },
+  // Infrastructure as Code
+  { category: 'Infrastructure as Code',     id: 'terraform',          label: 'Terraform',           desc: 'IaC — provision VMs, networks, cloud resources',               icon: Server,    color: 'border-violet-500/60  bg-violet-500/20  hover:border-violet-400  hover:bg-violet-500/30',  accent: 'text-violet-300'  },
+  { category: 'Infrastructure as Code',     id: 'pulumi',             label: 'Pulumi',              desc: 'IaC in TypeScript/Python — modern Terraform alternative',       icon: Code,      color: 'border-fuchsia-500/60 bg-fuchsia-500/20 hover:border-fuchsia-400 hover:bg-fuchsia-500/30', accent: 'text-fuchsia-300' },
+  { category: 'Infrastructure as Code',     id: 'aws-cdk',            label: 'AWS CDK',             desc: 'AWS Cloud Development Kit — TypeScript/Python IaC',             icon: Cloud,     color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
+  { category: 'Infrastructure as Code',     id: 'packer',             label: 'Packer',              desc: 'Build hardened VM and container images across providers',        icon: Package,   color: 'border-teal-500/60    bg-teal-500/20    hover:border-teal-400    hover:bg-teal-500/30',    accent: 'text-teal-300'    },
+  // Configuration Management
+  { category: 'Configuration Management',   id: 'ansible',            label: 'Ansible',             desc: 'YAML playbooks — agentless SSH config management',             icon: Settings,  color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
+  { category: 'Configuration Management',   id: 'puppet',             label: 'Puppet',              desc: 'Manifests + Hiera — agent-based config management',            icon: Settings,  color: 'border-amber-500/60   bg-amber-500/20   hover:border-amber-400   hover:bg-amber-500/30',   accent: 'text-amber-300'   },
+  // CI/CD & GitOps
+  { category: 'CI/CD & GitOps',             id: 'github-actions',     label: 'GitHub Actions',      desc: 'CI/CD pipelines with security scanning built in',              icon: GitBranch, color: 'border-white/30       bg-white/8        hover:border-white/50    hover:bg-white/12',       accent: 'text-white'       },
+  { category: 'CI/CD & GitOps',             id: 'gitlab-ci',          label: 'GitLab CI',           desc: 'CI/CD pipelines with SAST/DAST — .gitlab-ci.yml',              icon: GitBranch, color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
+  { category: 'CI/CD & GitOps',             id: 'jenkins',            label: 'Jenkins',             desc: 'Declarative Jenkinsfile pipeline — Groovy DSL',                 icon: Workflow,  color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
+  { category: 'CI/CD & GitOps',             id: 'azure-devops',       label: 'Azure DevOps',        desc: 'Azure Pipelines YAML — multi-stage with approval gates',        icon: Workflow,  color: 'border-blue-500/60    bg-blue-500/20    hover:border-blue-400    hover:bg-blue-500/30',    accent: 'text-blue-300'    },
+  { category: 'CI/CD & GitOps',             id: 'argocd',             label: 'ArgoCD',              desc: 'GitOps continuous delivery — App-of-Apps pattern',             icon: GitBranch, color: 'border-emerald-500/60 bg-emerald-500/20 hover:border-emerald-400 hover:bg-emerald-500/30', accent: 'text-emerald-300' },
+  // Containers & Orchestration
+  { category: 'Containers & Orchestration', id: 'docker',             label: 'Docker',              desc: 'Dockerfile — multi-stage, non-root, health checks',            icon: Box,       color: 'border-cyan-500/60    bg-cyan-500/20    hover:border-cyan-400    hover:bg-cyan-500/30',    accent: 'text-cyan-300'    },
+  { category: 'Containers & Orchestration', id: 'kubernetes',         label: 'Kubernetes / Helm',   desc: 'Manifests + Helm charts — security context, policies',          icon: Layers,    color: 'border-indigo-500/60  bg-indigo-500/20  hover:border-indigo-400  hover:bg-indigo-500/30',  accent: 'text-indigo-300'  },
+  // Security & Compliance
+  { category: 'Security & Compliance',      id: 'cis-hardening',      label: 'CIS Hardening',       desc: 'CIS Benchmark scripts — harden Linux or Windows servers',       icon: Shield,    color: 'border-rose-500/60    bg-rose-500/20    hover:border-rose-400    hover:bg-rose-500/30',    accent: 'text-rose-300'    },
+  { category: 'Security & Compliance',      id: 'vault',              label: 'HashiCorp Vault',     desc: 'Secrets management — policies, dynamic creds, PKI',            icon: Key,       color: 'border-yellow-500/60  bg-yellow-500/20  hover:border-yellow-400  hover:bg-yellow-500/30',  accent: 'text-yellow-300'  },
+  { category: 'Security & Compliance',      id: 'security-scanning',  label: 'Security Scanning',   desc: 'Trivy, Semgrep, Gitleaks, Checkov — multi-layer SAST/SCA',    icon: Shield,    color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
+  // AI / ML & Data
+  { category: 'AI / ML & Data',             id: 'mlops',              label: 'AI/ML Ops',           desc: 'MLflow, model serving, drift monitoring, inference API',        icon: Brain,     color: 'border-violet-500/60  bg-violet-500/20  hover:border-violet-400  hover:bg-violet-500/30',  accent: 'text-violet-300'  },
+  { category: 'AI / ML & Data',             id: 'langchain',          label: 'LangChain / RAG',     desc: 'LLM pipelines, RAG, vector stores, prompt engineering',         icon: Brain,     color: 'border-fuchsia-500/60 bg-fuchsia-500/20 hover:border-fuchsia-400 hover:bg-fuchsia-500/30', accent: 'text-fuchsia-300' },
+  // Monitoring & Observability
+  { category: 'Monitoring & Observability', id: 'prometheus-grafana',  label: 'Prometheus + Grafana', desc: 'Metrics, alerting rules, dashboards as code',                 icon: Activity,  color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
+  { category: 'Monitoring & Observability', id: 'elk-stack',           label: 'ELK Stack',           desc: 'Elasticsearch, Logstash, Kibana — log pipelines + ILM',       icon: Activity,  color: 'border-teal-500/60    bg-teal-500/20    hover:border-teal-400    hover:bg-teal-500/30',    accent: 'text-teal-300'    },
+  // Database & Storage
+  { category: 'Database & Storage',         id: 'database-admin',      label: 'Database Admin',      desc: 'PostgreSQL / MySQL — backup, replication, user management',   icon: Database,  color: 'border-blue-500/60    bg-blue-500/20    hover:border-blue-400    hover:bg-blue-500/30',    accent: 'text-blue-300'    },
+  // Network Automation
+  { category: 'Network Automation',         id: 'network-automation',  label: 'Network Automation',  desc: 'netmiko / NAPALM / Nornir — multi-vendor network config',     icon: Network,   color: 'border-green-500/60   bg-green-500/20   hover:border-green-400   hover:bg-green-500/30',   accent: 'text-green-300'   },
 ];
 
 const CLOUD_PROVIDERS: Cloud[] = [
@@ -95,6 +133,8 @@ const LANG_LABELS: Record<string, string> = {
   yaml: 'YAML',
   puppet: 'Puppet',
   dockerfile: 'Dockerfile',
+  groovy: 'Groovy (Jenkinsfile)',
+  typescript: 'TypeScript',
 };
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -406,16 +446,24 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           </button>
           <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">What tool or language?</h2>
           <p className="text-sm text-[#9CA3AF] mb-6">This determines the script format, file type, and enterprise best practices applied.</p>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {TOOL_OPTIONS.map((t) => (
-              <SelectionCard
-                key={t.id}
-                option={t}
-                selected={tool === t.id}
-                onClick={() => { setTool(t.id); setStep('task'); }}
-              />
-            ))}
-          </div>
+          {TOOL_CATEGORY_ORDER.map((category) => {
+            const tools = TOOL_OPTIONS.filter((t) => t.category === category);
+            return (
+              <div key={category} className="mb-6">
+                <p className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wider mb-3">{category}</p>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {tools.map((t) => (
+                    <SelectionCard
+                      key={t.id}
+                      option={t}
+                      selected={tool === t.id}
+                      onClick={() => { setTool(t.id); setStep('task'); }}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 

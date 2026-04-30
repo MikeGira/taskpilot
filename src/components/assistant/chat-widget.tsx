@@ -22,18 +22,54 @@ const ENV_OPTS = [
   { id: 'cloud',       label: 'Cloud'       },
   { id: 'multi-cloud', label: 'Multi-Cloud' },
 ];
-const TOOL_OPTS = [
-  { id: 'powershell',     label: 'PowerShell',       emoji: '❯_' },
-  { id: 'bash',           label: 'Bash / Shell',      emoji: '$_' },
-  { id: 'python',         label: 'Python',            emoji: '🐍' },
-  { id: 'terraform',      label: 'Terraform',         emoji: '🏗' },
-  { id: 'ansible',        label: 'Ansible',           emoji: '📋' },
-  { id: 'puppet',         label: 'Puppet',            emoji: '🎭' },
-  { id: 'github-actions', label: 'GitHub Actions',    emoji: '⚙' },
-  { id: 'gitlab-ci',      label: 'GitLab CI',         emoji: '🦊' },
-  { id: 'docker',         label: 'Docker',            emoji: '🐳' },
-  { id: 'kubernetes',     label: 'K8s / Helm',        emoji: '☸' },
+const TOOL_CATEGORIES_PILOT = [
+  { label: 'Scripting', tools: [
+    { id: 'powershell',        label: 'PowerShell',        emoji: '❯_' },
+    { id: 'bash',              label: 'Bash / Shell',       emoji: '$_' },
+    { id: 'python',            label: 'Python',             emoji: '🐍' },
+  ]},
+  { label: 'IaC', tools: [
+    { id: 'terraform',         label: 'Terraform',          emoji: '🏗' },
+    { id: 'pulumi',            label: 'Pulumi',             emoji: '🔷' },
+    { id: 'aws-cdk',           label: 'AWS CDK',            emoji: '☁' },
+    { id: 'packer',            label: 'Packer',             emoji: '📦' },
+  ]},
+  { label: 'Config Management', tools: [
+    { id: 'ansible',           label: 'Ansible',            emoji: '📋' },
+    { id: 'puppet',            label: 'Puppet',             emoji: '🎭' },
+  ]},
+  { label: 'CI/CD & GitOps', tools: [
+    { id: 'github-actions',    label: 'GitHub Actions',     emoji: '⚙' },
+    { id: 'gitlab-ci',         label: 'GitLab CI',          emoji: '🦊' },
+    { id: 'jenkins',           label: 'Jenkins',            emoji: '🔧' },
+    { id: 'azure-devops',      label: 'Azure DevOps',       emoji: '🔵' },
+    { id: 'argocd',            label: 'ArgoCD',             emoji: '🔄' },
+  ]},
+  { label: 'Containers', tools: [
+    { id: 'docker',            label: 'Docker',             emoji: '🐳' },
+    { id: 'kubernetes',        label: 'K8s / Helm',         emoji: '☸' },
+  ]},
+  { label: 'Security', tools: [
+    { id: 'cis-hardening',     label: 'CIS Hardening',      emoji: '🛡' },
+    { id: 'vault',             label: 'Vault',              emoji: '🔑' },
+    { id: 'security-scanning', label: 'Sec Scanning',       emoji: '🔍' },
+  ]},
+  { label: 'AI / ML', tools: [
+    { id: 'mlops',             label: 'AI/ML Ops',          emoji: '🧠' },
+    { id: 'langchain',         label: 'LangChain/RAG',      emoji: '🤖' },
+  ]},
+  { label: 'Monitoring', tools: [
+    { id: 'prometheus-grafana', label: 'Prometheus',        emoji: '📊' },
+    { id: 'elk-stack',          label: 'ELK Stack',         emoji: '📈' },
+  ]},
+  { label: 'Database', tools: [
+    { id: 'database-admin',    label: 'DB Admin',           emoji: '🗄' },
+  ]},
+  { label: 'Network', tools: [
+    { id: 'network-automation', label: 'Network Auto',      emoji: '🌐' },
+  ]},
 ];
+const TOOL_OPTS = TOOL_CATEGORIES_PILOT.flatMap((c) => c.tools);
 const CLOUD_PROVIDER_OPTS = [
   { id: 'AWS',          label: 'AWS'          },
   { id: 'Azure',        label: 'Azure'        },
@@ -455,28 +491,31 @@ export function ChatWidget() {
 
             {/* STEP: Tool */}
             {genStep === 'tool' && (
-              <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-3">
-                <button onClick={() => setGenStep('env')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit">
+              <div className="flex-1 overflow-y-auto p-4 scrollbar-hidden flex flex-col gap-2">
+                <button onClick={() => setGenStep('env')} className="flex items-center gap-1 text-[11px] text-[#888] hover:text-white transition-colors w-fit mb-1">
                   <ArrowLeft className="h-3 w-3" /> Back
                 </button>
-                <div>
-                  <p className="text-xs font-semibold text-white mb-0.5">What tool or language?</p>
-                  <p className="text-[11px] text-[#888]">Determines script format and best practices applied.</p>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {TOOL_OPTS.map((t) => (
-                    <button key={t.id} onClick={() => { setGenTool(t.id); setGenStep('task'); }}
-                      className={cn(
-                        'flex items-center gap-2 rounded-xl border px-3 py-3 text-sm font-medium text-white transition-all',
-                        genTool === t.id
-                          ? 'border-indigo-500/60 bg-indigo-950/40'
-                          : 'border-white/10 bg-white/3 hover:border-indigo-500/40 hover:bg-indigo-950/30'
-                      )}>
-                      <span className="text-base">{t.emoji}</span>
-                      <span className="font-medium text-[12px]">{t.label}</span>
-                    </button>
-                  ))}
-                </div>
+                <p className="text-xs font-semibold text-white mb-0.5">What tool or language?</p>
+                <p className="text-[11px] text-[#888] mb-2">Determines script format and best practices applied.</p>
+                {TOOL_CATEGORIES_PILOT.map((cat) => (
+                  <div key={cat.label} className="mb-3">
+                    <p className="text-[9px] font-semibold text-[#555] uppercase tracking-wider mb-1.5">{cat.label}</p>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {cat.tools.map((t) => (
+                        <button key={t.id} onClick={() => { setGenTool(t.id); setGenStep('task'); }}
+                          className={cn(
+                            'flex items-center gap-1.5 rounded-lg border px-2.5 py-2 text-[11px] font-medium text-white transition-all',
+                            genTool === t.id
+                              ? 'border-indigo-500/60 bg-indigo-950/40'
+                              : 'border-white/10 bg-white/3 hover:border-indigo-500/40 hover:bg-indigo-950/30'
+                          )}>
+                          <span className="text-sm">{t.emoji}</span>
+                          <span>{t.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
