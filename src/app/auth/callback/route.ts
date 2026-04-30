@@ -1,21 +1,25 @@
 import { createServerClient } from '@supabase/ssr';
+import type { EmailOtpType } from '@supabase/supabase-js';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const code = searchParams.get('code');
-  const next = searchParams.get('next') ?? '/dashboard';
+  const code       = searchParams.get('code');
+  const token_hash = searchParams.get('token_hash');
+  const type       = searchParams.get('type') as EmailOtpType | null;
+  const next       = searchParams.get('next') ?? '/dashboard';
   const redirectTarget = next.startsWith('/') ? next : '/dashboard';
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://taskpilot-umber.vercel.app';
-  const failUrl = `${siteUrl}/login?error=auth_failed`;
+  const siteUrl    = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://taskpilot-umber.vercel.app';
+  const failUrl    = `${siteUrl}/login?error=auth_failed`;
   const successUrl = `${siteUrl}${redirectTarget}`;
 
-  if (!code) {
+  // Reject immediately if neither auth param is present
+  if (!code && !token_hash) {
     return NextResponse.redirect(failUrl);
   }
 
-  // Build the success response first so we can attach session cookies to it
+  // Pre-create the redirect so the cookie setAll closure can attach session cookies to it
   const response = NextResponse.redirect(successUrl);
 
   const supabase = createServerClient(
@@ -27,7 +31,6 @@ export async function GET(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet: Array<{ name: string; value: string; options?: Record<string, unknown> }>) {
-          // Write session cookies directly onto the outgoing response
           cookiesToSet.forEach(({ name, value, options }) =>
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             response.cookies.set(name, value, options as any)
@@ -37,10 +40,21 @@ export async function GET(request: NextRequest) {
     }
   );
 
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  // Handle both Supabase auth flows:
+  // token_hash — email OTP / magic link (no PKCE cookie needed, works across browsers)
+  // code       — PKCE exchange (requires code_verifier cookie from the same browser session)
+  let authError: { message: string } | null = null;
 
-  if (error) {
-    console.error('[auth/callback]', error.message);
+  if (token_hash && type) {
+    const { error } = await supabase.auth.verifyOtp({ token_hash, type });
+    authError = error;
+  } else if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    authError = error;
+  }
+
+  if (authError) {
+    console.error('[auth/callback]', authError.message);
     return NextResponse.redirect(failUrl);
   }
 
