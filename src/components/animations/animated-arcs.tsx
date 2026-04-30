@@ -1,183 +1,193 @@
 'use client';
 
-// Vercel-style globe with animated colored connection arcs.
-// Each arc represents a script deploying to a server region.
-// Uses SVG stroke-dashoffset animation with pathLength normalization
-// so the "traveling dash" effect is consistent on every arc.
+// Hemisphere dome — IT scripts reaching every environment.
+// Vercel-style: elevation-angle projection, dense grid, traveling arcs, triangle nodes.
 
-const GLOBE_CX = 300;
-const GLOBE_CY = 300;
-const GLOBE_R  = 215;
+const CX = 500;   // horizontal center
+const CY = 500;   // sphere center at viewport bottom — only dome is visible
+const R  = 480;   // sphere radius
+const EL = 22;    // elevation angle (degrees above equatorial plane)
 
-// Connection arcs — each is a quadratic bezier Q cx cy ex ey
-// Control points are pulled outside the globe for a nice arc effect.
-const ARCS = [
-  { id: 'na-eu',  d: 'M 160 238 Q 228 108 298 218', color: '#818cf8', delay: '0s',    dur: '2.8s' }, // Americas → Europe (indigo)
-  { id: 'eu-as',  d: 'M 298 218 Q 368 118 435 232', color: '#22d3ee', delay: '0.7s',  dur: '2.5s' }, // Europe → Asia (cyan)
-  { id: 'as-au',  d: 'M 435 232 Q 492 300 428 378', color: '#fb923c', delay: '1.5s',  dur: '2.2s' }, // Asia → Australia (orange)
-  { id: 'na-sa',  d: 'M 160 238 Q 90 320 192 388',  color: '#34d399', delay: '0.3s',  dur: '2.6s' }, // Americas → S.America (green)
-  { id: 'eu-af',  d: 'M 298 218 Q 330 270 308 368', color: '#a78bfa', delay: '1.1s',  dur: '2.4s' }, // Europe → Africa (violet)
-  { id: 'sa-af',  d: 'M 192 388 Q 248 432 308 368', color: '#60a5fa', delay: '1.9s',  dur: '2s'   }, // S.America → Africa (blue)
-  { id: 'as-na',  d: 'M 435 232 Q 298 70  160 238', color: '#f472b6', delay: '2.4s',  dur: '3.2s' }, // Asia → Americas long arc (pink)
-  { id: 'eu-na',  d: 'M 298 218 Q 230 148 160 238', color: '#fbbf24', delay: '3.0s',  dur: '2.3s' }, // Europe → Americas (amber)
+const EL_RAD = (EL * Math.PI) / 180;
+const COS_EL = Math.cos(EL_RAD);
+const SIN_EL = Math.sin(EL_RAD);
+
+// Elevation-angle orthographic projection.
+// This makes latitude rings bow inward at the edges (the key dome visual).
+function toXY(latDeg: number, lonDeg: number) {
+  const lat = (latDeg * Math.PI) / 180;
+  const lon = (lonDeg * Math.PI) / 180;
+  return {
+    x: CX + R * Math.cos(lat) * Math.sin(lon),
+    y: CY - R * (Math.sin(lat) * COS_EL + Math.cos(lat) * Math.cos(lon) * SIN_EL),
+  };
+}
+
+function pts2path(pts: { x: number; y: number }[]) {
+  return pts
+    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
+    .join(' ');
+}
+
+function latArc(latDeg: number, lon1 = -130, lon2 = 130, steps = 60) {
+  const pts = [];
+  for (let i = 0; i <= steps; i++) {
+    pts.push(toXY(latDeg, lon1 + (i / steps) * (lon2 - lon1)));
+  }
+  return pts2path(pts);
+}
+
+function lonArc(lonDeg: number, lat1 = 4, lat2 = 82, steps = 40) {
+  const pts = [];
+  for (let i = 0; i <= steps; i++) {
+    pts.push(toXY(lat1 + (i / steps) * (lat2 - lat1), lonDeg));
+  }
+  return pts2path(pts);
+}
+
+// ── Grid ──────────────────────────────────────────────────────────────────────
+const LAT_RINGS = [10, 22, 36, 50, 64, 78];
+const LON_LINES = [-120, -80, -40, 0, 40, 80, 120];
+
+// ── Animated traveling segments ───────────────────────────────────────────────
+const ANIM = [
+  { d: latArc(22, -100,  70), color: '#60a5fa', delay: '0s',   dur: '4.2s' },
+  { d: latArc(10, -120,  10), color: '#818cf8', delay: '1.4s', dur: '4.8s' },
+  { d: latArc(36,   0,  115), color: '#34d399', delay: '0.8s', dur: '3.6s' },
+  { d: latArc(50, -85,   85), color: '#22d3ee', delay: '2.2s', dur: '5.2s' },
+  { d: latArc(64, -70,   60), color: '#a78bfa', delay: '3.1s', dur: '4.0s' },
+  { d: lonArc( 40,   6,  70), color: '#60a5fa', delay: '0.5s', dur: '3.0s' },
+  { d: lonArc(-40,   5,  65), color: '#818cf8', delay: '1.9s', dur: '3.4s' },
+  { d: lonArc( 80,   4,  52), color: '#34d399', delay: '2.7s', dur: '2.8s' },
 ];
 
-// Endpoint dots — glowing circles at key server/region nodes
-const DOTS = [
-  { x: 160, y: 238, color: '#818cf8' }, // Americas
-  { x: 298, y: 218, color: '#22d3ee' }, // Europe
-  { x: 435, y: 232, color: '#fb923c' }, // Asia
-  { x: 428, y: 378, color: '#34d399' }, // Australia
-  { x: 192, y: 388, color: '#a78bfa' }, // South America
-  { x: 308, y: 368, color: '#60a5fa' }, // Africa
+// ── Triangle node positions (lat, lon) ────────────────────────────────────────
+const NODE_COORDS: [number, number][] = [
+  [22,  40], [22, -80],
+  [36,   0], [36,  80],
+  [50, -40], [50,  40],
+  [10, -40], [10,  80],
+  [64,   0], [64, -80],
+  [78,  40],
 ];
 
+function trianglePoints(x: number, y: number, s = 7) {
+  const h = s * 0.866;
+  return `${x.toFixed(1)},${(y - h * 0.67).toFixed(1)} ${(x - s * 0.5).toFixed(1)},${(y + h * 0.33).toFixed(1)} ${(x + s * 0.5).toFixed(1)},${(y + h * 0.33).toFixed(1)}`;
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
 export function AnimatedArcs() {
+  const gridLats = LAT_RINGS.map(lat => latArc(lat));
+  const gridLons = LON_LINES.map(lon => lonArc(lon));
+  const nodes    = NODE_COORDS.map(([lat, lon]) => toXY(lat, lon));
+
   return (
-    <div className="w-full flex flex-col items-center py-4">
+    <div className="w-full overflow-hidden select-none">
       <svg
-        viewBox="0 0 600 600"
+        viewBox="0 0 1000 500"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full max-w-[500px] opacity-90"
+        className="w-full"
         aria-hidden
       >
         <defs>
-          {/* Globe gradient */}
-          <radialGradient id="globe-bg" cx="40%" cy="35%">
-            <stop offset="0%"   stopColor="#0d0d28" />
-            <stop offset="60%"  stopColor="#07071a" />
-            <stop offset="100%" stopColor="#030308" />
-          </radialGradient>
-
-          {/* Glow filter for arcs */}
-          <filter id="arc-glow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="2.5" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-
-          {/* Dot glow */}
-          <filter id="dot-glow" x="-100%" y="-100%" width="300%" height="300%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-
-          {/* Clip arcs to globe surface */}
-          <clipPath id="globe-clip">
-            <circle cx={GLOBE_CX} cy={GLOBE_CY} r={GLOBE_R} />
+          {/* Clip everything to the sphere silhouette */}
+          <clipPath id="dome-clip">
+            <circle cx={CX} cy={CY} r={R + 1} />
           </clipPath>
+
+          {/* Radial fade: bright dome centre, edges dissolve */}
+          <radialGradient id="grid-fade" cx="50%" cy="90%" r="65%">
+            <stop offset="0%"   stopColor="white" stopOpacity="1"   />
+            <stop offset="55%"  stopColor="white" stopOpacity="0.8" />
+            <stop offset="85%"  stopColor="white" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="white" stopOpacity="0"   />
+          </radialGradient>
+          <mask id="grid-mask">
+            <rect x="0" y="0" width="1000" height="500" fill="url(#grid-fade)" />
+          </mask>
+
+          {/* Glow for animated arcs */}
+          <filter id="arc-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="3.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          {/* Glow for triangle nodes */}
+          <filter id="node-glow" x="-120%" y="-120%" width="340%" height="340%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
 
-        {/* ── Globe sphere ────────────────────────────────────────────────── */}
-        <circle
-          cx={GLOBE_CX} cy={GLOBE_CY} r={GLOBE_R}
-          fill="url(#globe-bg)"
-          stroke="rgba(255,255,255,0.07)"
-          strokeWidth="1"
-        />
+        <g clipPath="url(#dome-clip)">
+          {/* Subtle sphere background */}
+          <circle cx={CX} cy={CY} r={R} fill="rgba(8,8,24,0.5)" />
 
-        {/* Subtle outer glow ring */}
-        <circle
-          cx={GLOBE_CX} cy={GLOBE_CY} r={GLOBE_R + 4}
-          fill="none"
-          stroke="rgba(129,140,248,0.08)"
-          strokeWidth="8"
-        />
-
-        {/* ── Latitude grid lines (horizontal ellipses) ───────────────────── */}
-        {[
-          { cy: 300, rx: 215, ry: 13 },  // equator
-          { cy: 190, rx: 185, ry: 11 },  // 30°N
-          { cy: 410, rx: 185, ry: 11 },  // 30°S
-          { cy: 110, rx: 107, ry:  7 },  // 60°N
-          { cy: 490, rx: 107, ry:  7 },  // 60°S
-        ].map(({ cy, rx, ry }, i) => (
-          <ellipse
-            key={i}
-            cx={GLOBE_CX} cy={cy} rx={rx} ry={ry}
-            fill="none"
-            stroke="rgba(255,255,255,0.05)"
-            strokeWidth="0.8"
-          />
-        ))}
-
-        {/* ── Longitude grid lines (vertical ellipses) ────────────────────── */}
-        {[
-          { rx: 13, ry: 215 },
-          { rx: 107, ry: 215 },
-        ].map(({ rx, ry }, i) => (
-          <ellipse
-            key={i}
-            cx={GLOBE_CX} cy={GLOBE_CY} rx={rx} ry={ry}
-            fill="none"
-            stroke="rgba(255,255,255,0.05)"
-            strokeWidth="0.8"
-          />
-        ))}
-
-        {/* ── Animated connection arcs ─────────────────────────────────────── */}
-        {ARCS.map((arc) => (
-          <g key={arc.id}>
-            {/* Ghost trail (faint static path) */}
-            <path
-              d={arc.d}
-              stroke={arc.color}
-              strokeOpacity="0.06"
-              strokeWidth="1"
-              fill="none"
-              pathLength="1000"
-            />
-            {/* Animated traveling dash */}
-            <path
-              d={arc.d}
-              stroke={arc.color}
-              strokeWidth="1.8"
-              fill="none"
-              filter="url(#arc-glow)"
-              pathLength="1000"
-              strokeDasharray="180 1000"
-              strokeLinecap="round"
-            >
-              <animate
-                attributeName="stroke-dashoffset"
-                from="1000"
-                to="-200"
-                dur={arc.dur}
-                begin={arc.delay}
-                repeatCount="indefinite"
-                calcMode="spline"
-                keySplines="0.4 0 0.6 1"
-              />
-              <animate
-                attributeName="stroke-opacity"
-                values="0;1;1;1;0"
-                keyTimes="0;0.05;0.5;0.85;1"
-                dur={arc.dur}
-                begin={arc.delay}
-                repeatCount="indefinite"
-              />
-            </path>
+          {/* Grid lines with radial fade */}
+          <g mask="url(#grid-mask)" stroke="rgba(255,255,255,0.15)" strokeWidth="0.75" fill="none">
+            {gridLats.map((d, i) => <path key={`lat${i}`} d={d} />)}
+            {gridLons.map((d, i) => <path key={`lon${i}`} d={d} />)}
           </g>
-        ))}
 
-        {/* ── Region dots with pulse ───────────────────────────────────────── */}
-        {DOTS.map((dot, i) => (
-          <g key={i} filter="url(#dot-glow)">
-            {/* Pulsing outer ring */}
-            <circle cx={dot.x} cy={dot.y} r="6" fill={dot.color} fillOpacity="0.15">
-              <animate attributeName="r" values="4;9;4" dur="3s" begin={`${i * 0.5}s`} repeatCount="indefinite" />
-              <animate attributeName="fill-opacity" values="0.15;0;0.15" dur="3s" begin={`${i * 0.5}s`} repeatCount="indefinite" />
-            </circle>
-            {/* Core dot */}
-            <circle cx={dot.x} cy={dot.y} r="3" fill={dot.color} fillOpacity="0.9" />
-          </g>
-        ))}
+          {/* Animated traveling arcs */}
+          {ANIM.map((seg, i) => (
+            <g key={i}>
+              {/* Faint static trail */}
+              <path d={seg.d} stroke={seg.color} strokeOpacity="0.09" strokeWidth="1" fill="none" pathLength="1000" />
+              {/* Bright traveling segment */}
+              <path
+                d={seg.d}
+                stroke={seg.color}
+                strokeWidth="2.2"
+                fill="none"
+                filter="url(#arc-glow)"
+                pathLength="1000"
+                strokeDasharray="110 1000"
+                strokeLinecap="round"
+              >
+                <animate
+                  attributeName="stroke-dashoffset"
+                  from="1200" to="-200"
+                  dur={seg.dur} begin={seg.delay}
+                  repeatCount="indefinite"
+                  calcMode="spline"
+                  keySplines="0.4 0 0.6 1"
+                />
+                <animate
+                  attributeName="stroke-opacity"
+                  values="0;1;1;1;0"
+                  keyTimes="0;0.07;0.45;0.88;1"
+                  dur={seg.dur} begin={seg.delay}
+                  repeatCount="indefinite"
+                />
+              </path>
+            </g>
+          ))}
+
+          {/* Triangle node markers */}
+          {nodes.map((pt, i) => (
+            <g key={i} filter="url(#node-glow)">
+              <polygon
+                points={trianglePoints(pt.x, pt.y)}
+                fill="none"
+                stroke="rgba(255,255,255,0.75)"
+                strokeWidth="1.2"
+                strokeLinejoin="round"
+              />
+            </g>
+          ))}
+        </g>
+
+        {/* Outer sphere ring */}
+        <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
       </svg>
     </div>
   );
