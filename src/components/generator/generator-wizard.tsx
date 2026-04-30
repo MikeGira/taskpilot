@@ -631,8 +631,8 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           {/* Upsell */}
           <div className="rounded-xl border border-white/12 bg-white/5 p-4 flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold text-[#F9FAFB] mb-0.5">Want 4 ready-to-deploy scripts?</p>
-              <p className="text-xs text-[#9CA3AF]">The Starter Kit includes pre-tested scripts for the most common IT tasks, just $19.</p>
+              <p className="text-sm font-semibold text-[#F9FAFB] mb-0.5">Want 9 production-ready scripts?</p>
+              <p className="text-xs text-[#9CA3AF]">The Starter Kit includes pre-built, pre-tested scripts for the most common IT tasks — just $19.</p>
             </div>
             <Button asChild size="sm" className="shrink-0">
               <a href="/checkout">Get the Kit →</a>
