@@ -44,3 +44,6 @@ next-env.d.ts
 # Playwright
 /test-results/
 /playwright-report/
+
+# Personal — never commit
+TRAINING_PLAN.md
