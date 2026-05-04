@@ -256,7 +256,9 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
   const [result, setResult] = useState<GenerateResult | null>(null);
   const [error, setError] = useState('');
   const [loadingMsg, setLoadingMsg] = useState(0);
+  const [slowGen, setSlowGen] = useState(false);
   const loadingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const slowGenRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [feedbackRating, setFeedbackRating] = useState<1 | -1 | null>(null);
   const [feedbackComment, setFeedbackComment] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
@@ -265,13 +267,20 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
   useEffect(() => {
     if (step === 'generating') {
       setLoadingMsg(0);
+      setSlowGen(false);
       loadingRef.current = setInterval(() => {
         setLoadingMsg((m) => (m + 1) % LOADING_MESSAGES.length);
       }, 1800);
+      slowGenRef.current = setTimeout(() => setSlowGen(true), 12_000);
     } else {
       if (loadingRef.current) clearInterval(loadingRef.current);
+      if (slowGenRef.current) clearTimeout(slowGenRef.current);
+      setSlowGen(false);
     }
-    return () => { if (loadingRef.current) clearInterval(loadingRef.current); };
+    return () => {
+      if (loadingRef.current) clearInterval(loadingRef.current);
+      if (slowGenRef.current) clearTimeout(slowGenRef.current);
+    };
   }, [step]);
 
   function toggleCloud(id: string) {
@@ -544,6 +553,11 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           <p className="text-sm text-[#9CA3AF] transition-all duration-500 min-h-[20px]">
             {LOADING_MESSAGES[loadingMsg]}
           </p>
+          {slowGen && (
+            <p className="text-xs text-[#6B7280] mt-3 animate-fade-in">
+              Complex scripts can take up to 30 seconds — still working…
+            </p>
+          )}
         </div>
       )}
 
