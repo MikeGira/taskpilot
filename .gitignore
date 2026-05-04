@@ -49,3 +49,9 @@ next-env.d.ts
 TRAINING_PLAN.md
 my_conversation_with_chatGPT.md
 MASTER_PROFILE.md
+
+# Tool-generated skill files — not source code
+.agents/
+.augment/
+skills/
+skills-lock.json
