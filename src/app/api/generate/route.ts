@@ -137,7 +137,19 @@ STANDARDS:
 - Dry-run: -WhatIf parameter or $DryRun flag before any destructive operation
 - Credentials: Get-Credential, SecureString, or Windows Credential Manager — never plain-text passwords
 - Use approved PowerShell verbs; prefer cmdlets over calling external executables
-- Wrap operations in try/catch/finally with meaningful error messages`;
+- Wrap operations in try/catch/finally with meaningful error messages
+STRING QUOTING (CRITICAL — common failure mode):
+- NEVER use \" to embed quotes inside double-quoted strings. PowerShell's escape char is backtick, not backslash.
+- For CSV rows and format strings containing quotes: use single-quoted template with -f operator: '"{0}","{1}"' -f $a, $b
+- To embed a literal double-quote inside a double-quoted string: use \`" (backtick-quote) or "" (doubled quote)
+- Example WRONG: "\"{0}\"" — this produces literal backslashes in output
+- Example RIGHT: '"{0}"' -f $value — produces properly quoted CSV
+FUNCTION NAMING (CRITICAL — causes silent failures):
+- NEVER name a custom function the same as a built-in PowerShell cmdlet or function
+- Reserved names include: Register-ScheduledTask, Get-Process, Get-Service, Start-Service, Stop-Service, Write-Host, Send-MailMessage, Export-Csv, Import-Csv, and all other Get-/Set-/New-/Remove- cmdlets
+- Always use a domain-specific prefix for custom functions: Register-CaptureTask not Register-ScheduledTask
+CMDLETBINDING:
+- Any function that calls \$PSCmdlet.ShouldProcess() MUST declare [CmdletBinding(SupportsShouldProcess)] on that function itself, not just the script's param() block`;
 
     case 'bash':
       return `TOOL: Bash / Shell Script

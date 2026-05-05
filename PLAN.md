@@ -1,5 +1,63 @@
 # TaskPilot — Monetization Roadmap
 
+## Option 0: Script Review & Fix (QUALITY FEATURE — build before Pro tier)
+
+### Problem
+AI-generated scripts sometimes contain language-specific bugs that only appear at runtime:
+PowerShell string quoting errors, function name conflicts with built-in cmdlets, missing
+CmdletBinding attributes, Python bare excepts, Bash unquoted variables, etc. Users currently
+discover these bugs only when they try to run the script — not before.
+
+### Solution
+A **"Review & Fix"** button on the result step that sends the generated script back to Claude
+with a bug-hunting prompt. Returns a structured list of issues and an automatically corrected script.
+
+### What it does
+- User clicks "Review & Fix" after generation
+- A second API call sends the script + language to `/api/generate/review`
+- Claude reviews specifically for: syntax errors, naming conflicts, security issues,
+  missing error handling, language-specific anti-patterns, and logic bugs
+- Returns: `{ issues: [{line, severity, description, fix}], correctedScript: string }`
+- UI shows the issue list with severity badges (Critical / Warning / Info)
+- "Apply fixes" button replaces the script with the corrected version
+- User can download the corrected script directly
+
+### Why it matters for the product
+Transforms TaskPilot from "AI that generates code" to "AI that generates AND validates code."
+Differentiates from generic ChatGPT usage. Can be gated as a Pro feature (free users see issue
+count but must upgrade to see details and apply fixes).
+
+### Implementation Plan
+
+**New API route (`src/app/api/generate/review/route.ts`):**
+```typescript
+// POST body: { script: string, language: string, title: string }
+// Returns:   { issues: Issue[], correctedScript: string }
+// Rate limit: 5/hr per IP (review is expensive — 2× API calls)
+// model: claude-sonnet-4-6, max_tokens: 8192
+```
+
+**Review system prompt structure:**
+```
+You are a senior [LANGUAGE] engineer performing a security and quality review.
+Find ALL bugs, anti-patterns, and improvements in this script.
+Return JSON: { "issues": [{"line": N, "severity": "critical|warning|info", "description": "...", "fix": "..."}], "correctedScript": "..." }
+Focus on: syntax errors, naming conflicts with built-ins, missing error handling,
+security vulnerabilities, and language-specific pitfalls.
+```
+
+**UI changes (`src/components/generator/generator-wizard.tsx`):**
+- Add "Review & Fix" button next to Download in the result step
+- Show loading state while review runs
+- Render issue list with severity color coding (red/yellow/blue)
+- "Apply fixes" button swaps script content with correctedScript
+- Download button uses corrected script if fixes were applied
+
+**Estimated effort:** 1 day
+**Pro gate option:** Show issue count to free users; require Pro to see details + apply fixes
+
+---
+
 ## Option 1: Streaming Script Generation (REQUIRED BEFORE PRO TIER)
 
 ### Problem
