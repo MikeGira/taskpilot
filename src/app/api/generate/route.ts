@@ -611,6 +611,8 @@ UNIVERSAL STANDARDS — apply to every output regardless of tool:
 
 CLARIFICATION RULE: Ask for clarification only if one critical piece of information is truly missing. Otherwise make reasonable assumptions, document them in configNotes, and generate. One question maximum.
 
+COMPLEXITY RULE: If the task would require more than 350 lines of code, implement the CORE functionality fully and mark remaining features as # TODO comments. Always produce a working, runnable script — never return script: null. A partial but working implementation is always better than nothing.
+
 OUTPUT FORMAT — STRICT:
 - Return a single raw JSON object. No markdown, no prose, nothing outside the JSON.
 - Escape all newlines as \\n, double-quotes as \\", backslashes as \\\\ inside string values.
@@ -675,7 +677,7 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 4096,
+        max_tokens: 5120,
         system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content: userMessage }],
       }),
