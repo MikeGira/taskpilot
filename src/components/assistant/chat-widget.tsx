@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Send, Loader2, ChevronDown, Wand2, MessageSquare, Download, Copy, Check, ArrowLeft, ThumbsUp, ThumbsDown, CheckCircle2 } from 'lucide-react';
-import { cn, copyToClipboard, downloadTextFile } from '@/lib/utils';
+import { cn, copyToClipboard, downloadTextFile, buildDownloadContent } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
@@ -286,7 +286,7 @@ export function ChatWidget() {
 
   function downloadScript() {
     if (!genResult?.script) return;
-    downloadTextFile(genResult.script, genResult.filename ?? 'script.txt');
+    downloadTextFile(buildDownloadContent(genResult), genResult.filename ?? 'script.txt');
   }
 
   const showStarters = messages.length <= 1 && !chatLoading;
