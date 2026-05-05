@@ -1,5 +1,38 @@
 # TaskPilot — Monetization Roadmap
 
+## Option 1: Streaming Script Generation (REQUIRED BEFORE PRO TIER)
+
+### Problem
+The generator calls Anthropic synchronously and waits for the full response before returning.
+Complex scripts (500–1100+ lines) take 60–150 seconds to generate. The current `maxDuration = 300`
+buys time on Vercel Pro, but Hobby plan caps at 60s. Users on any plan see a spinner with no
+feedback until the full script arrives. Streaming fixes both issues.
+
+### Solution
+Stream tokens from Anthropic directly to the browser as they are generated.
+- User sees the script building in real time (no long spinner)
+- Connection stays alive — no function timeout for long scripts
+- Works on any Vercel plan
+
+### Implementation Plan
+
+**Backend (`src/app/api/generate/route.ts`):**
+1. Add `stream: true` to the Anthropic request body
+2. Return a `ReadableStream` response instead of `NextResponse.json()`
+3. Pipe Anthropic SSE chunks to the client stream
+4. Signal stream end by sending a final `data: [DONE]` SSE event
+
+**Frontend (`src/components/generator/generator-wizard.tsx` + `chat-widget.tsx`):**
+1. Replace `fetch + await res.json()` with an SSE reader that consumes the stream
+2. Accumulate token chunks as they arrive — display live script preview in the code block
+3. On stream end, parse the complete accumulated text with `extractJson()`
+4. Transition to result step as normal
+
+**Estimated effort:** 2–3 days  
+**Impact:** Removes the timeout ceiling entirely — scripts of any length become possible
+
+---
+
 ## Option 2: Pro Generator Tier (BUILD NEXT)
 
 ### Goal
