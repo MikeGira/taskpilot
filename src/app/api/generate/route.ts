@@ -665,29 +665,20 @@ export async function POST(request: Request) {
   const userMessage = buildUserMessage(taskDescription, clarificationAnswer, previousQuestion);
 
   try {
-    const abort = new AbortController();
-    const abortTimer = setTimeout(() => abort.abort(), 57_000);
-
-    let anthropicResponse: Response;
-    try {
-      anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        signal: abort.signal,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 16384,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: userMessage }],
-        }),
-      });
-    } finally {
-      clearTimeout(abortTimer);
-    }
+    const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 16384,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMessage }],
+      }),
+    });
 
     if (!anthropicResponse.ok) {
       const errData = await anthropicResponse.json().catch(() => ({}));
