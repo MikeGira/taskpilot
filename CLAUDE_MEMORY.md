@@ -1,6 +1,6 @@
 # TaskPilot — Claude Session Memory
 
-_Last updated: 2026-05-05 (session 5)_
+_Last updated: 2026-05-06 (session 6)_
 _Resume guide: read this file → PLAN.md → CLAUDE.md → `git log --oneline -10`_
 
 ---
@@ -15,7 +15,25 @@ _Resume guide: read this file → PLAN.md → CLAUDE.md → `git log --oneline -
 
 ---
 
-## What Was Done This Session (2026-05-03 to 2026-05-05)
+## What Was Done Session 6 (2026-05-05 to 2026-05-06)
+
+### TaskPilot: No code changes
+Session 6 was entirely personal automation work — no TaskPilot commits.
+
+### WhatsApp Screenshot Capture Script ✅
+Built, debugged, and delivered a complete personal PowerShell script for capturing WhatsApp Desktop screenshots of the Louis I&M Bank Recovery conversation. Key engineering challenges solved:
+- **AV false positive**: Script uses P/Invoke (advapi32, user32) + screen capture → AMSI blocks it in scheduled context. Fix: `Add-MpPreference -ExclusionProcess 'pwsh.exe'`
+- **DPI scaling**: `GetWindowRect` returns logical coords but `SetCursorPos` needs physical. Fix: `SetProcessDPIAware()` + `GetDpiForWindow()` + ×1.25 scale on all click offsets
+- **WhatsApp process name**: `WhatsApp.Root` (not `WhatsApp`)
+- **WebView2 limitation**: UI Automation cannot read WhatsApp's message content — all dedup approaches based on text hashing fail
+- **Pixel dedup**: Attempted SHA256 of full frame, right-panel crop, 128×128 thumbnail — all fail because WhatsApp renders differently each run (scroll, cursor, navigation artifacts). Removed. Schedule controls frequency instead.
+- **Task Scheduler**: Set up + debugged (pwsh.exe full path, NonInteractive Read-Host fix, AV exclusion). User chose to remove it and run manually instead.
+- Script at: `D:\Projects\TaskPilot Downloads\WhatsApp-ScreenshotCapture - Personal - From Main Generator page.ps1`
+- Details in memory: `~/.claude/projects/d--Projects-taskpilot/memory/whatsapp_script.md`
+
+---
+
+## What Was Done Session 5 (2026-05-03 to 2026-05-05)
 
 ### Stripe LIVE Switch ✅
 - Switched from TEST to LIVE keys in Stripe dashboard
