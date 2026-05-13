@@ -94,6 +94,20 @@ CREATE TABLE IF NOT EXISTS public.email_logs (
   sent_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- ── generation_feedback ───────────────────────────────────────────────────────
+-- Anonymous thumbs-up/down on AI-generated content. No user_id by design.
+-- ip_hash is set app-side for throttling; not enforced at DB level.
+CREATE TABLE IF NOT EXISTS public.generation_feedback (
+  id          UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  os          TEXT        NOT NULL,
+  environment TEXT        NOT NULL,
+  language    TEXT,
+  rating      SMALLINT    NOT NULL CHECK (rating = ANY(ARRAY[1::smallint, (-1)::smallint])),
+  comment     TEXT        CHECK (char_length(comment) <= 500),
+  ip_hash     TEXT
+);
+
 -- ── updated_at trigger ────────────────────────────────────────────────────────
 CREATE OR REPLACE FUNCTION public.update_updated_at()
 RETURNS TRIGGER AS $$
@@ -114,8 +128,9 @@ ALTER TABLE public.profiles         ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.products         ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.purchases        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.subscribers      ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.contact_requests ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.email_logs       ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.contact_requests    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.email_logs          ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.generation_feedback ENABLE ROW LEVEL SECURITY;
 
 -- profiles: each user sees and edits only their own row
 CREATE POLICY "profiles_own_select" ON public.profiles
@@ -143,6 +158,13 @@ CREATE POLICY "contacts_service_role" ON public.contact_requests
   FOR ALL USING (auth.role() = 'service_role');
 CREATE POLICY "email_logs_service_role" ON public.email_logs
   FOR ALL USING (auth.role() = 'service_role');
+
+-- generation_feedback: anyone can submit; WITH CHECK mirrors the rating constraint
+-- so the policy is non-trivially true and scoped to specific roles
+CREATE POLICY "anon_insert_feedback" ON public.generation_feedback
+  FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (rating = ANY(ARRAY[1::smallint, (-1)::smallint]));
 
 -- ── Seed: initial product ─────────────────────────────────────────────────────
 -- Replace REPLACE_WITH_STRIPE_PRICE_ID after creating the product in Stripe.
@@ -184,8 +206,13 @@ REVOKE ALL ON public.subscribers      FROM anon, authenticated;
 REVOKE ALL ON public.contact_requests FROM anon, authenticated;
 REVOKE ALL ON public.email_logs       FROM anon, authenticated;
 
--- Supabase internal function — not callable by end users
-REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM anon, authenticated;
+-- generation_feedback: anyone can INSERT; service_role handles all other ops
+GRANT INSERT ON public.generation_feedback TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.generation_feedback TO service_role;
+
+-- rls_auto_enable is a Supabase internal function — revoke from PUBLIC, not just
+-- individual roles, since the PUBLIC grant overrides role-level revokes
+REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM PUBLIC;
 
 -- ── Verification ──────────────────────────────────────────────────────────────
 SELECT table_name FROM information_schema.tables
