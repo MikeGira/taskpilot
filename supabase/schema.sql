@@ -158,6 +158,30 @@ VALUES (
 )
 ON CONFLICT (slug) DO NOTHING;
 
+-- ── Data API Grants (Supabase May/Oct 2026 compliance) ───────────────────────
+-- GRANTs are the access layer; RLS is the authorization layer. Both required.
+-- Grants must exactly mirror the RLS policies defined above.
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+
+-- profiles: authenticated users read/write their own row (mirrors profiles_own_*)
+GRANT SELECT, INSERT, UPDATE ON public.profiles TO authenticated;
+
+-- products: public catalog read (mirrors products_public_read)
+GRANT SELECT ON public.products TO anon;
+GRANT SELECT ON public.products TO authenticated;
+
+-- purchases: authenticated users see their own rows (mirrors purchases_own_select)
+GRANT SELECT ON public.purchases TO authenticated;
+
+-- subscribers, contact_requests, email_logs: server-side only (mirrors *_service_role)
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.subscribers       TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.contact_requests  TO service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.email_logs        TO service_role;
+
+REVOKE ALL ON public.subscribers      FROM anon, authenticated;
+REVOKE ALL ON public.contact_requests FROM anon, authenticated;
+REVOKE ALL ON public.email_logs       FROM anon, authenticated;
+
 -- ── Verification ──────────────────────────────────────────────────────────────
 SELECT table_name FROM information_schema.tables
 WHERE table_schema = 'public'
