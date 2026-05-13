@@ -101,7 +101,9 @@ BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+   SECURITY INVOKER
+   SET search_path = public;
 
 CREATE TRIGGER trg_profiles_updated_at
   BEFORE UPDATE ON public.profiles
@@ -181,6 +183,9 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.email_logs        TO service_role
 REVOKE ALL ON public.subscribers      FROM anon, authenticated;
 REVOKE ALL ON public.contact_requests FROM anon, authenticated;
 REVOKE ALL ON public.email_logs       FROM anon, authenticated;
+
+-- Supabase internal function — not callable by end users
+REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM anon, authenticated;
 
 -- ── Verification ──────────────────────────────────────────────────────────────
 SELECT table_name FROM information_schema.tables
