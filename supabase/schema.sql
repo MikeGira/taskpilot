@@ -54,6 +54,7 @@ CREATE INDEX IF NOT EXISTS idx_purchases_user_id    ON public.purchases(user_id)
 CREATE INDEX IF NOT EXISTS idx_purchases_email      ON public.purchases(email);
 CREATE INDEX IF NOT EXISTS idx_purchases_session_id ON public.purchases(stripe_session_id);
 CREATE INDEX IF NOT EXISTS idx_purchases_status     ON public.purchases(status);
+CREATE INDEX IF NOT EXISTS idx_purchases_product_id ON public.purchases(product_id);
 
 -- ── subscribers ───────────────────────────────────────────────────────────────
 -- Double opt-in: confirmed=false until user clicks the confirmation link.
@@ -133,12 +134,13 @@ ALTER TABLE public.email_logs          ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.generation_feedback ENABLE ROW LEVEL SECURITY;
 
 -- profiles: each user sees and edits only their own row
+-- (select auth.uid()) prevents per-row re-evaluation — Supabase perf advisory
 CREATE POLICY "profiles_own_select" ON public.profiles
-  FOR SELECT USING (auth.uid() = id);
+  FOR SELECT USING ((select auth.uid()) = id);
 CREATE POLICY "profiles_own_update" ON public.profiles
-  FOR UPDATE USING (auth.uid() = id);
+  FOR UPDATE USING ((select auth.uid()) = id);
 CREATE POLICY "profiles_own_insert" ON public.profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
+  FOR INSERT WITH CHECK ((select auth.uid()) = id);
 
 -- products: anyone can read active products (safe — no PII)
 CREATE POLICY "products_public_read" ON public.products
@@ -147,17 +149,17 @@ CREATE POLICY "products_public_read" ON public.products
 -- purchases: authenticated users see only their own rows (by user_id OR email)
 CREATE POLICY "purchases_own_select" ON public.purchases
   FOR SELECT USING (
-    auth.uid() = user_id
-    OR email = (SELECT email FROM public.profiles WHERE id = auth.uid())
+    (select auth.uid()) = user_id
+    OR email = (SELECT email FROM public.profiles WHERE id = (select auth.uid()))
   );
 
 -- subscribers, contact_requests, email_logs: service_role only
 CREATE POLICY "subscribers_service_role" ON public.subscribers
-  FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING ((select auth.role()) = 'service_role');
 CREATE POLICY "contacts_service_role" ON public.contact_requests
-  FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING ((select auth.role()) = 'service_role');
 CREATE POLICY "email_logs_service_role" ON public.email_logs
-  FOR ALL USING (auth.role() = 'service_role');
+  FOR ALL USING ((select auth.role()) = 'service_role');
 
 -- generation_feedback: anyone can submit; WITH CHECK mirrors the rating constraint
 -- so the policy is non-trivially true and scoped to specific roles
@@ -183,18 +185,21 @@ VALUES (
 ON CONFLICT (slug) DO NOTHING;
 
 -- ── Data API Grants (Supabase May/Oct 2026 compliance) ───────────────────────
--- GRANTs are the access layer; RLS is the authorization layer. Both required.
--- Grants must exactly mirror the RLS policies defined above.
+-- Supabase defaults grant ALL on every public table to anon/authenticated.
+-- Revoke first, then grant exactly what each RLS policy permits.
 GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
 
--- profiles: authenticated users read/write their own row (mirrors profiles_own_*)
+-- profiles: authenticated → SELECT, INSERT, UPDATE only (mirrors profiles_own_*)
+REVOKE ALL ON public.profiles FROM anon, authenticated;
 GRANT SELECT, INSERT, UPDATE ON public.profiles TO authenticated;
 
--- products: public catalog read (mirrors products_public_read)
+-- products: read-only for both roles (mirrors products_public_read)
+REVOKE ALL ON public.products FROM anon, authenticated;
 GRANT SELECT ON public.products TO anon;
 GRANT SELECT ON public.products TO authenticated;
 
--- purchases: authenticated users see their own rows (mirrors purchases_own_select)
+-- purchases: authenticated SELECT only (mirrors purchases_own_select); anon: none
+REVOKE ALL ON public.purchases FROM anon, authenticated;
 GRANT SELECT ON public.purchases TO authenticated;
 
 -- subscribers, contact_requests, email_logs: server-side only (mirrors *_service_role)
@@ -206,7 +211,8 @@ REVOKE ALL ON public.subscribers      FROM anon, authenticated;
 REVOKE ALL ON public.contact_requests FROM anon, authenticated;
 REVOKE ALL ON public.email_logs       FROM anon, authenticated;
 
--- generation_feedback: anyone can INSERT; service_role handles all other ops
+-- generation_feedback: INSERT only for anon/authenticated (mirrors anon_insert_feedback)
+REVOKE ALL ON public.generation_feedback FROM anon, authenticated;
 GRANT INSERT ON public.generation_feedback TO anon, authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.generation_feedback TO service_role;
 
