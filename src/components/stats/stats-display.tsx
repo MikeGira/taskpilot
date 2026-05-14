@@ -81,7 +81,7 @@ function BreakdownLine({
         <span key={item.name} className="whitespace-nowrap">
           <span className="text-[#D1D5DB]">{labels[item.name] ?? item.name}</span>
           <span className="text-[#6B7280]"> {item.pct}%</span>
-          {i < items.length - 1 && <span className="text-[#374151]">{'  '}</span>}
+          {i < items.length - 1 && <span className="text-[#4B5563]"> · </span>}
         </span>
       ))}
     </>
