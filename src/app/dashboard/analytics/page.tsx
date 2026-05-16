@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { getAdminClient } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
 import { AnalyticsClient } from '@/components/dashboard/analytics-client';
+import { SecurityAuditClient } from '@/components/dashboard/security-audit-client';
 
 export const metadata = { title: 'Analytics' };
 
@@ -138,6 +139,9 @@ export default async function AnalyticsPage() {
 
       {/* AI Prompt Improvement */}
       <AnalyticsClient negativeCount={negative} />
+
+      {/* Security Self-Scan */}
+      <SecurityAuditClient />
     </div>
   );
 }

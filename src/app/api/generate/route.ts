@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { withRetry } from '@/lib/utils';
 import { z } from 'zod';
 
 export const maxDuration = 300;
@@ -679,20 +680,22 @@ export async function POST(request: Request) {
   const userMessage = buildUserMessage(taskDescription, clarificationAnswer, previousQuestion);
 
   try {
-    const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 16384,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userMessage }],
-      }),
-    });
+    const anthropicResponse = await withRetry(() =>
+      fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY!,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 16384,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: userMessage }],
+        }),
+      })
+    );
 
     if (!anthropicResponse.ok) {
       const errData = await anthropicResponse.json().catch(() => ({}));

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import {
   ShieldCheck, HardDrive, Users, Activity, FileText, Laptop,
   CheckCircle2, ArrowRight, Zap, Clock, Download, Wand2,
-  XCircle, Rocket,
+  XCircle, Rocket, Workflow,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -277,6 +277,69 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               </FadeInSection>
               <FadeInSection delay={150}>
                 <AnimatedArcs />
+              </FadeInSection>
+            </div>
+          </div>
+        </section>
+
+        {/* Free Tools Banner */}
+        <section className="py-16 border-t border-white/12 bg-[#0A0A0A]">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <FadeInSection>
+              <p className="text-[10px] font-semibold text-[#4B5563] uppercase tracking-widest text-center mb-10">
+                Free AI-powered tools
+              </p>
+            </FadeInSection>
+            <div className="grid sm:grid-cols-2 gap-4">
+
+              {/* Script Generator card */}
+              <FadeInSection delay={0}>
+                <Link href="/generate" className="block group">
+                  <div className="rounded-2xl border border-white/8 bg-white/2 p-6 h-full transition-all duration-200 group-hover:border-white/16 group-hover:bg-white/4 spotlight-card">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="h-10 w-10 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center group-hover:border-white/20 transition-colors">
+                        <Wand2 className="h-5 w-5 text-[#9CA3AF]" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-[#F9FAFB] text-sm">Script Generator</p>
+                        <p className="text-[10px] text-[#4B5563] uppercase tracking-wider">Free · No sign-in</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-[#6B7280] leading-relaxed mb-4">
+                      Describe your IT task in plain English. Get production-ready PowerShell, Bash, Python, Terraform, and 20+ other formats — security-hardened and ready to run.
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['PowerShell', 'Bash', 'Python', 'Terraform', 'Ansible', '20+ more'].map((tag) => (
+                        <span key={tag} className="text-[10px] px-2 py-0.5 rounded-md border border-white/8 bg-white/3 text-[#6B7280]">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
+              </FadeInSection>
+
+              {/* Workflow Generator card */}
+              <FadeInSection delay={80}>
+                <Link href="/workflow" className="block group">
+                  <div className="rounded-2xl border border-violet-500/20 bg-violet-500/4 p-6 h-full transition-all duration-200 group-hover:border-violet-500/35 group-hover:bg-violet-500/7 spotlight-card">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="h-10 w-10 rounded-xl border border-violet-500/25 bg-violet-500/10 flex items-center justify-center group-hover:border-violet-500/40 transition-colors">
+                        <Workflow className="h-5 w-5 text-violet-400" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-[#F9FAFB] text-sm">n8n Workflow Generator</p>
+                        <p className="text-[10px] text-[#4B5563] uppercase tracking-wider">Free · New</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-[#6B7280] leading-relaxed mb-4">
+                      Describe your automation, pick your integrations, and get a complete n8n workflow JSON you can import directly. Slack, GitHub, Stripe, Claude AI, and 30+ integrations.
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['Slack', 'GitHub', 'Gmail', 'Stripe', 'Claude AI', '30+ more'].map((tag) => (
+                        <span key={tag} className="text-[10px] px-2 py-0.5 rounded-md border border-violet-500/20 bg-violet-500/8 text-violet-300/70">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
               </FadeInSection>
             </div>
           </div>

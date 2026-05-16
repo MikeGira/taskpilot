@@ -136,3 +136,114 @@
   60%  { transform: scaleX(1.05) scaleY(1.05); }
   100% { transform: scaleX(1) scaleY(1); opacity: 1; }
 }
+
+/* ── Aurora blobs ────────────────────────────────────────────────────────── */
+
+@keyframes aurora-drift {
+  0%, 100% { transform: translateX(0) translateY(0) scale(1);       opacity: 0.14; }
+  33%       { transform: translateX(4%) translateY(-3%) scale(1.08); opacity: 0.22; }
+  66%       { transform: translateX(-3%) translateY(4%) scale(0.96); opacity: 0.10; }
+}
+
+@keyframes aurora-drift-r {
+  0%, 100% { transform: translateX(0) translateY(0) scale(1);        opacity: 0.10; }
+  33%       { transform: translateX(-3%) translateY(4%) scale(1.06);  opacity: 0.18; }
+  66%       { transform: translateX(4%) translateY(-2%) scale(0.94);  opacity: 0.08; }
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.aurora-violet {
+  width: 600px; height: 600px;
+  top: -100px; left: -100px;
+  background: radial-gradient(circle, rgba(139,92,246,0.55) 0%, transparent 70%);
+  animation: aurora-drift 14s ease-in-out infinite;
+}
+
+.aurora-cyan {
+  width: 400px; height: 400px;
+  top: 50px; right: -80px;
+  background: radial-gradient(circle, rgba(6,182,212,0.45) 0%, transparent 70%);
+  animation: aurora-drift-r 10s ease-in-out infinite;
+}
+
+.aurora-fuchsia {
+  width: 320px; height: 320px;
+  bottom: -60px; left: 40%;
+  background: radial-gradient(circle, rgba(217,70,239,0.40) 0%, transparent 70%);
+  animation: aurora-drift 17s ease-in-out infinite 4s;
+}
+
+/* ── Spotlight cursor effect ─────────────────────────────────────────────── */
+
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255,255,255,0.04),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.spotlight-card:hover::before { opacity: 1; }
+
+/* ── Slide-up animation ──────────────────────────────────────────────────── */
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.animate-slide-up  { animation: slide-up 0.32s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-fade-in   { animation: fade-in-up 0.28s ease both; }
+
+/* ── Count-up utility ────────────────────────────────────────────────────── */
+
+@keyframes count-tick {
+  from { transform: translateY(6px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+.animate-count { animation: count-tick 0.2s ease both; }
+
+/* ── Live pill — iPhone Dynamic Island style ─────────────────────────────── */
+
+@keyframes live-pill-bounce {
+  0%          { transform: scale(1)    translateY(0);     }
+  18%         { transform: scale(1.04) translateY(-4px);  }
+  36%         { transform: scale(0.97) translateY(0);     }
+  52%         { transform: scale(1.02) translateY(-2px);  }
+  68%         { transform: scale(0.99) translateY(0);     }
+  84%         { transform: scale(1.01) translateY(-1px);  }
+  100%        { transform: scale(1)    translateY(0);     }
+}
+
+@keyframes live-pill-glow {
+  0%, 100%    { box-shadow: 0 0 0 0   rgba(255,255,255,0.04); opacity: 0; }
+  50%         { box-shadow: 0 0 20px 4px rgba(255,255,255,0.06); opacity: 1; }
+}
+
+.animate-live-pill-bounce {
+  animation: live-pill-bounce 0.58s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+.animate-live-pill-glow {
+  animation: live-pill-glow 3.2s ease-in-out infinite;
+}

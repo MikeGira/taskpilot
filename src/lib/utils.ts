@@ -81,3 +81,30 @@ export function downloadTextFile(content: string, filename: string): void {
   document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 100);
 }
+
+const RETRYABLE_STATUSES = new Set([429, 502, 503, 504]);
+
+export async function withRetry<T>(
+  fn: () => Promise<T>,
+  retries = 3,
+  backoffMs = 600,
+): Promise<T> {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+      const status = (err as { status?: number })?.status;
+      const isTransient =
+        !status ||
+        RETRYABLE_STATUSES.has(status) ||
+        (err instanceof TypeError && err.message.includes('fetch'));
+      if (!isTransient || attempt === retries) break;
+      const delay = backoffMs * Math.pow(2, attempt);
+      console.warn(`[withRetry] attempt ${attempt + 1} failed, retrying in ${delay}ms`, err);
+      await new Promise((r) => setTimeout(r, delay));
+    }
+  }
+  throw lastErr;
+}

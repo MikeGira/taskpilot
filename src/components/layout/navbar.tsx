@@ -9,7 +9,8 @@ import { cn } from '@/lib/utils';
 import type { User } from '@supabase/supabase-js';
 
 const NAV_LINKS = [
-  { href: '/generate', label: 'Generator' },
+  { href: '/generate', label: 'Scripts' },
+  { href: '/workflow', label: 'Workflows' },
   { href: '/stats', label: 'Stats' },
   { href: '/#includes', label: "What's included" },
   { href: '/#pricing', label: 'Pricing' },
