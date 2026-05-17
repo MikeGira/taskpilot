@@ -377,14 +377,20 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     Describe your automation in plain English. Pick your integrations. Get production-ready n8n workflow JSON to import directly: Slack, GitHub, Stripe, Claude AI, and 30+ more.
                   </p>
 
-                  {/* Each tag = one arc color from the globe */}
+                  {/* Brand-color tags */}
                   <div className="relative flex flex-wrap gap-1.5 mb-5">
-                    <span className="text-xs px-2.5 py-1 rounded-full border border-blue-400/52 bg-blue-400/12 text-blue-300 cursor-pointer hover:bg-blue-400 hover:border-blue-400 hover:text-black hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(96,165,250,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Slack</span>
-                    <span className="text-xs px-2.5 py-1 rounded-full border border-white/42 bg-white/8 text-white/75 cursor-pointer hover:bg-white hover:border-white hover:text-black hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(255,255,255,0.35)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">GitHub</span>
-                    <span className="text-xs px-2.5 py-1 rounded-full border border-emerald-400/52 bg-emerald-400/12 text-emerald-300 cursor-pointer hover:bg-emerald-400 hover:border-emerald-400 hover:text-black hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(52,211,153,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Gmail</span>
-                    <span className="text-xs px-2.5 py-1 rounded-full border border-indigo-400/52 bg-indigo-400/12 text-indigo-300 cursor-pointer hover:bg-indigo-400 hover:border-indigo-400 hover:text-white hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(129,140,248,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Stripe</span>
-                    <span className="text-xs px-2.5 py-1 rounded-full border border-cyan-400/52 bg-cyan-400/12 text-cyan-300 cursor-pointer hover:bg-cyan-400 hover:border-cyan-400 hover:text-black hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(34,211,238,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Claude AI</span>
-                    <span className="text-xs px-2.5 py-1 rounded-full border border-pink-400/52 bg-pink-400/12 text-pink-300 cursor-pointer hover:bg-pink-400 hover:border-pink-400 hover:text-white hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(244,114,182,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">30+ more</span>
+                    {/* Slack — aubergine #4A154B bg, pink #E01E5A accent */}
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-[#E01E5A]/52 bg-[#4A154B]/40 text-[#E01E5A] cursor-pointer hover:bg-[#E01E5A] hover:border-[#E01E5A] hover:text-white hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(224,30,90,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Slack</span>
+                    {/* GitHub — dark #0d1117 bg, blue #58a6ff accent */}
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-[#58a6ff]/50 bg-[#0d1117]/70 text-[#58a6ff] cursor-pointer hover:bg-[#58a6ff] hover:border-[#58a6ff] hover:text-black hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(88,166,255,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">GitHub</span>
+                    {/* Gmail — Google red #EA4335 */}
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-[#EA4335]/52 bg-[#EA4335]/12 text-[#EA4335] cursor-pointer hover:bg-[#EA4335] hover:border-[#EA4335] hover:text-white hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(234,67,53,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Gmail</span>
+                    {/* Stripe — violet #635BFF */}
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-[#635BFF]/52 bg-[#635BFF]/14 text-[#9692FF] cursor-pointer hover:bg-[#635BFF] hover:border-[#635BFF] hover:text-white hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(99,91,255,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Stripe</span>
+                    {/* Claude AI — Anthropic warm copper #D97757 */}
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-[#D97757]/52 bg-[#D97757]/12 text-[#D97757] cursor-pointer hover:bg-[#D97757] hover:border-[#D97757] hover:text-white hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(217,119,87,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Claude AI</span>
+                    {/* 30+ more — neutral discovery */}
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-white/30 bg-white/5 text-white/55 cursor-pointer hover:bg-white/18 hover:border-white/50 hover:text-white hover:-translate-y-px transition-[background-color,border-color,color,box-shadow,transform] duration-150">30+ more</span>
                   </div>
 
                   <div className="relative mt-auto flex items-center gap-1.5 pt-4 border-t border-white/20 group-hover:border-white/42 transition-colors duration-150">
