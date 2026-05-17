@@ -327,7 +327,12 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
 
                   <div className="flex flex-wrap gap-1.5 mb-5">
                     {['PowerShell', 'Bash', 'Python', 'Terraform', 'Ansible', '20+ more'].map((tag) => (
-                      <span key={tag} className="text-xs px-2.5 py-1 rounded-md border border-white/20 bg-white/6 text-[#E5E7EB]">{tag}</span>
+                      <span
+                        key={tag}
+                        className="text-xs px-2.5 py-1 rounded-md border border-white/20 bg-white/6 text-[#D1D5DB]
+                          hover:bg-white/14 hover:border-white/38 hover:text-white
+                          transition-colors duration-150"
+                      >{tag}</span>
                     ))}
                   </div>
 
@@ -371,7 +376,12 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
 
                   <div className="flex flex-wrap gap-1.5 mb-5">
                     {['Slack', 'GitHub', 'Gmail', 'Stripe', 'Claude AI', '30+ more'].map((tag) => (
-                      <span key={tag} className="text-xs px-2.5 py-1 rounded-md border border-violet-400/22 bg-violet-500/10 text-violet-100">{tag}</span>
+                      <span
+                        key={tag}
+                        className="text-xs px-2.5 py-1 rounded-md border border-violet-400/22 bg-violet-500/10 text-violet-200
+                          hover:bg-violet-500/25 hover:border-violet-400/48 hover:text-white
+                          transition-colors duration-150"
+                      >{tag}</span>
                     ))}
                   </div>
 
