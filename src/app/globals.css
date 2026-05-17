@@ -313,8 +313,8 @@
 
 .glow-workflow-card {
   background:
-    radial-gradient(ellipse at -18% 118%, rgba(62,207,142,0.46) 0%, rgba(0,210,120,0.26) 48%, transparent 70%),
-    radial-gradient(ellipse at 118% -12%, rgba(0,191,255,0.11) 0%, transparent 52%);
+    radial-gradient(ellipse at -18% 118%, rgba(139,92,246,0.55) 0%, rgba(109,40,217,0.30) 48%, transparent 70%),
+    radial-gradient(ellipse at 118% -12%, rgba(217,70,239,0.18) 0%, transparent 52%);
 }
 
 .glow-pricing-section {
