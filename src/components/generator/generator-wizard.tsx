@@ -11,6 +11,7 @@ import {
   Code, Box, GitBranch, Settings, Shield, Key, Brain, Database, Activity, Package, Workflow, Network,
 } from 'lucide-react';
 import { cn, copyToClipboard, downloadTextFile, buildDownloadContent } from '@/lib/utils';
+import { LivePill } from '@/components/ui/live-pill';
 import type { GenerateResult } from '@/app/api/generate/route';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -265,6 +266,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
   const [feedbackComment, setFeedbackComment] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+  const [pillVisible, setPillVisible] = useState(false);
 
   useEffect(() => {
     if (step === 'generating') {
@@ -322,6 +324,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       } else {
         setResult(data);
         setStep('result');
+        setTimeout(() => setPillVisible(true), 600);
       }
     } catch {
       setError('Network error. Please try again.');
@@ -354,6 +357,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
   }
 
   function reset() {
+    setPillVisible(false);
     setStep('os');
     setOs('');
     setEnv('');
@@ -639,6 +643,24 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           {/* Script */}
           {result.script && (
             <ScriptBlock script={result.script} filename={result.filename} language={result.language} />
+          )}
+
+          {/* Live pill — copy or start over */}
+          {result.script && (
+            <div className="flex justify-center py-1">
+              <LivePill
+                label="Script ready"
+                sublabel={result.filename ?? result.language ?? undefined}
+                visible={pillVisible}
+                acceptLabel={<Copy className="h-3.5 w-3.5" />}
+                declineLabel={<RefreshCw className="h-3.5 w-3.5" />}
+                onAccept={() => {
+                  copyToClipboard(result.script!);
+                  setPillVisible(false);
+                }}
+                onDecline={() => { setPillVisible(false); reset(); }}
+              />
+            </div>
           )}
 
           {/* Config notes */}
