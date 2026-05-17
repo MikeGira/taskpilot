@@ -352,24 +352,24 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <Link
                   href="/workflow"
                   className="card-lift-snap group relative flex flex-col h-full rounded-2xl overflow-hidden
-                    border border-violet-500/55 bg-[#0B0814] p-6
-                    shadow-[0_0_0_1px_rgba(139,92,246,0.18),0_8px_32px_rgba(0,0,0,0.80)]
-                    hover:border-violet-400/80
-                    hover:shadow-[0_0_0_1px_rgba(139,92,246,0.35),0_0_55px_rgba(139,92,246,0.25),0_8px_32px_rgba(0,0,0,0.80)]"
+                    border border-[#EA4B71]/60 bg-[#0C0F24] p-6
+                    shadow-[0_0_0_1px_rgba(234,75,113,0.20),0_8px_32px_rgba(0,0,0,0.82)]
+                    hover:border-[#EA4B71]/85
+                    hover:shadow-[0_0_0_1px_rgba(234,75,113,0.38),0_0_55px_rgba(234,75,113,0.22),0_8px_32px_rgba(0,0,0,0.82)]"
                 >
-                  {/* Aurora violet glow — matches workflow page hero */}
+                  {/* n8n pink glow — bottom-left primary, top-right warm counter-glow */}
                   <div className="glow-workflow-card pointer-events-none absolute inset-0 rounded-2xl" />
 
                   <div className="relative flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-xl border border-violet-500/60 bg-violet-500/22 flex items-center justify-center shrink-0">
-                      <Workflow className="h-5 w-5 text-violet-400" />
+                    <div className="h-10 w-10 rounded-xl border border-[#EA4B71]/62 bg-[#EA4B71]/18 flex items-center justify-center shrink-0">
+                      <Workflow className="h-5 w-5 text-[#EA4B71]" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="font-semibold text-white text-sm">n8n Workflow Generator</p>
-                        <span className="text-[10px] font-bold bg-violet-500/28 border border-violet-400/55 text-violet-300 px-1.5 py-0.5 rounded">FREE</span>
+                        <span className="text-[10px] font-bold bg-[#EA4B71]/22 border border-[#EA4B71]/62 text-[#EA4B71] px-1.5 py-0.5 rounded">FREE</span>
                       </div>
-                      <p className="text-xs text-violet-300/85">No sign-in needed · Import-ready JSON</p>
+                      <p className="text-xs text-[#EA4B71]/85">No sign-in needed · Import-ready JSON</p>
                     </div>
                   </div>
 
@@ -381,19 +381,19 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     {['Slack', 'GitHub', 'Gmail', 'Stripe', 'Claude AI', '30+ more'].map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs px-2.5 py-1 rounded-full border border-violet-500/50 bg-violet-500/16 text-violet-300 cursor-pointer
-                          hover:bg-violet-500 hover:border-violet-400 hover:text-white hover:-translate-y-px
-                          hover:shadow-[0_4px_14px_rgba(139,92,246,0.55)]
+                        className="text-xs px-2.5 py-1 rounded-full border border-[#EA4B71]/52 bg-[#EA4B71]/14 text-[#EA4B71] cursor-pointer
+                          hover:bg-[#EA4B71] hover:border-[#EA4B71] hover:text-white hover:-translate-y-px
+                          hover:shadow-[0_4px_14px_rgba(234,75,113,0.55)]
                           transition-[background-color,border-color,color,box-shadow,transform] duration-150"
                       >{tag}</span>
                     ))}
                   </div>
 
-                  <div className="relative mt-auto flex items-center gap-1.5 pt-4 border-t border-violet-500/35 group-hover:border-violet-400/60 transition-colors duration-150">
-                    <span className="text-sm font-semibold text-violet-300/90 group-hover:text-violet-200 transition-colors duration-100">
+                  <div className="relative mt-auto flex items-center gap-1.5 pt-4 border-t border-[#EA4B71]/35 group-hover:border-[#EA4B71]/62 transition-colors duration-150">
+                    <span className="text-sm font-semibold text-[#EA4B71]/88 group-hover:text-[#EA4B71] transition-colors duration-100">
                       Generate a workflow
                     </span>
-                    <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0 text-violet-400
+                    <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0 text-[#EA4B71]
                       group-hover:translate-x-0 group-hover:opacity-100
                       transition-[transform,opacity] duration-100" />
                   </div>
