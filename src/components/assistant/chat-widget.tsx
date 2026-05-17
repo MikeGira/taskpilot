@@ -311,12 +311,12 @@ export function ChatWidget() {
       }}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/15 bg-indigo-950/20 rounded-t-2xl shrink-0">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/28 bg-indigo-950/40 rounded-t-2xl shrink-0">
           <div className="flex items-center gap-2.5">
             <PilotAvatar />
             <div>
               <p className="text-sm font-semibold text-white leading-none">Pilot</p>
-              <p className="text-[11px] text-indigo-400/70 mt-0.5">TaskPilot AI Co-Pilot</p>
+              <p className="text-[11px] text-indigo-400/90 mt-0.5">TaskPilot AI Co-Pilot</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -328,14 +328,14 @@ export function ChatWidget() {
         </div>
 
         {/* Tab bar */}
-        <div className="flex border-b border-white/15 shrink-0">
+        <div className="flex border-b border-white/28 shrink-0">
           {(['chat', 'generate'] as Panel[]).map((p) => (
             <button
               key={p}
               onClick={() => setPanel(p)}
               className={cn(
                 'flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium transition-colors',
-                panel === p ? 'text-white border-b-2 border-indigo-500' : 'text-[#A0A0A0] hover:text-[#ccc]'
+                panel === p ? 'text-white border-b-2 border-indigo-500' : 'text-[#C0C0C0] hover:text-white'
               )}
             >
               {p === 'chat' ? <MessageSquare className="h-3.5 w-3.5" /> : <Wand2 className="h-3.5 w-3.5" />}
@@ -353,7 +353,7 @@ export function ChatWidget() {
                   {msg.role === 'assistant' && <PilotAvatar size="sm" />}
                   <div className={cn(
                     'max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed',
-                    msg.role === 'user' ? 'bg-white text-black rounded-tr-sm' : 'bg-indigo-950/40 text-[#E4E4E7] border border-indigo-500/15 rounded-tl-sm'
+                    msg.role === 'user' ? 'bg-white text-black rounded-tr-sm' : 'bg-indigo-950/60 text-[#F0F0F2] border border-indigo-500/35 rounded-tl-sm'
                   )}>
                     {msg.content}
                   </div>
@@ -362,7 +362,7 @@ export function ChatWidget() {
               {chatLoading && (
                 <div className="flex gap-2.5 animate-fade-in">
                   <PilotAvatar size="sm" />
-                  <div className="bg-indigo-950/40 border border-indigo-500/15 rounded-2xl rounded-tl-sm px-4 py-3">
+                  <div className="bg-indigo-950/60 border border-indigo-500/35 rounded-2xl rounded-tl-sm px-4 py-3">
                     <div className="flex gap-1">
                       {[0,150,300].map((d) => <div key={d} className="h-1.5 w-1.5 rounded-full bg-indigo-400/60 animate-bounce" style={{ animationDelay: `${d}ms` }} />)}
                     </div>
@@ -373,9 +373,9 @@ export function ChatWidget() {
                 <div className="space-y-1.5 pt-1">
                   <p className="text-[10px] text-[#A0A0A0] px-1 uppercase tracking-wider font-medium">Quick questions</p>
                   {STARTERS.map((q) => (
-                    <button key={q} onClick={() => sendChat(q)} className="w-full text-left text-xs text-[#aaa] border border-indigo-500/25 bg-indigo-950/30 hover:bg-indigo-950/60 hover:text-white rounded-xl px-3 py-2 transition-colors">{q}</button>
+                    <button key={q} onClick={() => sendChat(q)} className="w-full text-left text-xs text-[#D0D0D0] border border-indigo-500/45 bg-indigo-950/50 hover:bg-indigo-950/75 hover:text-white rounded-xl px-3 py-2 transition-colors">{q}</button>
                   ))}
-                  <button onClick={() => setPanel('generate')} className="w-full text-left text-xs text-indigo-300 border border-indigo-400/30 bg-indigo-900/30 hover:bg-indigo-900/50 hover:text-white rounded-xl px-3 py-2 transition-colors flex items-center gap-1.5 font-medium">
+                  <button onClick={() => setPanel('generate')} className="w-full text-left text-xs text-indigo-300 border border-indigo-400/50 bg-indigo-900/45 hover:bg-indigo-900/65 hover:text-white rounded-xl px-3 py-2 transition-colors flex items-center gap-1.5 font-medium">
                     <Wand2 className="h-3 w-3" /> Generate a custom script for my environment →
                   </button>
                 </div>
@@ -383,7 +383,7 @@ export function ChatWidget() {
               {chatError && <p className="text-[11px] text-red-400/60 text-center">{chatError}</p>}
               <div ref={bottomRef} />
             </div>
-            <div className="p-3 border-t border-white/15 shrink-0">
+            <div className="p-3 border-t border-white/28 shrink-0">
               <form onSubmit={(e) => { e.preventDefault(); sendChat(chatInput); }} className="flex gap-2">
                 <input
                   ref={chatInputRef}
@@ -416,7 +416,7 @@ export function ChatWidget() {
                 <div className="grid grid-cols-2 gap-2">
                   {OS_OPTS.map((o) => (
                     <button key={o.id} onClick={() => { setGenOs(o.id); setGenStep('env'); }}
-                      className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/3 hover:border-indigo-500/40 hover:bg-indigo-950/30 px-3 py-3 text-sm text-white transition-all group">
+                      className="flex items-center gap-2 rounded-xl border border-white/22 bg-white/6 hover:border-indigo-500/55 hover:bg-indigo-950/45 px-3 py-3 text-sm text-white transition-all group">
                       <span className="text-base">{o.emoji}</span>
                       <span className="font-medium">{o.label}</span>
                     </button>
@@ -444,7 +444,7 @@ export function ChatWidget() {
                         'rounded-xl border px-3 py-3 text-sm font-medium text-white transition-all',
                         genEnv === e.id
                           ? 'border-indigo-500/60 bg-indigo-950/40'
-                          : 'border-white/10 bg-white/3 hover:border-indigo-500/40 hover:bg-indigo-950/30'
+                          : 'border-white/22 bg-white/6 hover:border-indigo-500/55 hover:bg-indigo-950/45'
                       )}
                     >
                       {e.label}
@@ -467,7 +467,7 @@ export function ChatWidget() {
                             'px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all',
                             genCloudProviders.includes(c.id)
                               ? 'border-indigo-500/50 bg-indigo-950/50 text-indigo-300'
-                              : 'border-white/10 bg-white/3 text-[#9CA3AF] hover:border-white/20 hover:text-white'
+                              : 'border-white/22 bg-white/6 text-[#C9CACB] hover:border-white/38 hover:text-white'
                           )}
                         >
                           {genCloudProviders.includes(c.id) && <span className="mr-1 text-emerald-400">✓</span>}
@@ -508,7 +508,7 @@ export function ChatWidget() {
                             'flex items-center gap-1.5 rounded-lg border px-2.5 py-2 text-[11px] font-medium text-white transition-all',
                             genTool === t.id
                               ? 'border-indigo-500/60 bg-indigo-950/40'
-                              : 'border-white/10 bg-white/3 hover:border-indigo-500/40 hover:bg-indigo-950/30'
+                              : 'border-white/22 bg-white/6 hover:border-indigo-500/55 hover:bg-indigo-950/45'
                           )}>
                           <span className="text-sm">{t.emoji}</span>
                           <span>{t.label}</span>
@@ -599,7 +599,7 @@ export function ChatWidget() {
             {genStep === 'loading' && (
               <div className="flex-1 flex flex-col items-center justify-center gap-4 p-8">
                 <div className="relative h-16 w-16">
-                  <div className="absolute inset-0 rounded-full border-2 border-indigo-500/20" />
+                  <div className="absolute inset-0 rounded-full border-2 border-indigo-500/40" />
                   <div className="absolute inset-0 rounded-full border-2 border-t-indigo-400 border-transparent animate-spin" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Wand2 className="h-5 w-5 text-indigo-400" />
@@ -617,7 +617,7 @@ export function ChatWidget() {
               <div className="flex-1 flex flex-col overflow-hidden">
 
                 {/* ── Sticky header: title + New script ── */}
-                <div className="shrink-0 px-4 pt-4 pb-3 border-b border-white/8 flex items-start gap-2">
+                <div className="shrink-0 px-4 pt-4 pb-3 border-b border-white/22 flex items-start gap-2">
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-white truncate">{genResult.title ?? 'Script ready'}</p>
                     {genResult.explanation && (
@@ -629,13 +629,13 @@ export function ChatWidget() {
 
                 {/* ── Sticky action bar: always visible Copy + Download ── */}
                 {genResult.script ? (
-                  <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-white/8 bg-white/[0.02]">
-                    <span className="text-[11px] font-mono text-[#9CA3AF] flex-1 truncate">{genResult.filename ?? 'script'}</span>
+                  <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-white/22 bg-white/[0.05]">
+                    <span className="text-[11px] font-mono text-[#C9CACB] flex-1 truncate">{genResult.filename ?? 'script'}</span>
                     <button onClick={copyScript} className={cn(
                       'flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-md border transition-colors',
                       genCopied
-                        ? 'border-emerald-500/40 bg-emerald-950/40 text-emerald-400'
-                        : 'border-white/20 bg-white/5 text-[#ccc] hover:border-white/30 hover:text-white hover:bg-white/10'
+                        ? 'border-emerald-500/50 bg-emerald-950/50 text-emerald-400'
+                        : 'border-white/32 bg-white/8 text-[#E0E0E0] hover:border-white/45 hover:text-white hover:bg-white/12'
                     )}>
                       {genCopied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                       {genCopied ? 'Copied!' : 'Copy'}
@@ -646,8 +646,8 @@ export function ChatWidget() {
                     </button>
                   </div>
                 ) : (
-                  <div className="shrink-0 px-4 py-3 border-b border-white/8 flex items-center gap-2">
-                    <p className="text-[11px] text-[#9CA3AF] flex-1">Script could not be extracted. Add more detail and try again.</p>
+                  <div className="shrink-0 px-4 py-3 border-b border-white/22 flex items-center gap-2">
+                    <p className="text-[11px] text-[#C9CACB] flex-1">Script could not be extracted. Add more detail and try again.</p>
                     <button onClick={resetGenerate} className="text-[11px] text-indigo-400 hover:text-indigo-300 shrink-0 flex items-center gap-1">
                       <ArrowLeft className="h-3 w-3" /> Retry
                     </button>
@@ -657,7 +657,7 @@ export function ChatWidget() {
                 {/* ── Scrollable body: script preview + config notes ── */}
                 <div className="flex-1 overflow-y-auto scrollbar-hidden flex flex-col gap-3 p-4">
                   {genResult.script && (
-                    <pre className="overflow-auto rounded-xl border border-white/10 p-3 text-[11px] text-[#C9D1D9] font-mono leading-relaxed scrollbar-hidden max-h-[200px]">
+                    <pre className="overflow-auto rounded-xl border border-white/25 p-3 text-[11px] text-[#D9E1E9] font-mono leading-relaxed scrollbar-hidden max-h-[200px]">
                       <code>{genResult.script}</code>
                     </pre>
                   )}
@@ -687,19 +687,19 @@ export function ChatWidget() {
                   {/* Feedback */}
                   {genResult.script && (
                     genFeedbackSubmitted ? (
-                      <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/3 px-3 py-2.5">
+                      <div className="flex items-center gap-2 rounded-xl border border-white/25 bg-white/6 px-3 py-2.5">
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
                         <p className="text-[11px] text-[#9CA3AF]">Thanks, your feedback helps improve the AI.</p>
                       </div>
                     ) : (
-                      <div className="rounded-xl border border-white/10 bg-white/3 p-3">
-                        <p className="text-[10px] text-[#666] mb-2 uppercase tracking-wider">Was this script useful?</p>
+                      <div className="rounded-xl border border-white/25 bg-white/6 p-3">
+                        <p className="text-[10px] text-[#9CA3AF] mb-2 uppercase tracking-wider">Was this script useful?</p>
                         {genFeedbackRating === null && (
                           <div className="flex gap-2">
                             <button
                               onClick={() => submitGenFeedback(1)}
                               disabled={genFeedbackSubmitting}
-                              className="flex-1 flex items-center justify-center gap-1.5 text-[11px] font-medium py-1.5 rounded-lg border border-white/15 bg-white/4 text-[#ccc] hover:border-emerald-500/40 hover:bg-emerald-950/30 hover:text-emerald-400 transition-colors disabled:opacity-40"
+                              className="flex-1 flex items-center justify-center gap-1.5 text-[11px] font-medium py-1.5 rounded-lg border border-white/28 bg-white/7 text-[#E0E0E0] hover:border-emerald-500/55 hover:bg-emerald-950/45 hover:text-emerald-400 transition-colors disabled:opacity-40"
                             >
                               <ThumbsUp className="h-3 w-3" /> Worked great
                             </button>
@@ -734,7 +734,7 @@ export function ChatWidget() {
                               <button
                                 onClick={() => setGenFeedbackRating(null)}
                                 disabled={genFeedbackSubmitting}
-                                className="text-[11px] text-[#666] hover:text-[#9CA3AF] px-3 transition-colors disabled:opacity-40"
+                                className="text-[11px] text-[#9CA3AF] hover:text-[#D1D5DB] px-3 transition-colors disabled:opacity-40"
                               >
                                 Cancel
                               </button>

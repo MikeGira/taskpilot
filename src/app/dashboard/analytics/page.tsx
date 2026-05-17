@@ -71,8 +71,8 @@ export default async function AnalyticsPage() {
           { label: 'Needs Work', value: String(negative), color: 'text-amber-400' },
           { label: 'Satisfaction', value: `${positiveRate}%`, color: positiveRate >= 70 ? 'text-white' : 'text-amber-400' },
         ].map((s) => (
-          <div key={s.label} className="card-glow rounded-xl border border-white/20 bg-[#0D0D0D] p-4">
-            <p className="text-xs text-[#6B7280] mb-1">{s.label}</p>
+          <div key={s.label} className="card-glow rounded-xl border border-white/32 bg-[#0D0D0D] p-4">
+            <p className="text-xs text-[#9CA3AF] mb-1">{s.label}</p>
             <p className={`text-2xl font-bold ${s.color || 'text-[#F9FAFB]'}`}>{s.value}</p>
           </div>
         ))}
@@ -100,36 +100,36 @@ export default async function AnalyticsPage() {
       {/* Recent feedback */}
       <div className="mb-8">
         <h2 className="text-sm font-semibold text-[#F9FAFB] mb-3">
-          Recent Feedback {total > 0 && <span className="text-[#6B7280] font-normal">(last {recent.length})</span>}
+          Recent Feedback {total > 0 && <span className="text-[#9CA3AF] font-normal">(last {recent.length})</span>}
         </h2>
         {recent.length === 0 ? (
-          <div className="rounded-xl border border-white/20 bg-[#0D0D0D] p-8 text-center">
-            <p className="text-sm text-[#6B7280]">No feedback submitted yet.</p>
-            <p className="text-xs text-[#6B7280] mt-1">Ratings will appear here after users try the script generator.</p>
+          <div className="rounded-xl border border-white/32 bg-[#0D0D0D] p-8 text-center">
+            <p className="text-sm text-[#9CA3AF]">No feedback submitted yet.</p>
+            <p className="text-xs text-[#9CA3AF] mt-1">Ratings will appear here after users try the script generator.</p>
           </div>
         ) : (
           <div className="space-y-2">
             {recent.map((f, i) => (
-              <div key={i} className="rounded-lg border border-white/15 bg-[#0D0D0D] px-4 py-3 flex items-start gap-3">
+              <div key={i} className="rounded-lg border border-white/28 bg-[#0D0D0D] px-4 py-3 flex items-start gap-3">
                 <span className="text-base shrink-0 mt-0.5">{f.rating === 1 ? '👍' : '👎'}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-1.5 mb-1">
                     <span className="text-xs font-medium text-[#9CA3AF]">{f.os}</span>
-                    <span className="text-xs text-[#374151]">·</span>
+                    <span className="text-xs text-[#9CA3AF]">·</span>
                     <span className="text-xs text-[#9CA3AF]">{f.environment}</span>
                     {f.language && (
                       <>
-                        <span className="text-xs text-[#374151]">·</span>
+                        <span className="text-xs text-[#9CA3AF]">·</span>
                         <span className="text-xs text-[#9CA3AF]">{f.language}</span>
                       </>
                     )}
-                    <span className="text-xs text-[#6B7280] ml-auto">
+                    <span className="text-xs text-[#9CA3AF] ml-auto">
                       {new Date(f.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </span>
                   </div>
                   {f.comment
                     ? <p className="text-xs text-[#D1D5DB] leading-relaxed">{f.comment}</p>
-                    : <p className="text-xs text-[#374151] italic">No comment</p>}
+                    : <p className="text-xs text-[#9CA3AF] italic">No comment</p>}
                 </div>
               </div>
             ))}
@@ -158,10 +158,10 @@ function BreakdownCard({
   );
 
   return (
-    <div className="card-glow rounded-xl border border-white/20 bg-[#0D0D0D] p-4">
-      <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">{title}</p>
+    <div className="card-glow rounded-xl border border-white/32 bg-[#0D0D0D] p-4">
+      <p className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">{title}</p>
       {entries.length === 0 ? (
-        <p className="text-xs text-[#374151]">No data yet</p>
+        <p className="text-xs text-[#9CA3AF]">No data yet</p>
       ) : (
         <div className="space-y-2.5">
           {entries.map(([key, { pos, neg }]) => {
@@ -171,7 +171,7 @@ function BreakdownCard({
               <div key={key}>
                 <div className="flex justify-between items-center text-xs mb-1">
                   <span className="text-[#9CA3AF]">{labels[key] ?? key}</span>
-                  <span className="text-[#6B7280]">{tot} · {pct}% 👍</span>
+                  <span className="text-[#9CA3AF]">{tot} · {pct}% 👍</span>
                 </div>
                 <div className="h-1.5 rounded-full bg-white/6 overflow-hidden">
                   <div

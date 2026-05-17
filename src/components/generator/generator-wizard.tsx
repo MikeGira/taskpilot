@@ -151,7 +151,7 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
           key={i}
           className={cn(
             'h-1.5 rounded-full transition-all duration-300',
-            i < current ? 'bg-white flex-1' : i === current ? 'bg-white/40 flex-[2]' : 'bg-white/10 flex-1'
+            i < current ? 'bg-white flex-1' : i === current ? 'bg-white/55 flex-[2]' : 'bg-white/25 flex-1'
           )}
         />
       ))}
@@ -207,18 +207,18 @@ function ScriptBlock({ script, filename, language, locked = false }: {
   const langLabel = language ? (LANG_LABELS[language] ?? language) : 'Script';
   const displayScript = locked ? script.split('\n').slice(0, 18).join('\n') : script;
   return (
-    <div className="rounded-xl border border-white/10 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2.5 bg-white/4 border-b border-white/8">
+    <div className="rounded-xl border border-white/25 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-2.5 bg-white/8 border-b border-white/20">
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5">
-            <div className="h-3 w-3 rounded-full bg-white/5" />
-            <div className="h-3 w-3 rounded-full bg-yellow-500/60" />
-            <div className="h-3 w-3 rounded-full bg-white/5" />
+            <div className="h-3 w-3 rounded-full bg-white/12" />
+            <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
+            <div className="h-3 w-3 rounded-full bg-white/12" />
           </div>
-          <span className="text-xs text-[#9CA3AF] ml-2 font-mono">{filename ?? 'script'}</span>
+          <span className="text-xs text-[#C9CACB] ml-2 font-mono">{filename ?? 'script'}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-[#4B5563] border border-white/10 px-2 py-0.5 rounded">{langLabel}</span>
+          <span className="text-xs text-[#9CA3AF] border border-white/22 px-2 py-0.5 rounded">{langLabel}</span>
           {!locked && <CopyButton text={script} />}
         </div>
       </div>
@@ -417,9 +417,9 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
 
           {/* Cloud provider sub-selection */}
           {needsCloud && (
-            <div className="rounded-xl border border-white/8 bg-white/3 p-4 mb-5">
-              <p className="text-sm font-medium text-[#9CA3AF] mb-3">
-                Which cloud provider(s)? <span className="text-[#4B5563]">(select all that apply)</span>
+            <div className="rounded-xl border border-white/22 bg-white/6 p-4 mb-5">
+              <p className="text-sm font-medium text-[#C9CACB] mb-3">
+                Which cloud provider(s)? <span className="text-[#9CA3AF]">(select all that apply)</span>
               </p>
               <div className="flex flex-wrap gap-2">
                 {CLOUD_PROVIDERS.map((c) => (
@@ -429,8 +429,8 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
                     className={cn(
                       'px-3 py-1.5 rounded-lg text-sm font-medium border transition-all duration-150',
                       cloudProviders.includes(c.id)
-                        ? 'border-white/12 bg-white/5 text-zinc-300'
-                        : 'border-white/10 bg-white/4 text-[#9CA3AF] hover:border-white/20 hover:bg-white/8'
+                        ? 'border-white/28 bg-white/10 text-white'
+                        : 'border-white/22 bg-white/7 text-[#C9CACB] hover:border-white/35 hover:bg-white/12'
                     )}
                   >
                     {cloudProviders.includes(c.id) && <span className="mr-1">✓</span>}
@@ -511,7 +511,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
                   <AlertCircle className="h-3 w-3" />{error}
                 </p>
               )}
-              <span className="text-xs text-[#4B5563] ml-auto">{task.length}/2000</span>
+              <span className="text-xs text-[#9CA3AF] ml-auto">{task.length}/2000</span>
             </div>
             {task.length > 800 && (
               <p className="text-xs text-yellow-500/70 mt-1.5 flex items-start gap-1.5">
@@ -552,7 +552,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {step === 'generating' && (
         <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
           <div className="relative mb-8">
-            <div className="h-20 w-20 rounded-full border-2 border-white/12 flex items-center justify-center">
+            <div className="h-20 w-20 rounded-full border-2 border-white/28 flex items-center justify-center">
               <div className="h-14 w-14 rounded-full border-2 border-t-red-400 border-white/12 animate-spin" />
             </div>
             <Wand2 className="absolute inset-0 m-auto h-6 w-6 text-white" />
@@ -573,7 +573,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {step === 'clarify' && result?.question && (
         <div className="animate-slide-up">
           <StepIndicator current={3} total={4} />
-          <div className="rounded-xl border border-white/12 bg-white/5 p-5 mb-6">
+          <div className="rounded-xl border border-white/28 bg-white/9 p-5 mb-6">
             <div className="flex items-start gap-3">
               <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
                 <Wand2 className="h-4 w-4 text-white" />
@@ -660,7 +660,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
 
           {/* Feedback */}
           {feedbackSubmitted ? (
-            <div className="rounded-xl border border-white/12 bg-white/5 px-4 py-3 flex items-center gap-2">
+            <div className="rounded-xl border border-white/28 bg-white/9 px-4 py-3 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-white shrink-0" />
               <p className="text-sm text-[#D1D5DB]">Thanks, your feedback helps improve the AI.</p>
             </div>
@@ -747,7 +747,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           </div>
 
           {/* Upsell */}
-          <div className="rounded-xl border border-white/12 bg-white/5 p-4 flex items-center justify-between gap-4">
+          <div className="rounded-xl border border-white/28 bg-white/9 p-4 flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-[#F9FAFB] mb-0.5">Want 9 production-ready scripts?</p>
               <p className="text-xs text-[#9CA3AF]">The Starter Kit includes 9 pre-built, pre-tested scripts for the most common IT tasks. Just $19.</p>

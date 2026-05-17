@@ -117,15 +117,15 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
 
   return (
     <div className="font-mono">
-      <div className="rounded-xl border border-white/10 bg-[#0D0D0D] overflow-hidden shadow-2xl">
+      <div className="rounded-xl border border-white/25 bg-[#0D0D0D] overflow-hidden shadow-2xl">
         {/* macOS-style title bar */}
-        <div className="flex items-center px-4 py-3 border-b border-white/8 bg-[#111]">
+        <div className="flex items-center px-4 py-3 border-b border-white/20 bg-[#111]">
           <div className="flex gap-1.5">
             <span className="block w-3 h-3 rounded-full bg-[#FF5F56]" />
             <span className="block w-3 h-3 rounded-full bg-[#FFBD2E]" />
             <span className="block w-3 h-3 rounded-full bg-[#27C93F]" />
           </div>
-          <span className="text-xs text-[#4B5563] ml-auto">taskpilot — stats</span>
+          <span className="text-xs text-[#9CA3AF] ml-auto">taskpilot — stats</span>
         </div>
 
         {/* Terminal body */}

@@ -62,7 +62,7 @@ export default function WorkflowPage() {
 
               <div className="flex flex-wrap justify-center gap-2 mb-12">
                 {FEATURES.map(({ icon: Icon, label }) => (
-                  <div key={label} className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/8 px-3 py-1.5">
+                  <div key={label} className="inline-flex items-center gap-1.5 rounded-full border border-white/38 bg-white/13 px-3 py-1.5">
                     <Icon className="h-3 w-3 text-[#D1D5DB]" />
                     <span className="text-xs text-[#D1D5DB] font-medium">{label}</span>
                   </div>
@@ -78,7 +78,7 @@ export default function WorkflowPage() {
         </section>
 
         {/* ── What makes this different (with dots) ────────────────────────── */}
-        <section className="relative border-t border-white/12 bg-[#0A0A0A] py-16 px-4 overflow-hidden">
+        <section className="relative border-t border-white/25 bg-[#0A0A0A] py-16 px-4 overflow-hidden">
           <div className="absolute inset-0 bg-grid-pattern-subtle pointer-events-none" />
           <div className="relative z-10 max-w-4xl mx-auto">
             <div className="text-center mb-12">
@@ -89,10 +89,10 @@ export default function WorkflowPage() {
               {FEATURES.map(({ icon: Icon, label, desc }) => (
                 <div
                   key={label}
-                  className="card-glow rounded-xl border border-white/20 bg-[#111111] p-6 group
+                  className="card-glow rounded-xl border border-white/32 bg-[#111111] p-6 group
                     hover:border-white/35"
                 >
-                  <div className="h-9 w-9 rounded-lg border border-white/25 bg-white/8 flex items-center justify-center mb-4
+                  <div className="h-9 w-9 rounded-lg border border-white/38 bg-white/13 flex items-center justify-center mb-4
                     group-hover:border-white/40 group-hover:bg-white/12 transition-colors duration-200">
                     <Icon className="h-4 w-4 text-white" />
                   </div>
@@ -117,7 +117,7 @@ export default function WorkflowPage() {
                 { step: '02', title: 'Generate', body: 'WorkflowPilot builds a complete n8n workflow JSON using real node types, proper connections, and error paths.' },
                 { step: '03', title: 'Import', body: 'Copy or download the JSON, paste it into n8n via Import Workflow. Configure credentials and activate.' },
               ].map(({ step, title, body }) => (
-                <div key={step} className="card-glow rounded-xl border border-white/20 bg-white/3 p-6
+                <div key={step} className="card-glow rounded-xl border border-white/32 bg-white/7 p-6
                   hover:border-white/30">
                   <p className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest mb-3">{step}</p>
                   <p className="font-bold text-white text-sm mb-2">{title}</p>

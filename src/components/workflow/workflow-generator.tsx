@@ -102,8 +102,8 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
           className={cn(
             'h-1 rounded-full transition-all duration-500',
             i < current  ? 'bg-white flex-1' :
-            i === current ? 'bg-white/50 flex-[2]' :
-                            'bg-white/12 flex-1'
+            i === current ? 'bg-white/60 flex-[2]' :
+                            'bg-white/28 flex-1'
           )}
         />
       ))}
@@ -132,17 +132,17 @@ function NodeDiagramPreview({ workflow }: { workflow: Record<string, unknown> })
   const nodes = (workflow.nodes as { name?: string; type?: string }[]) ?? [];
   if (nodes.length === 0) return null;
   return (
-    <div className="rounded-xl border border-white/8 bg-white/2 p-4">
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B7280] mb-3">Workflow nodes</p>
+    <div className="rounded-xl border border-white/22 bg-white/5 p-4">
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-[#9CA3AF] mb-3">Workflow nodes</p>
       <div className="flex flex-wrap gap-2">
         {nodes.map((node, i) => (
           <div key={i} className="flex items-center gap-1.5">
-            <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5">
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-400/70 shrink-0" />
-              <span className="text-xs text-[#D1D5DB] font-mono">{node.name ?? node.type?.split('.').pop() ?? `Node ${i + 1}`}</span>
+            <div className="flex items-center gap-1.5 bg-white/10 border border-white/22 rounded-lg px-2.5 py-1.5">
+              <div className="h-1.5 w-1.5 rounded-full bg-emerald-400/85 shrink-0" />
+              <span className="text-xs text-[#E2E8F0] font-mono">{node.name ?? node.type?.split('.').pop() ?? `Node ${i + 1}`}</span>
             </div>
             {i < nodes.length - 1 && (
-              <ChevronRight className="h-3 w-3 text-[#4B5563] shrink-0" />
+              <ChevronRight className="h-3 w-3 text-[#9CA3AF] shrink-0" />
             )}
           </div>
         ))}
@@ -285,7 +285,7 @@ export function WorkflowGenerator() {
         <div className="animate-slide-up">
           <StepIndicator current={0} total={3} />
           <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">How does the workflow start?</h2>
-          <p className="text-sm text-[#6B7280] mb-6">Choose the event that kicks off your automation.</p>
+          <p className="text-sm text-[#9CA3AF] mb-6">Choose the event that kicks off your automation.</p>
           <div className="grid sm:grid-cols-2 gap-2.5">
             {TRIGGERS.map((t) => {
               const Icon = t.icon;
@@ -307,7 +307,7 @@ export function WorkflowGenerator() {
                   )}
                   <Icon className={cn('h-5 w-5 mb-2.5', t.accent)} />
                   <div className="font-semibold text-[#F9FAFB] text-sm mb-0.5">{t.label}</div>
-                  <div className="text-xs text-[#6B7280] leading-relaxed">{t.desc}</div>
+                  <div className="text-xs text-[#9CA3AF] leading-relaxed">{t.desc}</div>
                 </button>
               );
             })}
@@ -323,7 +323,7 @@ export function WorkflowGenerator() {
             <ArrowLeft className="h-3.5 w-3.5" /> Back
           </button>
           <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">Which apps do you need?</h2>
-          <p className="text-sm text-[#6B7280] mb-1">Select up to 8 integrations. Skip if not sure.</p>
+          <p className="text-sm text-[#9CA3AF] mb-1">Select up to 8 integrations. Skip if not sure.</p>
           {selectedIntegrations.length > 0 && (
             <p className="text-xs text-[#9CA3AF] mb-4">{selectedIntegrations.length}/8 selected</p>
           )}
@@ -340,7 +340,7 @@ export function WorkflowGenerator() {
                     'px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-150',
                     active
                       ? 'border-white/25 bg-white/10 text-white'
-                      : cn('border-white/8 bg-white/3 text-[#6B7280]', i.color),
+                      : cn('border-white/22 bg-white/6 text-[#C9CACB]', i.color),
                     !active && selectedIntegrations.length >= 8 && 'opacity-40 cursor-not-allowed'
                   )}
                 >
@@ -363,12 +363,12 @@ export function WorkflowGenerator() {
                   className={cn(
                     'card-lift text-left rounded-xl border p-3 transition-colors duration-150',
                     complexity === c.id
-                      ? 'border-white/25 bg-white/8 text-white'
-                      : 'border-white/8 bg-white/3 text-[#6B7280] hover:border-white/16 hover:bg-white/5 hover:text-[#9CA3AF]'
+                      ? 'border-white/38 bg-white/14 text-white'
+                      : 'border-white/22 bg-white/6 text-[#C9CACB] hover:border-white/32 hover:bg-white/10 hover:text-white'
                   )}
                 >
                   <div className="font-semibold text-sm mb-0.5">{c.label}</div>
-                  <div className="text-[10px] text-[#4B5563]">{c.nodes}</div>
+                  <div className="text-[10px] text-[#9CA3AF]">{c.nodes}</div>
                 </button>
               ))}
             </div>
@@ -388,7 +388,7 @@ export function WorkflowGenerator() {
             <ArrowLeft className="h-3.5 w-3.5" /> Back
           </button>
           <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">Describe your automation</h2>
-          <p className="text-sm text-[#6B7280] mb-6">Plain English. Include the trigger event, what to do, and where to send results.</p>
+          <p className="text-sm text-[#9CA3AF] mb-6">Plain English. Include the trigger event, what to do, and where to send results.</p>
 
           <div className="mb-4">
             <Textarea
@@ -407,18 +407,18 @@ export function WorkflowGenerator() {
                   <AlertCircle className="h-3 w-3" />{error}
                 </p>
               )}
-              <span className="text-xs text-[#4B5563] ml-auto">{task.length}/2000</span>
+              <span className="text-xs text-[#9CA3AF] ml-auto">{task.length}/2000</span>
             </div>
           </div>
 
           <div className="mb-6">
-            <p className="text-xs text-[#6B7280] mb-2 font-medium">Examples</p>
+            <p className="text-xs text-[#9CA3AF] mb-2 font-medium">Examples</p>
             <div className="flex flex-wrap gap-1.5">
               {TASK_EXAMPLES.map((ex) => (
                 <button
                   key={ex}
                   onClick={() => setTask(ex)}
-                  className="text-xs px-2.5 py-1 rounded-md border border-white/8 bg-white/3 text-[#6B7280] hover:text-[#D1D5DB] hover:border-white/14 transition-colors text-left"
+                  className="text-xs px-2.5 py-1 rounded-md border border-white/22 bg-white/6 text-[#C9CACB] hover:text-white hover:border-white/32 transition-colors text-left"
                 >
                   {ex.length > 60 ? ex.slice(0, 60) + '…' : ex}
                 </button>
@@ -437,17 +437,17 @@ export function WorkflowGenerator() {
       {step === 'generating' && (
         <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
           <div className="relative mb-8">
-            <div className="h-20 w-20 rounded-full border-2 border-white/8 flex items-center justify-center">
-              <div className="h-14 w-14 rounded-full border-2 border-t-violet-400 border-white/8 animate-spin" />
+            <div className="h-20 w-20 rounded-full border-2 border-white/25 flex items-center justify-center">
+              <div className="h-14 w-14 rounded-full border-2 border-t-violet-400 border-white/25 animate-spin" />
             </div>
             <Zap className="absolute inset-0 m-auto h-6 w-6 text-white" />
           </div>
           <h2 className="text-lg font-semibold text-[#F9FAFB] mb-2">Building your workflow…</h2>
-          <p className="text-sm text-[#6B7280] transition-all duration-500 min-h-[20px]">
+          <p className="text-sm text-[#9CA3AF] transition-all duration-500 min-h-[20px]">
             {LOADING_MESSAGES[loadingMsg]}
           </p>
           {slowGen && (
-            <p className="text-xs text-[#4B5563] mt-3 animate-fade-in">
+            <p className="text-xs text-[#9CA3AF] mt-3 animate-fade-in">
               Complex workflows can take up to 30 seconds. Still building…
             </p>
           )}
@@ -458,7 +458,7 @@ export function WorkflowGenerator() {
       {step === 'clarify' && result?.question && (
         <div className="animate-slide-up">
           <StepIndicator current={2} total={3} />
-          <div className="rounded-xl border border-white/10 bg-white/4 p-5 mb-6">
+          <div className="rounded-xl border border-white/25 bg-white/8 p-5 mb-6">
             <div className="flex items-start gap-3">
               <div className="h-8 w-8 rounded-full bg-violet-500/15 border border-violet-500/25 flex items-center justify-center shrink-0 mt-0.5">
                 <Wand2 className="h-3.5 w-3.5 text-violet-400" />
@@ -501,16 +501,16 @@ export function WorkflowGenerator() {
               <div className="flex items-center gap-2 mb-1">
                 {result.workflow
                   ? <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
-                  : <AlertCircle className="h-5 w-5 text-[#6B7280] shrink-0" />}
+                  : <AlertCircle className="h-5 w-5 text-[#9CA3AF] shrink-0" />}
                 <h2 className="font-bold text-[#F9FAFB]">
                   {result.workflow ? (result.workflowName ?? 'Your workflow is ready') : 'Generation incomplete'}
                 </h2>
               </div>
               {result.workflow && result.nodeCount && (
                 <div className="flex items-center gap-2 pl-7">
-                  <span className="text-xs text-[#6B7280]">{result.nodeCount} nodes</span>
+                  <span className="text-xs text-[#9CA3AF]">{result.nodeCount} nodes</span>
                   {result.description && (
-                    <><span className="text-[#4B5563]">·</span><span className="text-xs text-[#9CA3AF]">{result.description}</span></>
+                    <><span className="text-[#9CA3AF]">·</span><span className="text-xs text-[#9CA3AF]">{result.description}</span></>
                   )}
                 </div>
               )}
@@ -525,18 +525,18 @@ export function WorkflowGenerator() {
 
           {/* JSON output */}
           {workflowJson && (
-            <div className="rounded-xl border border-white/10 overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-2.5 bg-white/3 border-b border-white/8">
+            <div className="rounded-xl border border-white/25 overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-2.5 bg-white/8 border-b border-white/20">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
                     <div className="h-2.5 w-2.5 rounded-full bg-white/5" />
                     <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/50" />
                     <div className="h-2.5 w-2.5 rounded-full bg-white/5" />
                   </div>
-                  <span className="text-xs text-[#6B7280] ml-1.5 font-mono">workflow.json</span>
+                  <span className="text-xs text-[#C9CACB] ml-1.5 font-mono">workflow.json</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-[#4B5563] border border-white/8 px-2 py-0.5 rounded font-mono">n8n JSON</span>
+                  <span className="text-[10px] text-[#9CA3AF] border border-white/22 px-2 py-0.5 rounded font-mono">n8n JSON</span>
                   <CopyButton text={workflowJson} />
                 </div>
               </div>
@@ -563,12 +563,12 @@ export function WorkflowGenerator() {
 
           {/* Import instructions */}
           {result.importInstructions && result.importInstructions.length > 0 && (
-            <div className="rounded-xl border border-white/8 bg-white/2 p-4">
+            <div className="rounded-xl border border-white/22 bg-white/6 p-4">
               <p className="text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-widest mb-2.5">How to import</p>
               <ol className="space-y-1">
                 {result.importInstructions.map((step, i) => (
                   <li key={i} className="text-xs text-[#9CA3AF] flex items-start gap-2.5">
-                    <span className="text-[10px] font-bold text-[#4B5563] shrink-0 mt-0.5 w-3.5">{i + 1}.</span>
+                    <span className="text-[10px] font-bold text-[#9CA3AF] shrink-0 mt-0.5 w-3.5">{i + 1}.</span>
                     {step}
                   </li>
                 ))}
@@ -578,13 +578,13 @@ export function WorkflowGenerator() {
 
           {/* Feedback */}
           {feedbackSubmitted ? (
-            <div className="rounded-xl border border-white/8 bg-white/2 px-4 py-3 flex items-center gap-2">
+            <div className="rounded-xl border border-white/22 bg-white/6 px-4 py-3 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
               <p className="text-sm text-[#9CA3AF]">Thanks. Your feedback helps improve the AI.</p>
             </div>
           ) : (
-            <div className="rounded-xl border border-white/8 bg-white/2 p-4">
-              <p className="text-xs font-medium text-[#6B7280] mb-3">Did this workflow work?</p>
+            <div className="rounded-xl border border-white/22 bg-white/6 p-4">
+              <p className="text-xs font-medium text-[#9CA3AF] mb-3">Did this workflow work?</p>
               {feedbackRating === null && (
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={() => submitFeedback(1)} disabled={feedbackSubmitting} className="gap-1.5 flex-1">
@@ -652,10 +652,10 @@ export function WorkflowGenerator() {
           </div>
 
           {/* Upsell */}
-          <div className="rounded-xl border border-white/8 bg-white/2 p-4 flex items-center justify-between gap-4">
+          <div className="rounded-xl border border-white/22 bg-white/6 p-4 flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-[#F9FAFB] mb-0.5">Need production-ready scripts too?</p>
-              <p className="text-xs text-[#6B7280]">The Starter Kit includes 9 pre-built PowerShell scripts for the most common IT tasks. Just $19.</p>
+              <p className="text-xs text-[#9CA3AF]">The Starter Kit includes 9 pre-built PowerShell scripts for the most common IT tasks. Just $19.</p>
             </div>
             <Button asChild size="sm" className="shrink-0">
               <a href="/checkout">Get the Kit →</a>

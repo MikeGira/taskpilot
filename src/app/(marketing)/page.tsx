@@ -73,7 +73,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
       <Navbar />
 
       {searchParams.subscribed && (
-        <div className="bg-white/5 border-b border-white/20 text-center py-2 text-sm text-white">
+        <div className="bg-white/10 border-b border-white/20 text-center py-2 text-sm text-white">
           You&apos;re subscribed! Check your inbox to confirm.
         </div>
       )}
@@ -105,7 +105,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
 
           <div className="relative mx-auto max-w-4xl px-4 sm:px-6 pt-24 pb-8 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-medium text-white mb-8 animate-float-up">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white mb-8 animate-float-up">
               <Zap className="h-3 w-3" />
               Built by an IT pro with 10+ years in the field
             </div>
@@ -159,7 +159,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
 
           {/* Metrics strip */}
-          <div className="relative border-t border-white/8 py-6">
+          <div className="relative border-t border-white/20 py-6">
             <div className="mx-auto max-w-4xl px-4 sm:px-6">
               <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
                 {[
@@ -182,7 +182,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* What's included */}
-        <section id="includes" className="py-20 border-t border-white/12">
+        <section id="includes" className="py-20 border-t border-white/22">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <FadeInSection>
               <div className="text-center mb-14">
@@ -222,7 +222,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* How it works */}
-        <section className="relative overflow-hidden py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
+        <section className="relative overflow-hidden py-20 border-t border-white/22 bg-black bg-grid-pattern-subtle">
           <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center">
             <div className="h-48 w-[600px] rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at top, rgba(99,102,241,0.1) 0%, transparent 70%)' }} />
           </div>
@@ -236,7 +236,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               {STEPS.map((step, i) => (
                 <FadeInSection key={step.num} delay={i * 100}>
                   <Card className="p-6 h-full flex flex-col items-center text-center hover:border-white/35 transition-colors duration-200 group">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-white/5 text-white font-bold text-lg mb-5 group-hover:border-white/40 group-hover:bg-white/8 transition-all duration-200">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white font-bold text-lg mb-5 group-hover:border-white/40 group-hover:bg-white/8 transition-all duration-200">
                       {step.num}
                     </div>
                     <h3 className="font-semibold text-white mb-2">{step.title}</h3>
@@ -249,12 +249,12 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Deploy everywhere */}
-        <section className="py-16 border-t border-white/12 overflow-hidden">
+        <section className="py-16 border-t border-white/22 overflow-hidden">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="grid lg:grid-cols-2 gap-10 items-center">
               <FadeInSection>
                 <div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/4 px-3 py-1 text-xs font-medium text-white mb-5">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-3 py-1 text-xs font-medium text-white mb-5">
                     <Zap className="h-3 w-3 text-cyan-400" /> Works everywhere
                   </div>
                   <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
@@ -283,7 +283,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Free Tools Banner */}
-        <section id="free-tools" className="relative py-16 border-t border-white/12 bg-[#0A0A0A] overflow-hidden">
+        <section id="free-tools" className="relative py-16 border-t border-white/22 bg-[#0A0A0A] overflow-hidden">
           {/* Dot grid fills section but solid card bgs will mask it */}
           <div className="absolute inset-0 bg-grid-pattern-subtle pointer-events-none" />
 
@@ -405,7 +405,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Before / After */}
-        <section className="py-20 border-t border-white/12">
+        <section className="py-20 border-t border-white/22">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <FadeInSection>
               <div className="text-center mb-14">
@@ -454,7 +454,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="relative overflow-hidden py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
+        <section id="pricing" className="relative overflow-hidden py-20 border-t border-white/22 bg-black bg-grid-pattern-subtle">
           <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center">
             <div className="glow-pricing-section h-48 w-[500px] rounded-full blur-3xl" />
           </div>
@@ -506,7 +506,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="py-20 border-t border-white/12">
+        <section id="faq" className="py-20 border-t border-white/22">
           <div className="mx-auto max-w-3xl px-4 sm:px-6">
             <FadeInSection>
               <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-14">
@@ -527,14 +527,14 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Newsletter */}
-        <section className="relative overflow-hidden py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
+        <section className="relative overflow-hidden py-20 border-t border-white/22 bg-black bg-grid-pattern-subtle">
           <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center">
             <div className="glow-newsletter-section h-40 w-[500px] rounded-full blur-3xl" />
           </div>
           <div className="mx-auto max-w-lg px-4 sm:px-6">
             <FadeInSection>
               <Card className="p-8 sm:p-10 text-center hover:border-white/30 transition-colors duration-300">
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/4 px-4 py-1.5 text-xs font-medium text-white mb-6">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-4 py-1.5 text-xs font-medium text-white mb-6">
                   Free weekly tips
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
@@ -548,7 +548,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Contact */}
-        <section id="contact" className="py-20 border-t border-white/12">
+        <section id="contact" className="py-20 border-t border-white/22">
           <div className="mx-auto max-w-xl px-4 sm:px-6">
             <FadeInSection>
               <div className="text-center mb-10">

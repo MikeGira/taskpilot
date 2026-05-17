@@ -18,16 +18,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
-      <header className="border-b border-white/20 bg-black/80 backdrop-blur-md sticky top-0 z-40">
+      <header className="border-b border-white/28 bg-black/80 backdrop-blur-md sticky top-0 z-40">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-bold">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-white/5 border border-white/20">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-white/8 border border-white/32">
               <Terminal className="h-3.5 w-3.5 text-white" />
             </div>
-            <span className="text-white">Task<span className="text-white/60">Pilot</span></span>
+            <span className="text-white">Task<span className="text-white/70">Pilot</span></span>
           </Link>
           <div className="flex items-center gap-3">
-            <span className="hidden sm:block text-xs text-[#6B7280]">{user.email}</span>
+            <span className="hidden sm:block text-xs text-[#9CA3AF]">{user.email}</span>
             <SignOutButton />
           </div>
         </div>

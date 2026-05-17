@@ -58,7 +58,7 @@ function CheckRow({ check, expanded, onToggle }: {
             <button
               type="button"
               onClick={onToggle}
-              className="text-[#6B7280] hover:text-[#9CA3AF] transition-colors"
+              className="text-[#9CA3AF] hover:text-[#9CA3AF] transition-colors"
               aria-label="Toggle fix steps"
             >
               {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
@@ -69,7 +69,7 @@ function CheckRow({ check, expanded, onToggle }: {
 
       {expanded && check.fixSteps && (
         <div className="px-4 pb-3 border-t border-white/6 pt-3">
-          <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider mb-2">How to fix</p>
+          <p className="text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-2">How to fix</p>
           <ol className="space-y-1.5">
             {check.fixSteps.map((step, i) => (
               <li key={i} className="flex gap-2 text-xs text-[#9CA3AF]">
@@ -176,7 +176,7 @@ export function SecurityAuditClient() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-[#6B7280]" />
+            <Shield className="h-4 w-4 text-[#9CA3AF]" />
             <h2 className="text-sm font-semibold text-[#F9FAFB]">Security Self-Scan</h2>
           </div>
           <Button
@@ -209,9 +209,9 @@ export function SecurityAuditClient() {
                 { label: 'Warn',  value: result.summary.warn,  color: 'text-amber-400' },
                 { label: 'Fail',  value: result.summary.fail,  color: 'text-red-400' },
               ].map(({ label, value, color }) => (
-                <div key={label} className="rounded-xl border border-white/8 bg-[#0D0D0D] p-3 text-center">
+                <div key={label} className="rounded-xl border border-white/22 bg-[#0D0D0D] p-3 text-center">
                   <p className={`text-xl font-bold ${color}`}>{value}</p>
-                  <p className="text-[10px] text-[#6B7280] mt-0.5 uppercase tracking-wider">{label}</p>
+                  <p className="text-[10px] text-[#9CA3AF] mt-0.5 uppercase tracking-wider">{label}</p>
                 </div>
               ))}
             </div>
@@ -234,9 +234,9 @@ export function SecurityAuditClient() {
         )}
 
         {!result && !loading && !error && (
-          <div className="rounded-xl border border-white/8 bg-[#0D0D0D] p-8 text-center">
+          <div className="rounded-xl border border-white/22 bg-[#0D0D0D] p-8 text-center">
             <Shield className="h-8 w-8 text-[#374151] mx-auto mb-3" />
-            <p className="text-sm text-[#6B7280]">Run a scan to check env vars, RLS, security headers, and API reachability.</p>
+            <p className="text-sm text-[#9CA3AF]">Run a scan to check env vars, RLS, security headers, and API reachability.</p>
           </div>
         )}
       </div>
@@ -245,7 +245,7 @@ export function SecurityAuditClient() {
       {result && hasIssues && (
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <Wrench className="h-4 w-4 text-[#6B7280]" />
+            <Wrench className="h-4 w-4 text-[#9CA3AF]" />
             <h2 className="text-sm font-semibold text-[#F9FAFB]">Security Self-Heal</h2>
           </div>
 
@@ -293,7 +293,7 @@ export function SecurityAuditClient() {
           {/* Manual fixes */}
           {manualFixes.length > 0 && (
             <div className="space-y-2">
-              <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider px-1">Manual action required</p>
+              <p className="text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider px-1">Manual action required</p>
               {manualFixes.map((check) => (
                 <CheckRow
                   key={`heal-${check.name}`}
@@ -306,7 +306,7 @@ export function SecurityAuditClient() {
           )}
 
           {autoFixable.length === 0 && manualFixes.length === 0 && (
-            <div className="rounded-xl border border-white/8 bg-[#0D0D0D] px-4 py-3 text-xs text-[#6B7280]">
+            <div className="rounded-xl border border-white/22 bg-[#0D0D0D] px-4 py-3 text-xs text-[#9CA3AF]">
               No automated fixes available for the current warnings. Expand each check for step-by-step instructions.
             </div>
           )}
