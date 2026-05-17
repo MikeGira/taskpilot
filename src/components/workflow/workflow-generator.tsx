@@ -295,7 +295,7 @@ export function WorkflowGenerator() {
                   key={t.id}
                   onClick={() => { setTriggerType(t.id); setStep('integrations'); }}
                   className={cn(
-                    'relative w-full text-left rounded-xl border p-4 transition-all duration-200 group cursor-pointer',
+                    'card-lift relative w-full text-left rounded-xl border p-4 transition-colors duration-200 group',
                     t.color,
                     triggerType === t.id && 'ring-1 ring-white/20 ring-offset-1 ring-offset-black'
                   )}
@@ -361,7 +361,7 @@ export function WorkflowGenerator() {
                   key={c.id}
                   onClick={() => setComplexity(c.id)}
                   className={cn(
-                    'text-left rounded-xl border p-3 transition-all duration-150',
+                    'card-lift text-left rounded-xl border p-3 transition-colors duration-150',
                     complexity === c.id
                       ? 'border-white/25 bg-white/8 text-white'
                       : 'border-white/8 bg-white/3 text-[#6B7280] hover:border-white/16 hover:bg-white/5 hover:text-[#9CA3AF]'

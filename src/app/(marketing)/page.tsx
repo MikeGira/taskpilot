@@ -196,7 +196,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {SCRIPTS.map((s, i) => {
                 const cardContent = (
-                  <Card className={`p-5 group transition-all duration-200 h-full ${s.task ? 'hover:border-white/35 hover:bg-white/4 cursor-pointer' : 'hover:border-white/28 hover:bg-white/2'}`}>
+                  <Card className={`p-5 group transition-colors duration-200 h-full ${s.task ? 'hover:border-white/35 hover:bg-white/4' : 'hover:border-white/20 hover:bg-white/2'}`}>
                     <div className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${s.bg} mb-4 group-hover:scale-110 transition-transform duration-200`}>
                       <s.icon className={`h-5 w-5 ${s.color}`} />
                     </div>
@@ -210,10 +210,12 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 return (
                   <FadeInSection key={s.name} delay={i * 60}>
                     {s.task ? (
-                      <Link href={`/generate?task=${encodeURIComponent(s.task)}`}>
+                      <Link href={`/generate?task=${encodeURIComponent(s.task)}`} className="card-lift block rounded-xl">
                         {cardContent}
                       </Link>
-                    ) : cardContent}
+                    ) : (
+                      <div className="card-lift-subtle rounded-xl">{cardContent}</div>
+                    )}
                   </FadeInSection>
                 );
               })}
@@ -235,7 +237,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="grid sm:grid-cols-3 gap-5">
               {STEPS.map((step, i) => (
                 <FadeInSection key={step.num} delay={i * 100}>
-                  <Card className="p-6 h-full flex flex-col items-center text-center hover:border-white/35 transition-all duration-200 group">
+                  <Card className="card-lift-subtle p-6 h-full flex flex-col items-center text-center hover:border-white/35 transition-colors duration-200 group">
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-white/5 text-white font-bold text-lg mb-5 group-hover:border-white/40 group-hover:bg-white/8 transition-all duration-200">
                       {step.num}
                     </div>
@@ -412,7 +414,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             </FadeInSection>
             <div className="grid md:grid-cols-2 gap-6">
               <FadeInSection delay={0}>
-                <Card className="p-6 border-red-500/30 bg-red-950/5 h-full">
+                <Card className="card-lift-subtle p-6 border-red-500/30 bg-red-950/5 h-full">
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-500/10 border border-red-500/30">
                       <XCircle className="h-4 w-4 text-red-400" />
@@ -430,7 +432,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 </Card>
               </FadeInSection>
               <FadeInSection delay={120}>
-                <Card className="p-6 border-emerald-500/30 bg-emerald-950/5 h-full">
+                <Card className="card-lift-subtle p-6 border-emerald-500/30 bg-emerald-950/5 h-full">
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30">
                       <Rocket className="h-4 w-4 text-emerald-400" />
@@ -467,7 +469,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   <div className="h-40 w-80 rounded-full blur-3xl opacity-75"
                     style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.3) 0%, transparent 70%)' }} />
                 </div>
-                <Card className="relative overflow-hidden p-8 border-indigo-500/30 bg-gradient-to-b from-indigo-950/20 to-transparent hover:border-indigo-500/50 transition-colors duration-300">
+                <Card className="card-lift-subtle relative overflow-hidden p-8 border-indigo-500/30 bg-gradient-to-b from-indigo-950/20 to-transparent hover:border-indigo-500/50 transition-colors duration-300">
                   {/* Top gradient accent line */}
                   <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/80 to-transparent" />
                   <div className="mb-6">

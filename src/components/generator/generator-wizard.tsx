@@ -165,9 +165,10 @@ function SelectionCard<T extends { id: string; label: string; desc: string; icon
   const Icon = option.icon;
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
-        'relative w-full text-left rounded-xl border p-5 transition-all duration-200 group cursor-pointer',
+        'card-lift relative w-full text-left rounded-xl border p-5 transition-colors duration-200 group',
         option.color,
         selected && 'ring-2 ring-white/30 ring-offset-2 ring-offset-[#000000]'
       )}
