@@ -30,7 +30,7 @@ export function DownloadCard({ purchase, downloadUrl }: DownloadCardProps) {
   return (
     <Card className="hover:border-white/35 transition-colors duration-200">
       <CardContent className="p-5 flex items-center gap-4">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/5 border border-white/15">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/8 border border-white/30">
           <Package className="h-5 w-5 text-white/70" />
         </div>
         <div className="flex-1 min-w-0">

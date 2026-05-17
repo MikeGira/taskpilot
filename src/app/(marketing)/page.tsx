@@ -414,9 +414,9 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             </FadeInSection>
             <div className="grid md:grid-cols-2 gap-6">
               <FadeInSection delay={0}>
-                <Card className="p-6 border-red-500/30 bg-red-950/5 h-full hover:border-red-500/50 transition-colors duration-200">
+                <Card className="p-6 border-red-500/55 bg-red-950/8 h-full hover:border-red-500/75 transition-colors duration-200">
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-500/10 border border-red-500/30">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-500/15 border border-red-500/55">
                       <XCircle className="h-4 w-4 text-red-400" />
                     </div>
                     Without TaskPilot
@@ -432,9 +432,9 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 </Card>
               </FadeInSection>
               <FadeInSection delay={120}>
-                <Card className="p-6 border-emerald-500/30 bg-emerald-950/5 h-full hover:border-emerald-500/50 transition-colors duration-200">
+                <Card className="p-6 border-emerald-500/55 bg-emerald-950/8 h-full hover:border-emerald-500/75 transition-colors duration-200">
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/55">
                       <Rocket className="h-4 w-4 text-emerald-400" />
                     </div>
                     With TaskPilot
@@ -468,7 +468,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <div className="pointer-events-none absolute inset-x-0 -top-20 flex justify-center">
                   <div className="glow-pricing-card h-40 w-80 rounded-full blur-3xl opacity-75" />
                 </div>
-                <Card className="relative overflow-hidden p-8 border-indigo-500/30 bg-gradient-to-b from-indigo-950/20 to-transparent hover:border-indigo-500/50 transition-colors duration-300">
+                <Card className="relative overflow-hidden p-8 border-indigo-500/55 bg-gradient-to-b from-indigo-950/25 to-transparent hover:border-indigo-500/75 transition-colors duration-300">
                   {/* Top gradient accent line */}
                   <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/80 to-transparent" />
                   <div className="mb-6">

@@ -27,7 +27,7 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
             className={cn(
               'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
               pathname === href
-                ? 'bg-white/10 text-white border border-white/15'
+                ? 'bg-white/12 text-white border border-white/32'
                 : 'text-[#9CA3AF] hover:text-white hover:bg-white/5'
             )}
           >
@@ -38,7 +38,7 @@ export function DashboardNav({ isAdmin }: { isAdmin: boolean }) {
       </nav>
 
       {/* Mobile bottom tab bar */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-white/20 bg-black/95 backdrop-blur-sm">
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-white/32 bg-black/95 backdrop-blur-sm">
         <div className="flex">
           {items.map(({ href, label, icon: Icon }) => (
             <Link

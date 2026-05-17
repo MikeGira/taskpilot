@@ -18,9 +18,9 @@ interface Analysis {
 }
 
 const PRIORITY_STYLE: Record<string, string> = {
-  high: 'text-white border-white/12 bg-white/5',
-  medium: 'text-amber-400 border-amber-500/20 bg-amber-500/5',
-  low: 'text-zinc-400 border-zinc-500/20 bg-zinc-500/5',
+  high: 'text-white border-white/30 bg-white/9',
+  medium: 'text-amber-400 border-amber-500/48 bg-amber-500/10',
+  low: 'text-zinc-400 border-zinc-500/42 bg-zinc-500/9',
 };
 
 export function AnalyticsClient({ negativeCount }: { negativeCount: number }) {
@@ -49,7 +49,7 @@ export function AnalyticsClient({ negativeCount }: { negativeCount: number }) {
   }
 
   return (
-    <div className="rounded-xl border border-white/12 bg-white/5 p-5">
+    <div className="rounded-xl border border-white/28 bg-white/8 p-5">
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <h2 className="text-sm font-semibold text-[#F9FAFB] mb-1">AI Prompt Improvement</h2>

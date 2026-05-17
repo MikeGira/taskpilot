@@ -72,7 +72,7 @@ export function LivePill({
     <div
       aria-live="assertive"
       className={cn(
-        'inline-flex items-center gap-3 rounded-full bg-[#0A0A0A] border border-white/12 pl-4 pr-2 py-2 shadow-2xl',
+        'inline-flex items-center gap-3 rounded-full bg-[#0A0A0A] border border-white/30 pl-4 pr-2 py-2 shadow-2xl',
         'transition-all duration-400',
         mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2',
         bouncing ? 'animate-live-pill-bounce' : '',
@@ -102,8 +102,8 @@ export function LivePill({
           aria-label="Decline"
           className={cn(
             'h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold',
-            'bg-red-500/20 border border-red-500/30 text-red-400',
-            'hover:bg-red-500/35 hover:border-red-500/50 hover:scale-110',
+            'bg-red-500/25 border border-red-500/55 text-red-400',
+            'hover:bg-red-500/40 hover:border-red-500/75 hover:scale-110',
             'active:scale-95 transition-all duration-150',
           )}
         >

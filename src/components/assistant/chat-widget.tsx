@@ -570,7 +570,7 @@ export function ChatWidget() {
                 <button onClick={() => setGenStep('task')} className="flex items-center gap-1 text-[11px] text-[#A0A0A0] hover:text-white transition-colors w-fit">
                   <ArrowLeft className="h-3 w-3" /> Back
                 </button>
-                <div className="rounded-xl border border-indigo-500/25 bg-indigo-950/20 p-3 flex gap-2">
+                <div className="rounded-xl border border-indigo-500/52 bg-indigo-950/38 p-3 flex gap-2">
                   <Wand2 className="h-3.5 w-3.5 text-indigo-400 shrink-0 mt-0.5" />
                   <p className="text-xs text-[#E4E4E7] leading-relaxed">{genClarifyQuestion}</p>
                 </div>
@@ -663,7 +663,7 @@ export function ChatWidget() {
                   )}
 
                   {genResult.script && genResult.configNotes && genResult.configNotes.length > 0 && (
-                    <div className="rounded-xl border border-amber-500/15 bg-amber-950/10 p-3">
+                    <div className="rounded-xl border border-amber-500/45 bg-amber-950/18 p-3">
                       <p className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-1.5">Before you run</p>
                       <ul className="space-y-1">
                         {genResult.configNotes.map((n, i) => (

@@ -24,9 +24,9 @@ interface AuditResult {
 }
 
 const STATUS_CONFIG = {
-  pass: { icon: CheckCircle2, color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/5',  label: 'Pass' },
-  warn: { icon: AlertTriangle, color: 'text-amber-400',  border: 'border-amber-500/20',  bg: 'bg-amber-500/5',   label: 'Warn' },
-  fail: { icon: XCircle,       color: 'text-red-400',    border: 'border-red-500/20',    bg: 'bg-red-500/5',     label: 'Fail' },
+  pass: { icon: CheckCircle2, color: 'text-emerald-400', border: 'border-emerald-500/45', bg: 'bg-emerald-500/5',  label: 'Pass' },
+  warn: { icon: AlertTriangle, color: 'text-amber-400',  border: 'border-amber-500/45',  bg: 'bg-amber-500/5',   label: 'Warn' },
+  fail: { icon: XCircle,       color: 'text-red-400',    border: 'border-red-500/45',    bg: 'bg-red-500/5',     label: 'Fail' },
 };
 
 function CheckRow({ check, expanded, onToggle }: {
@@ -47,7 +47,7 @@ function CheckRow({ check, expanded, onToggle }: {
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {check.healable && (
-            <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/45 px-1.5 py-0.5 rounded">
               Auto-fix
             </span>
           )}
@@ -68,7 +68,7 @@ function CheckRow({ check, expanded, onToggle }: {
       </div>
 
       {expanded && check.fixSteps && (
-        <div className="px-4 pb-3 border-t border-white/6 pt-3">
+        <div className="px-4 pb-3 border-t border-white/18 pt-3">
           <p className="text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-2">How to fix</p>
           <ol className="space-y-1.5">
             {check.fixSteps.map((step, i) => (
@@ -195,7 +195,7 @@ export function SecurityAuditClient() {
         </div>
 
         {error && (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-xs text-red-400 mb-4">
+          <div className="rounded-xl border border-red-500/45 bg-red-500/5 px-4 py-3 text-xs text-red-400 mb-4">
             {error}
           </div>
         )}
@@ -251,7 +251,7 @@ export function SecurityAuditClient() {
 
           {/* Auto-fixable */}
           {autoFixable.length > 0 && (
-            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 mb-3">
+            <div className="rounded-xl border border-emerald-500/45 bg-emerald-500/5 p-4 mb-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-2">
                   <Zap className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
@@ -315,7 +315,7 @@ export function SecurityAuditClient() {
 
       {/* All clear */}
       {result && !hasIssues && (
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 flex items-center gap-2">
+        <div className="rounded-xl border border-emerald-500/45 bg-emerald-500/5 px-4 py-3 flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
           <p className="text-xs text-emerald-400 font-medium">All checks passed. No remediation needed.</p>
         </div>
