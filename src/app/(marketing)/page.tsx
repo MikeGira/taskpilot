@@ -286,31 +286,34 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         <section className="py-16 border-t border-white/12 bg-[#0A0A0A]">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <FadeInSection>
-              <p className="text-[10px] font-semibold text-[#4B5563] uppercase tracking-widest text-center mb-10">
-                Free AI-powered tools
-              </p>
+              <div className="text-center mb-10">
+                <p className="text-sm font-semibold text-white uppercase tracking-widest mb-2">
+                  Free AI-powered tools
+                </p>
+                <p className="text-sm text-[#9CA3AF]">No sign-in required. Generate and download instantly.</p>
+              </div>
             </FadeInSection>
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-5">
 
               {/* Script Generator card */}
               <FadeInSection delay={0}>
                 <Link href="/generate" className="block group">
-                  <div className="rounded-2xl border border-white/8 bg-white/2 p-6 h-full transition-all duration-200 group-hover:border-white/16 group-hover:bg-white/4 spotlight-card">
+                  <div className="rounded-2xl border border-white/25 bg-white/8 p-6 h-full transition-all duration-200 group-hover:border-white/40 group-hover:bg-white/12">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="h-10 w-10 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center group-hover:border-white/20 transition-colors">
-                        <Wand2 className="h-5 w-5 text-[#9CA3AF]" />
+                      <div className="h-10 w-10 rounded-xl border border-white/30 bg-white/12 flex items-center justify-center group-hover:border-white/50 group-hover:bg-white/18 transition-all duration-200">
+                        <Wand2 className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <p className="font-semibold text-[#F9FAFB] text-sm">Script Generator</p>
-                        <p className="text-[10px] text-[#4B5563] uppercase tracking-wider">Free · No sign-in</p>
+                        <p className="font-semibold text-white text-sm">Script Generator</p>
+                        <p className="text-xs text-[#9CA3AF]">Free · No sign-in needed</p>
                       </div>
                     </div>
-                    <p className="text-sm text-[#6B7280] leading-relaxed mb-4">
+                    <p className="text-sm text-[#C9CACB] leading-relaxed mb-4">
                       Describe your IT task in plain English. Get production-ready PowerShell, Bash, Python, Terraform, and 20+ other formats — security-hardened and ready to run.
                     </p>
                     <div className="flex flex-wrap gap-1.5">
                       {['PowerShell', 'Bash', 'Python', 'Terraform', 'Ansible', '20+ more'].map((tag) => (
-                        <span key={tag} className="text-[10px] px-2 py-0.5 rounded-md border border-white/8 bg-white/3 text-[#6B7280]">{tag}</span>
+                        <span key={tag} className="text-xs px-2.5 py-1 rounded-md border border-white/25 bg-white/10 text-[#E5E7EB]">{tag}</span>
                       ))}
                     </div>
                   </div>
@@ -320,22 +323,25 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               {/* Workflow Generator card */}
               <FadeInSection delay={80}>
                 <Link href="/workflow" className="block group">
-                  <div className="rounded-2xl border border-violet-500/20 bg-violet-500/4 p-6 h-full transition-all duration-200 group-hover:border-violet-500/35 group-hover:bg-violet-500/7 spotlight-card">
+                  <div className="rounded-2xl border border-violet-400/40 bg-violet-500/15 p-6 h-full transition-all duration-200 group-hover:border-violet-400/60 group-hover:bg-violet-500/22">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="h-10 w-10 rounded-xl border border-violet-500/25 bg-violet-500/10 flex items-center justify-center group-hover:border-violet-500/40 transition-colors">
-                        <Workflow className="h-5 w-5 text-violet-400" />
+                      <div className="h-10 w-10 rounded-xl border border-violet-400/45 bg-violet-500/25 flex items-center justify-center group-hover:border-violet-400/65 group-hover:bg-violet-500/35 transition-all duration-200">
+                        <Workflow className="h-5 w-5 text-violet-300" />
                       </div>
                       <div>
-                        <p className="font-semibold text-[#F9FAFB] text-sm">n8n Workflow Generator</p>
-                        <p className="text-[10px] text-[#4B5563] uppercase tracking-wider">Free · New</p>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <p className="font-semibold text-white text-sm">n8n Workflow Generator</p>
+                          <span className="text-[10px] font-bold bg-violet-500/35 border border-violet-400/40 text-violet-200 px-1.5 py-0.5 rounded">NEW</span>
+                        </div>
+                        <p className="text-xs text-[#9CA3AF]">Free · No sign-in needed</p>
                       </div>
                     </div>
-                    <p className="text-sm text-[#6B7280] leading-relaxed mb-4">
+                    <p className="text-sm text-[#C9CACB] leading-relaxed mb-4">
                       Describe your automation, pick your integrations, and get a complete n8n workflow JSON you can import directly. Slack, GitHub, Stripe, Claude AI, and 30+ integrations.
                     </p>
                     <div className="flex flex-wrap gap-1.5">
                       {['Slack', 'GitHub', 'Gmail', 'Stripe', 'Claude AI', '30+ more'].map((tag) => (
-                        <span key={tag} className="text-[10px] px-2 py-0.5 rounded-md border border-violet-500/20 bg-violet-500/8 text-violet-300/70">{tag}</span>
+                        <span key={tag} className="text-xs px-2.5 py-1 rounded-md border border-violet-400/35 bg-violet-500/20 text-violet-100">{tag}</span>
                       ))}
                     </div>
                   </div>
