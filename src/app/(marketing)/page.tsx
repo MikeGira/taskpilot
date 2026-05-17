@@ -307,11 +307,11 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <Link
                   href="/generate"
                   className="card-lift group flex flex-col h-full rounded-2xl
-                    border border-white/25 bg-[#141414] p-6
-                    hover:border-white/45"
+                    border border-white/40 bg-[#222222] p-6
+                    hover:border-white/60"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-xl border border-white/20 bg-white/6 flex items-center justify-center shrink-0">
+                    <div className="h-10 w-10 rounded-xl border border-white/35 bg-white/14 flex items-center justify-center shrink-0">
                       <Wand2 className="h-5 w-5 text-white" />
                     </div>
                     <div>
@@ -320,7 +320,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     </div>
                   </div>
 
-                  <p className="text-sm text-[#C9CACB] leading-relaxed mb-4 flex-1">
+                  <p className="text-sm text-[#D1D5DB] leading-relaxed mb-4 flex-1">
                     Describe your IT task in plain English. Get production-ready PowerShell, Bash, Python, Terraform, and 20+ other formats, security-hardened and ready to run.
                   </p>
 
@@ -328,14 +328,14 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     {['PowerShell', 'Bash', 'Python', 'Terraform', 'Ansible', '20+ more'].map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs px-2.5 py-1 rounded-md border border-white/20 bg-white/6 text-[#D1D5DB]
-                          group-hover:bg-white/14 group-hover:border-white/38 group-hover:text-white"
+                        className="text-xs px-2.5 py-1 rounded-md border border-white/30 bg-white/12 text-white
+                          group-hover:bg-white/20 group-hover:border-white/50"
                       >{tag}</span>
                     ))}
                   </div>
 
-                  <div className="mt-auto flex items-center gap-1.5 pt-4 border-t border-white/12 group-hover:border-white/25">
-                    <span className="text-sm font-semibold opacity-60 group-hover:opacity-100 transition-opacity duration-150">
+                  <div className="mt-auto flex items-center gap-1.5 pt-4 border-t border-white/20 group-hover:border-white/35">
+                    <span className="text-sm font-semibold opacity-70 group-hover:opacity-100 transition-opacity duration-150">
                       Try it free
                     </span>
                     <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0
@@ -350,23 +350,23 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <Link
                   href="/workflow"
                   className="card-lift group flex flex-col h-full rounded-2xl
-                    border border-violet-500/38 bg-[#0E0817] p-6
-                    hover:border-violet-400/60"
+                    border border-violet-500/60 bg-violet-950 p-6
+                    hover:border-violet-400/80"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-xl border border-violet-400/30 bg-violet-500/12 flex items-center justify-center shrink-0">
-                      <Workflow className="h-5 w-5 text-violet-300" />
+                    <div className="h-10 w-10 rounded-xl border border-violet-400/55 bg-violet-500/30 flex items-center justify-center shrink-0">
+                      <Workflow className="h-5 w-5 text-violet-200" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="font-semibold text-white text-sm">n8n Workflow Generator</p>
-                        <span className="text-[10px] font-bold bg-violet-500/25 border border-violet-400/30 text-violet-200 px-1.5 py-0.5 rounded">NEW</span>
+                        <span className="text-[10px] font-bold bg-violet-500/40 border border-violet-400/50 text-violet-100 px-1.5 py-0.5 rounded">NEW</span>
                       </div>
-                      <p className="text-xs text-[#9CA3AF]">Free · No sign-in needed</p>
+                      <p className="text-xs text-violet-300">Free · No sign-in needed</p>
                     </div>
                   </div>
 
-                  <p className="text-sm text-[#C9CACB] leading-relaxed mb-4 flex-1">
+                  <p className="text-sm text-violet-100 leading-relaxed mb-4 flex-1">
                     Describe your automation, pick your integrations, and get a complete n8n workflow JSON you can import directly. Slack, GitHub, Stripe, Claude AI, and 30+ integrations.
                   </p>
 
@@ -374,13 +374,13 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     {['Slack', 'GitHub', 'Gmail', 'Stripe', 'Claude AI', '30+ more'].map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs px-2.5 py-1 rounded-md border border-violet-400/22 bg-violet-500/10 text-violet-200
-                          group-hover:bg-violet-500/25 group-hover:border-violet-400/48 group-hover:text-white"
+                        className="text-xs px-2.5 py-1 rounded-md border border-violet-400/45 bg-violet-500/25 text-violet-100
+                          group-hover:bg-violet-500/40 group-hover:border-violet-400/65 group-hover:text-white"
                       >{tag}</span>
                     ))}
                   </div>
 
-                  <div className="mt-auto flex items-center gap-1.5 pt-4 border-t border-violet-500/18 group-hover:border-violet-400/35">
+                  <div className="mt-auto flex items-center gap-1.5 pt-4 border-t border-violet-400/35 group-hover:border-violet-400/55">
                     <span className="text-sm font-semibold opacity-60 group-hover:opacity-100 transition-opacity duration-150">
                       Try it free
                     </span>
