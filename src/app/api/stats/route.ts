@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { buildStats, VALID_PERIODS } from '@/lib/stats';
 import type { Period } from '@/lib/stats';
+import { getVisitorStats } from '@/lib/analytics';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function GET(request: Request) {
@@ -16,8 +17,22 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Invalid period' }, { status: 400 });
   }
 
+  const period = raw as Period;
+
   try {
-    const stats = await buildStats(raw as Period);
+    const [scriptResult, visitorResult] = await Promise.allSettled([
+      buildStats(period),
+      getVisitorStats(period),
+    ]);
+
+    if (scriptResult.status === 'rejected') {
+      console.error('[stats]', scriptResult.reason);
+      return NextResponse.json({ error: 'Failed to load stats' }, { status: 500 });
+    }
+
+    const stats = scriptResult.value;
+    stats.visitorStats = visitorResult.status === 'fulfilled' ? visitorResult.value : null;
+
     return NextResponse.json(stats, {
       headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=30' },
     });

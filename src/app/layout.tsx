@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { ChatWidget } from '@/components/assistant/chat-widget';
 import { ScrollToTop } from '@/components/ui/scroll-to-top';
+import { VisitorTracker } from '@/components/analytics/visitor-tracker';
 import './globals.css';
 
 const inter = Inter({
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ChatWidget />
         <ScrollToTop />
         <Analytics />
+        <VisitorTracker />
       </body>
     </html>
   );

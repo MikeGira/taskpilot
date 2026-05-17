@@ -1,7 +1,15 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import type { StatsResponse, Period } from '@/lib/stats';
+import { useState, useCallback, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import type { StatsResponse, VisitorStats, Period } from '@/lib/stats';
+import { CountUp } from './count-up';
+import { AnimatedBar } from './animated-bar';
+
+const WorldMap = dynamic(
+  () => import('./world-map').then((m) => m.WorldMap),
+  { ssr: false, loading: () => <div className="aspect-[2/1] bg-[#0a0a0a] rounded-lg animate-pulse" /> }
+);
 
 const PERIODS: { value: Period; label: string }[] = [
   { value: '24h', label: '24h' },
@@ -11,79 +19,192 @@ const PERIODS: { value: Period; label: string }[] = [
 ];
 
 const OS_LABELS: Record<string, string> = {
-  windows: 'Windows',
-  linux: 'Linux',
-  macos: 'macOS',
-  'cross-platform': 'Cross-Platform',
+  windows: 'Windows', linux: 'Linux', macos: 'macOS', 'cross-platform': 'Cross-Platform',
 };
-
 const ENV_LABELS: Record<string, string> = {
-  'on-premises': 'On-Prem',
-  hybrid: 'Hybrid',
-  cloud: 'Cloud',
-  'multi-cloud': 'Multi-Cloud',
+  'on-premises': 'On-Prem', hybrid: 'Hybrid', cloud: 'Cloud', 'multi-cloud': 'Multi-Cloud',
 };
-
 const LANG_LABELS: Record<string, string> = {
-  powershell: 'PowerShell',
-  bash: 'Bash',
-  python: 'Python',
-  yaml: 'YAML',
-  terraform: 'Terraform',
-  typescript: 'TypeScript',
-  dockerfile: 'Dockerfile',
-  puppet: 'Puppet',
-  groovy: 'Groovy',
-  bicep: 'Bicep',
-  json: 'JSON',
+  powershell: 'PowerShell', bash: 'Bash', python: 'Python', yaml: 'YAML',
+  terraform: 'Terraform', typescript: 'TypeScript', dockerfile: 'Dockerfile',
+};
+const DEVICE_LABELS: Record<string, string> = {
+  desktop: 'Desktop', mobile: 'Mobile', tablet: 'Tablet',
 };
 
-function fmt(n: number): string {
-  return n.toLocaleString('en-US');
-}
-
-function bar(pct: number, width = 10): string {
-  const filled = Math.min(width, Math.max(0, Math.round((pct / 100) * width)));
-  return '█'.repeat(filled) + '░'.repeat(width - filled);
-}
-
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
+function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-[6.5rem_1fr] sm:grid-cols-[9rem_1fr] gap-x-3 items-start">
-      <span className="text-[#4B5563] uppercase tracking-widest text-[10px] pt-[3px] leading-5 shrink-0">
-        {label}
-      </span>
-      <div className="space-y-0.5">{children}</div>
+    <p className="text-[10px] font-mono uppercase tracking-widest text-emerald-400/60 mb-3">
+      {children}
+    </p>
+  );
+}
+
+function Card({ children, delay = 0, className = '' }: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), delay);
+    return () => clearTimeout(t);
+  }, [delay]);
+
+  return (
+    <div
+      className={`rounded-xl border border-white/10 bg-[#0D0D0D] p-5 transition-all duration-500 ${
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
+      } ${className}`}
+    >
+      {children}
     </div>
   );
 }
 
-function Line({ children }: { children: React.ReactNode }) {
+function HeroCard({
+  label,
+  value,
+  prefix = '',
+  suffix = '',
+  note,
+  delay,
+}: {
+  label: string;
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  note?: string;
+  delay: number;
+}) {
   return (
-    <div className="leading-5 flex items-baseline gap-0">
-      <span className="text-white/20 mr-2 shrink-0">|</span>
-      <span className="flex flex-wrap items-baseline gap-x-1">{children}</span>
-    </div>
+    <Card delay={delay}>
+      <SectionLabel>{label}</SectionLabel>
+      <p className="text-3xl font-bold font-mono text-white leading-none">
+        <CountUp value={value} prefix={prefix} suffix={suffix} />
+      </p>
+      {note && <p className="text-xs text-[#4B5563] mt-2">{note}</p>}
+    </Card>
   );
 }
 
-function BreakdownLine({
+function BreakdownCard({
+  label,
   items,
   labels,
+  delay,
 }: {
+  label: string;
   items: { name: string; count: number; pct: number }[];
   labels: Record<string, string>;
+  delay: number;
 }) {
-  if (items.length === 0) return <span className="text-[#374151]">no data yet</span>;
+  return (
+    <Card delay={delay}>
+      <SectionLabel>{label}</SectionLabel>
+      {items.length === 0 ? (
+        <p className="text-xs text-[#374151]">No data yet</p>
+      ) : (
+        <div className="space-y-3">
+          {items.map((item, i) => (
+            <AnimatedBar
+              key={item.name}
+              label={labels[item.name] ?? item.name}
+              pct={item.pct}
+              delay={delay + i * 80}
+            />
+          ))}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function VisitorSection({ v, baseDelay }: { v: VisitorStats; baseDelay: number }) {
   return (
     <>
-      {items.map((item, i) => (
-        <span key={item.name} className="whitespace-nowrap">
-          <span className="text-[#D1D5DB]">{labels[item.name] ?? item.name}</span>
-          <span className="text-[#6B7280]"> {item.pct}%</span>
-          {i < items.length - 1 && <span className="text-[#4B5563]"> · </span>}
-        </span>
-      ))}
+      {/* World map */}
+      <Card delay={baseDelay} className="col-span-full">
+        <SectionLabel>Global Reach</SectionLabel>
+        <WorldMap
+          countryCounts={v.countryCounts}
+          uniqueCountries={v.uniqueCountries}
+        />
+      </Card>
+
+      {/* Country top list */}
+      {v.topCountries.length > 0 && (
+        <Card delay={baseDelay + 100}>
+          <SectionLabel>Top Countries</SectionLabel>
+          <div className="space-y-3">
+            {v.topCountries.map((c, i) => (
+              <AnimatedBar
+                key={c.code}
+                label={c.name}
+                pct={c.pct}
+                delay={baseDelay + 100 + i * 60}
+              />
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Browsers */}
+      <Card delay={baseDelay + 160}>
+        <SectionLabel>Browsers</SectionLabel>
+        {v.topBrowsers.length === 0 ? (
+          <p className="text-xs text-[#374151]">No data yet</p>
+        ) : (
+          <div className="space-y-3">
+            {v.topBrowsers.map((b, i) => (
+              <AnimatedBar
+                key={b.name}
+                label={b.name}
+                pct={b.pct}
+                delay={baseDelay + 160 + i * 60}
+              />
+            ))}
+          </div>
+        )}
+      </Card>
+
+      {/* Devices */}
+      <Card delay={baseDelay + 220}>
+        <SectionLabel>Devices</SectionLabel>
+        {v.topDevices.length === 0 ? (
+          <p className="text-xs text-[#374151]">No data yet</p>
+        ) : (
+          <div className="space-y-3">
+            {v.topDevices.map((d, i) => (
+              <AnimatedBar
+                key={d.name}
+                label={DEVICE_LABELS[d.name] ?? d.name}
+                pct={d.pct}
+                delay={baseDelay + 220 + i * 60}
+              />
+            ))}
+          </div>
+        )}
+      </Card>
+
+      {/* Visitor OS */}
+      <Card delay={baseDelay + 280}>
+        <SectionLabel>Visitor OS</SectionLabel>
+        {v.topOs.length === 0 ? (
+          <p className="text-xs text-[#374151]">No data yet</p>
+        ) : (
+          <div className="space-y-3">
+            {v.topOs.map((o, i) => (
+              <AnimatedBar
+                key={o.name}
+                label={o.name}
+                pct={o.pct}
+                delay={baseDelay + 280 + i * 60}
+              />
+            ))}
+          </div>
+        )}
+      </Card>
     </>
   );
 }
@@ -114,130 +235,93 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
   );
 
   const d = data;
+  const v = d?.visitorStats ?? null;
 
   return (
-    <div className="font-mono">
-      <div className="rounded-xl border border-white/25 bg-[#0D0D0D] overflow-hidden shadow-2xl">
-        {/* macOS-style title bar */}
-        <div className="flex items-center px-4 py-3 border-b border-white/20 bg-[#111]">
-          <div className="flex gap-1.5">
-            <span className="block w-3 h-3 rounded-full bg-[#FF5F56]" />
-            <span className="block w-3 h-3 rounded-full bg-[#FFBD2E]" />
-            <span className="block w-3 h-3 rounded-full bg-[#27C93F]" />
-          </div>
-          <span className="text-xs text-[#9CA3AF] ml-auto">taskpilot — stats</span>
+    <div className="space-y-3">
+      {/* Period selector + header */}
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-xs font-mono text-[#6B7280]">
+            live · updates every 60s
+          </span>
+          {loading && <span className="text-xs text-[#4B5563] animate-pulse">loading…</span>}
         </div>
-
-        {/* Terminal body */}
-        <div className="px-5 py-5 text-sm text-[#F9FAFB] space-y-4">
-          {/* Prompt */}
-          <div className="leading-5">
-            <span className="text-emerald-400 select-none">$ </span>
-            <span className="text-[#9CA3AF]">taskpilot stats</span>
-            <span className="text-[#6B7280]"> --period </span>
-            <span className="text-emerald-400">{period}</span>
-            {loading && (
-              <span className="text-[#6B7280] ml-2 animate-pulse">·</span>
-            )}
-          </div>
-
-          {fetchError && (
-            <p className="text-red-400 text-xs">{fetchError}</p>
-          )}
-
-          {d && (
-            <div className="space-y-3">
-              {/* Scripts Generated */}
-              <Row label="GENERATED">
-                <Line>
-                  <span className="text-emerald-400 font-semibold">{fmt(d.totalGenerated)}</span>
-                  <span className="text-[#6B7280]">total</span>
-                </Line>
-                <Line>
-                  <span className="text-white">{fmt(d.periodCount)}</span>
-                  <span className="text-[#6B7280]">
-                    {period === 'all' ? 'all time' : `last ${period}`}
-                  </span>
-                </Line>
-              </Row>
-
-              {/* Satisfaction Rate */}
-              <Row label="SATISFACTION">
-                <Line>
-                  <span className="text-emerald-400/60">{bar(d.satisfactionRate)}</span>
-                  <span className="text-white font-semibold ml-2">{d.satisfactionRate}%</span>
-                </Line>
-                <Line>
-                  <span className="text-emerald-400">{fmt(d.positiveCount)}</span>
-                  <span className="text-[#6B7280]">👍</span>
-                  <span className="text-[#9CA3AF] ml-2">{fmt(d.negativeCount)}</span>
-                  <span className="text-[#6B7280]">👎</span>
-                </Line>
-              </Row>
-
-              {/* Platform/Env/Language breakdowns */}
-              <Row label="PLATFORMS">
-                <Line>
-                  <BreakdownLine items={d.topOs} labels={OS_LABELS} />
-                </Line>
-              </Row>
-
-              <Row label="ENVIRONMENTS">
-                <Line>
-                  <BreakdownLine items={d.topEnvironments} labels={ENV_LABELS} />
-                </Line>
-              </Row>
-
-              <Row label="LANGUAGES">
-                <Line>
-                  <BreakdownLine items={d.topLanguages} labels={LANG_LABELS} />
-                </Line>
-              </Row>
-
-              {/* Time Saved */}
-              <Row label="TIME SAVED">
-                <Line>
-                  <span className="text-emerald-400">~{fmt(d.timeSavedHours)} hrs</span>
-                  <span className="text-[#6B7280] mx-1">≈</span>
-                  <span className="text-white font-semibold">${fmt(d.timeSavedDollars)}</span>
-                </Line>
-                <Line>
-                  <span className="text-[#4B5563] text-xs">2 hr avg × $50/hr sysadmin rate</span>
-                </Line>
-              </Row>
-            </div>
-          )}
-
-          {!d && !loading && !fetchError && (
-            <p className="text-[#4B5563]">No data available yet.</p>
-          )}
-
-          {/* Period selector */}
-          <div className="border-t border-white/6 pt-3 flex items-center gap-1.5 flex-wrap">
-            {PERIODS.map((p) => (
-              <button
-                key={p.value}
-                onClick={() => selectPeriod(p.value)}
-                disabled={loading}
-                className={[
-                  'px-3 py-1 text-xs rounded border transition-all duration-150 disabled:opacity-50',
-                  period === p.value
-                    ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-400'
-                    : 'border-white/10 text-[#6B7280] hover:text-[#9CA3AF] hover:border-white/20',
-                ].join(' ')}
-              >
-                [{p.label}]
-              </button>
-            ))}
-            <span className="ml-auto text-[11px] text-[#374151]">
-              {loading ? 'loading...' : 'cache: 60s'}
-            </span>
-          </div>
+        <div className="flex items-center gap-1">
+          {PERIODS.map((p) => (
+            <button
+              key={p.value}
+              onClick={() => selectPeriod(p.value)}
+              disabled={loading}
+              className={[
+                'px-3 py-1 text-xs font-mono rounded border transition-all duration-150 disabled:opacity-50',
+                period === p.value
+                  ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-400'
+                  : 'border-white/10 text-[#6B7280] hover:text-[#9CA3AF] hover:border-white/20',
+              ].join(' ')}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      <p className="text-xs text-[#374151] mt-3 text-center">
-        Aggregate data only · Refreshes every 60s · No personal data stored
+      {fetchError && (
+        <p className="text-red-400 text-xs">{fetchError}</p>
+      )}
+
+      {d ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {/* Hero row */}
+          <HeroCard
+            label="Scripts Generated"
+            value={d.totalGenerated}
+            note={`${d.periodCount.toLocaleString('en-US')} in selected period`}
+            delay={0}
+          />
+          <HeroCard
+            label="Satisfaction Rate"
+            value={d.satisfactionRate}
+            suffix="%"
+            note={`${d.positiveCount} thumbs up · ${d.negativeCount} thumbs down`}
+            delay={60}
+          />
+          <HeroCard
+            label="Estimated Time Saved"
+            value={d.timeSavedDollars}
+            prefix="$"
+            note="2 hr avg × $50/hr sysadmin rate"
+            delay={120}
+          />
+
+          {/* Script breakdowns */}
+          <BreakdownCard label="Script Platforms" items={d.topOs} labels={OS_LABELS} delay={200} />
+          <BreakdownCard label="Environments" items={d.topEnvironments} labels={ENV_LABELS} delay={260} />
+          <BreakdownCard label="Script Languages" items={d.topLanguages} labels={LANG_LABELS} delay={320} />
+
+          {/* Visitor section */}
+          {v ? (
+            <VisitorSection v={v} baseDelay={400} />
+          ) : (
+            <Card delay={400} className="col-span-full">
+              <SectionLabel>Visitor Analytics</SectionLabel>
+              <p className="text-xs text-[#374151]">
+                Tracking active — visitor data will appear once the first page view is recorded.
+              </p>
+            </Card>
+          )}
+        </div>
+      ) : (
+        !loading && (
+          <div className="rounded-xl border border-white/10 bg-[#0D0D0D] p-8 text-center">
+            <p className="text-sm text-[#4B5563]">No data available yet.</p>
+          </div>
+        )
+      )}
+
+      <p className="text-xs text-[#374151] text-center pt-1">
+        Aggregate data only · No personal data stored
       </p>
     </div>
   );

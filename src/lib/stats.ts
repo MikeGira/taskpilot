@@ -3,6 +3,16 @@ import { getAdminClient } from '@/lib/supabase/admin';
 export const VALID_PERIODS = ['24h', '7d', '30d', 'all'] as const;
 export type Period = typeof VALID_PERIODS[number];
 
+export interface VisitorStats {
+  totalPageViews: number;
+  uniqueCountries: number;
+  topCountries: { code: string; name: string; count: number; pct: number }[];
+  topBrowsers: { name: string; count: number; pct: number }[];
+  topDevices: { name: string; count: number; pct: number }[];
+  topOs: { name: string; count: number; pct: number }[];
+  countryCounts: Record<string, number>;
+}
+
 export interface StatsResponse {
   period: Period;
   totalGenerated: number;
@@ -15,6 +25,7 @@ export interface StatsResponse {
   topLanguages: { name: string; count: number; pct: number }[];
   timeSavedHours: number;
   timeSavedDollars: number;
+  visitorStats: VisitorStats | null;
 }
 
 type FeedbackRow = {
@@ -91,5 +102,6 @@ export async function buildStats(period: Period): Promise<StatsResponse> {
     topLanguages: makeTopList(langMap),
     timeSavedHours: totalGenerated * 2,
     timeSavedDollars: totalGenerated * 2 * 50,
+    visitorStats: null,
   };
 }

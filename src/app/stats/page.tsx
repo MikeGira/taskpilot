@@ -5,19 +5,29 @@ import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { StatsDisplay } from '@/components/stats/stats-display';
 import { buildStats } from '@/lib/stats';
+import { getVisitorStats } from '@/lib/analytics';
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Live Stats',
   description:
-    'Real-time aggregate statistics for TaskPilot: total scripts generated, satisfaction rate, top platforms and languages.',
+    'Real-time aggregate statistics for TaskPilot: scripts generated, satisfaction rate, global reach, and visitor analytics.',
 };
 
 export default async function StatsPage() {
   let initialData = null;
   try {
-    initialData = await buildStats('all');
+    const [scriptStats, visitorStats] = await Promise.allSettled([
+      buildStats('all'),
+      getVisitorStats('all'),
+    ]);
+
+    if (scriptStats.status === 'fulfilled') {
+      initialData = scriptStats.value;
+      initialData.visitorStats =
+        visitorStats.status === 'fulfilled' ? visitorStats.value : null;
+    }
   } catch (err) {
     console.error('[stats page]', err);
   }
@@ -26,9 +36,8 @@ export default async function StatsPage() {
     <div className="min-h-screen flex flex-col bg-black">
       <Navbar />
       <main className="flex-1 flex flex-col items-center px-4 py-12 sm:py-20">
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-5xl">
 
-          {/* Back button */}
           <div className="mb-8">
             <Link
               href="/"
@@ -47,7 +56,7 @@ export default async function StatsPage() {
               TaskPilot Usage Stats
             </h1>
             <p className="text-sm text-[#A0A0A0]">
-              Scripts generated, satisfaction rate, and top platforms. Updated every 60 seconds.
+              Scripts generated, satisfaction rate, global reach, and visitor analytics.
             </p>
           </div>
 
