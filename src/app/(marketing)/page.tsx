@@ -349,43 +349,47 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
 
               {/* ── Workflow Generator card ── */}
               <FadeInSection delay={80} className="h-full">
-                {/* n8n official colors: primary #EA4B71 (pink), dark #101330 */}
                 <Link
                   href="/workflow"
-                  className="card-lift-snap group flex flex-col h-full rounded-2xl
-                    border border-[#EA4B71]/55 bg-[#101330] p-6
-                    hover:border-[#EA4B71]/85"
+                  className="card-lift-snap group relative flex flex-col h-full rounded-2xl overflow-hidden
+                    border border-white/10 bg-[#1F192A] p-6
+                    hover:border-white/20"
                 >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-xl border border-[#EA4B71]/45 bg-[#EA4B71]/15 flex items-center justify-center shrink-0">
-                      <Workflow className="h-5 w-5 text-[#EA4B71]" />
+                  {/* orange→red glow overlay matching n8n "Code when you need it" card */}
+                  <div className="pointer-events-none absolute inset-0 rounded-2xl"
+                    style={{background: 'radial-gradient(ellipse at -10% -10%, rgba(253,137,37,0.38) 0%, rgba(255,12,0,0.22) 45%, transparent 70%)'}}
+                  />
+
+                  <div className="relative flex items-center gap-3 mb-4">
+                    <div className="h-10 w-10 rounded-xl border border-[#FD8925]/40 bg-[#FD8925]/15 flex items-center justify-center shrink-0">
+                      <Workflow className="h-5 w-5 text-[#FD8925]" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="font-semibold text-white text-sm">n8n Workflow Generator</p>
-                        <span className="text-[10px] font-bold bg-[#EA4B71]/25 border border-[#EA4B71]/45 text-[#EA4B71] px-1.5 py-0.5 rounded">NEW</span>
+                        <span className="text-[10px] font-bold bg-[#FD8925]/25 border border-[#FD8925]/45 text-[#FD8925] px-1.5 py-0.5 rounded">NEW</span>
                       </div>
-                      <p className="text-xs text-[#EA4B71]/70">Free · No sign-in needed</p>
+                      <p className="text-xs text-[#FD8925]/75">Free · No sign-in needed</p>
                     </div>
                   </div>
 
-                  <p className="text-sm text-[#FCFCFD]/85 leading-relaxed mb-4 flex-1">
+                  <p className="relative text-sm text-[#FCFCFD]/85 leading-relaxed mb-4 flex-1">
                     Describe your automation, pick your integrations, and get a complete n8n workflow JSON you can import directly. Slack, GitHub, Stripe, Claude AI, and 30+ integrations.
                   </p>
 
-                  <div className="flex flex-wrap gap-1.5 mb-5">
+                  <div className="relative flex flex-wrap gap-1.5 mb-5">
                     {['Slack', 'GitHub', 'Gmail', 'Stripe', 'Claude AI', '30+ more'].map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs px-2.5 py-1 rounded-full border border-[#EA4B71]/40 bg-[#EA4B71]/12 text-[#EA4B71] cursor-pointer
-                          hover:bg-[#EA4B71] hover:border-[#EA4B71] hover:text-white hover:-translate-y-px
-                          hover:shadow-[0_4px_12px_rgba(234,75,113,0.45)]
+                        className="text-xs px-2.5 py-1 rounded-full border border-[#FD8925]/40 bg-[#FD8925]/12 text-[#FD8925] cursor-pointer
+                          hover:bg-[#FD8925] hover:border-[#FD8925] hover:text-white hover:-translate-y-px
+                          hover:shadow-[0_4px_12px_rgba(253,137,37,0.45)]
                           transition-[background-color,border-color,color,box-shadow,transform] duration-150"
                       >{tag}</span>
                     ))}
                   </div>
 
-                  <div className="mt-auto flex items-center gap-1.5 pt-4 border-t border-[#EA4B71]/25 group-hover:border-[#EA4B71]/50">
+                  <div className="relative mt-auto flex items-center gap-1.5 pt-4 border-t border-white/15 group-hover:border-white/30">
                     <span className="text-sm font-semibold opacity-70 group-hover:opacity-100 transition-opacity duration-100">
                       Try it free
                     </span>
