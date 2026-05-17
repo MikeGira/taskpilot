@@ -352,27 +352,28 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <Link
                   href="/workflow"
                   className="card-lift-snap group relative flex flex-col h-full rounded-2xl overflow-hidden
-                    border border-[#3ECF8E]/22 bg-[#050F0A] p-6
-                    hover:border-[#3ECF8E]/42
-                    hover:shadow-[0_0_32px_rgba(62,207,142,0.08)]"
+                    border border-[#3ECF8E]/42 bg-[#071812] p-6
+                    shadow-[0_0_0_1px_rgba(62,207,142,0.08),0_8px_32px_rgba(0,0,0,0.75)]
+                    hover:border-[#3ECF8E]/68
+                    hover:shadow-[0_0_0_1px_rgba(62,207,142,0.18),0_0_40px_rgba(62,207,142,0.14),0_8px_32px_rgba(0,0,0,0.75)]"
                 >
                   {/* TaskPilot brand glow: emerald bottom-left + faint electric-blue top-right */}
                   <div className="glow-workflow-card pointer-events-none absolute inset-0 rounded-2xl" />
 
                   <div className="relative flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-xl border border-[#3ECF8E]/35 bg-[#3ECF8E]/12 flex items-center justify-center shrink-0">
+                    <div className="h-10 w-10 rounded-xl border border-[#3ECF8E]/55 bg-[#3ECF8E]/18 flex items-center justify-center shrink-0">
                       <Workflow className="h-5 w-5 text-[#3ECF8E]" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="font-semibold text-white text-sm">n8n Workflow Generator</p>
-                        <span className="text-[10px] font-bold bg-[#3ECF8E]/18 border border-[#3ECF8E]/40 text-[#3ECF8E] px-1.5 py-0.5 rounded">FREE</span>
+                        <span className="text-[10px] font-bold bg-[#3ECF8E]/25 border border-[#3ECF8E]/55 text-[#3ECF8E] px-1.5 py-0.5 rounded">FREE</span>
                       </div>
-                      <p className="text-xs text-[#3ECF8E]/65">No sign-in needed · Import-ready JSON</p>
+                      <p className="text-xs text-[#3ECF8E]/85">No sign-in needed · Import-ready JSON</p>
                     </div>
                   </div>
 
-                  <p className="relative text-sm text-[#FCFCFD]/80 leading-relaxed mb-4 flex-1">
+                  <p className="relative text-sm text-[#FCFCFD]/85 leading-relaxed mb-4 flex-1">
                     Describe your automation in plain English. Pick your integrations. Get production-ready n8n workflow JSON to import directly: Slack, GitHub, Stripe, Claude AI, and 30+ more.
                   </p>
 
@@ -380,7 +381,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     {['Slack', 'GitHub', 'Gmail', 'Stripe', 'Claude AI', '30+ more'].map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs px-2.5 py-1 rounded-full border border-[#3ECF8E]/32 bg-[#3ECF8E]/8 text-[#3ECF8E] cursor-pointer
+                        className="text-xs px-2.5 py-1 rounded-full border border-[#3ECF8E]/45 bg-[#3ECF8E]/14 text-[#3ECF8E] cursor-pointer
                           hover:bg-[#3ECF8E] hover:border-[#3ECF8E] hover:text-black hover:-translate-y-px
                           hover:shadow-[0_4px_14px_rgba(62,207,142,0.45)]
                           transition-[background-color,border-color,color,box-shadow,transform] duration-150"
@@ -388,8 +389,8 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     ))}
                   </div>
 
-                  <div className="relative mt-auto flex items-center gap-1.5 pt-4 border-t border-[#3ECF8E]/18 group-hover:border-[#3ECF8E]/38 transition-colors duration-150">
-                    <span className="text-sm font-semibold text-[#3ECF8E]/70 group-hover:text-[#3ECF8E] transition-colors duration-100">
+                  <div className="relative mt-auto flex items-center gap-1.5 pt-4 border-t border-[#3ECF8E]/28 group-hover:border-[#3ECF8E]/50 transition-colors duration-150">
+                    <span className="text-sm font-semibold text-[#3ECF8E]/85 group-hover:text-[#3ECF8E] transition-colors duration-100">
                       Generate a workflow
                     </span>
                     <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0 text-[#3ECF8E]
