@@ -69,13 +69,13 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full px-4 sm:px-6 pt-3 pb-0.5">
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-5
         rounded-2xl
-        bg-[rgba(8,8,15,0.82)] backdrop-blur-2xl
-        border border-white/12
-        shadow-[0_4px_24px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.05)]">
+        bg-[rgba(8,8,15,0.88)] backdrop-blur-2xl
+        border border-white/22
+        shadow-[0_4px_28px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.10)]">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 font-semibold text-base group">
-          <div className="flex h-7 w-7 items-center justify-center rounded bg-white/8 border border-white/12 group-hover:bg-white/12 group-hover:border-white/20 transition-all duration-200">
+          <div className="flex h-7 w-7 items-center justify-center rounded bg-white/10 border border-white/22 group-hover:bg-white/15 group-hover:border-white/35 transition-all duration-200">
             <Terminal className="h-3.5 w-3.5 text-white" />
           </div>
           <span className="text-white tracking-tight">TaskPilot</span>
@@ -115,14 +115,14 @@ export function Navbar() {
       </nav>
 
       {mobileOpen && (
-        <div className="md:hidden mt-1 mx-4 sm:mx-6 rounded-2xl border border-white/12 bg-[rgba(8,8,15,0.92)] backdrop-blur-2xl px-3 py-3 flex flex-col gap-0.5">
+        <div className="md:hidden mt-1 mx-4 sm:mx-6 rounded-2xl border border-white/22 bg-[rgba(8,8,15,0.94)] backdrop-blur-2xl px-3 py-3 flex flex-col gap-0.5">
           {NAV_LINKS.map(({ href, label }) => (
             <Link key={href} href={href} onClick={() => setMobileOpen(false)}
               className="text-sm text-[#A0A0A0] hover:text-white font-medium px-3 py-2.5 rounded-full hover:bg-white/7 transition-all duration-200">
               {label}
             </Link>
           ))}
-          <div className="flex flex-col gap-2 pt-3 mt-2 border-t border-white/8">
+          <div className="flex flex-col gap-2 pt-3 mt-2 border-t border-white/15">
             {user ? (
               <Button asChild><Link href="/dashboard" onClick={() => setMobileOpen(false)}>Dashboard</Link></Button>
             ) : (
