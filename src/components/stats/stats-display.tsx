@@ -53,7 +53,7 @@ function Card({ children, delay = 0, className = '' }: {
 
   return (
     <div
-      className={`rounded-xl border border-white/10 bg-[#0D0D0D] p-5 transition-all duration-500 ${
+      className={`rounded-xl border border-white/32 bg-black p-5 transition-all duration-500 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
       } ${className}`}
     >
@@ -83,7 +83,7 @@ function HeroCard({
       <p className="text-3xl font-bold font-mono text-white leading-none">
         <CountUp value={value} prefix={prefix} suffix={suffix} />
       </p>
-      {note && <p className="text-xs text-[#4B5563] mt-2">{note}</p>}
+      {note && <p className="text-xs text-[#9CA3AF] mt-2">{note}</p>}
     </Card>
   );
 }
@@ -103,7 +103,7 @@ function BreakdownCard({
     <Card delay={delay}>
       <SectionLabel>{label}</SectionLabel>
       {items.length === 0 ? (
-        <p className="text-xs text-[#374151]">No data yet</p>
+        <p className="text-xs text-[#9CA3AF]">No data yet</p>
       ) : (
         <div className="space-y-3">
           {items.map((item, i) => (
@@ -153,7 +153,7 @@ function VisitorSection({ v, baseDelay }: { v: VisitorStats; baseDelay: number }
       <Card delay={baseDelay + 160}>
         <SectionLabel>Browsers</SectionLabel>
         {v.topBrowsers.length === 0 ? (
-          <p className="text-xs text-[#374151]">No data yet</p>
+          <p className="text-xs text-[#9CA3AF]">No data yet</p>
         ) : (
           <div className="space-y-3">
             {v.topBrowsers.map((b, i) => (
@@ -172,7 +172,7 @@ function VisitorSection({ v, baseDelay }: { v: VisitorStats; baseDelay: number }
       <Card delay={baseDelay + 220}>
         <SectionLabel>Devices</SectionLabel>
         {v.topDevices.length === 0 ? (
-          <p className="text-xs text-[#374151]">No data yet</p>
+          <p className="text-xs text-[#9CA3AF]">No data yet</p>
         ) : (
           <div className="space-y-3">
             {v.topDevices.map((d, i) => (
@@ -191,7 +191,7 @@ function VisitorSection({ v, baseDelay }: { v: VisitorStats; baseDelay: number }
       <Card delay={baseDelay + 280}>
         <SectionLabel>Visitor OS</SectionLabel>
         {v.topOs.length === 0 ? (
-          <p className="text-xs text-[#374151]">No data yet</p>
+          <p className="text-xs text-[#9CA3AF]">No data yet</p>
         ) : (
           <div className="space-y-3">
             {v.topOs.map((o, i) => (
@@ -243,10 +243,10 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs font-mono text-[#6B7280]">
+          <span className="text-xs font-mono text-[#9CA3AF]">
             live · updates every 60s
           </span>
-          {loading && <span className="text-xs text-[#4B5563] animate-pulse">loading…</span>}
+          {loading && <span className="text-xs text-[#9CA3AF] animate-pulse">loading…</span>}
         </div>
         <div className="flex items-center gap-1">
           {PERIODS.map((p) => (
@@ -258,7 +258,7 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
                 'px-3 py-1 text-xs font-mono rounded border transition-all duration-150 disabled:opacity-50',
                 period === p.value
                   ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-400'
-                  : 'border-white/10 text-[#6B7280] hover:text-[#9CA3AF] hover:border-white/20',
+                  : 'border-white/28 text-[#9CA3AF] hover:text-white hover:border-white/52',
               ].join(' ')}
             >
               {p.label}
@@ -306,7 +306,7 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
           ) : (
             <Card delay={400} className="col-span-full">
               <SectionLabel>Visitor Analytics</SectionLabel>
-              <p className="text-xs text-[#374151]">
+              <p className="text-xs text-[#9CA3AF]">
                 Tracking active — visitor data will appear once the first page view is recorded.
               </p>
             </Card>
@@ -314,13 +314,13 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
         </div>
       ) : (
         !loading && (
-          <div className="rounded-xl border border-white/10 bg-[#0D0D0D] p-8 text-center">
-            <p className="text-sm text-[#4B5563]">No data available yet.</p>
+          <div className="rounded-xl border border-white/32 bg-black p-8 text-center">
+            <p className="text-sm text-[#9CA3AF]">No data available yet.</p>
           </div>
         )
       )}
 
-      <p className="text-xs text-[#374151] text-center pt-1">
+      <p className="text-xs text-[#9CA3AF] text-center pt-1">
         Aggregate data only · No personal data stored
       </p>
     </div>

@@ -352,9 +352,9 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <Link
                   href="/workflow"
                   className="sphere-bg card-lift-snap group relative flex flex-col h-full rounded-2xl overflow-hidden
-                    border-2 border-white/62 p-6
-                    shadow-[0_0_0_1px_rgba(255,255,255,0.22),0_0_0_3px_rgba(129,140,248,0.12),0_8px_32px_rgba(0,0,0,0.90)]
-                    hover:border-white/68
+                    border-2 border-white/78 p-6
+                    shadow-[0_0_0_1px_rgba(255,255,255,0.32),0_0_0_3px_rgba(129,140,248,0.14),0_8px_32px_rgba(0,0,0,0.90)]
+                    hover:border-white/82
                     hover:shadow-[0_0_0_1px_rgba(255,255,255,0.22),0_0_0_3px_rgba(129,140,248,0.12),0_0_40px_rgba(96,165,250,0.12),0_8px_32px_rgba(0,0,0,0.90)]"
                 >
                   {/* Globe palette: blue+indigo bottom-left, violet+pink top-right, cyan top */}
