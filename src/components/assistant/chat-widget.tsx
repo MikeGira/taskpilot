@@ -306,12 +306,12 @@ export function ChatWidget() {
         open ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
       )}
       style={{
-        background: '#0f0f20',
+        background: '#000000',
         maxHeight: 'min(580px, calc(100dvh - 104px))',
       }}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/28 bg-indigo-950/40 rounded-t-2xl shrink-0">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/28 bg-black rounded-t-2xl shrink-0">
           <div className="flex items-center gap-2.5">
             <PilotAvatar />
             <div>
@@ -629,7 +629,7 @@ export function ChatWidget() {
 
                 {/* ── Sticky action bar: always visible Copy + Download ── */}
                 {genResult.script ? (
-                  <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-white/22 bg-white/[0.05]">
+                  <div className="shrink-0 flex items-center gap-2 px-4 py-2.5 border-b border-white/22">
                     <span className="text-[11px] font-mono text-[#C9CACB] flex-1 truncate">{genResult.filename ?? 'script'}</span>
                     <button onClick={copyScript} className={cn(
                       'flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-md border transition-colors',
