@@ -47,10 +47,10 @@ const WITH = [
 ];
 
 const ENVIRONMENTS = [
-  { color: 'bg-blue-400',    border: 'border-blue-500/50',    bg: 'bg-blue-500/10',    title: 'Windows', desc: 'Server 2016 to 2022, plus Windows 10 and 11' },
-  { color: 'bg-yellow-400',  border: 'border-yellow-500/50',  bg: 'bg-yellow-500/10',  title: 'Linux',   desc: 'Ubuntu, RHEL, Amazon Linux' },
-  { color: 'bg-emerald-400', border: 'border-emerald-500/50', bg: 'bg-emerald-500/10', title: 'Cloud',   desc: 'AWS, Azure, GCP, DigitalOcean' },
-  { color: 'bg-violet-400',  border: 'border-violet-500/50',  bg: 'bg-violet-500/10',  title: 'Hybrid',  desc: 'On-premises Active Directory' },
+  { color: 'bg-blue-400',    border: 'border-blue-500/60',    bg: 'bg-blue-500/[0.18]',    title: 'Windows', desc: 'Server 2016 to 2022, plus Windows 10 and 11' },
+  { color: 'bg-yellow-400',  border: 'border-yellow-500/60',  bg: 'bg-yellow-500/[0.18]',  title: 'Linux',   desc: 'Ubuntu, RHEL, Amazon Linux' },
+  { color: 'bg-emerald-400', border: 'border-emerald-500/60', bg: 'bg-emerald-500/[0.18]', title: 'Cloud',   desc: 'AWS, Azure, GCP, DigitalOcean' },
+  { color: 'bg-violet-400',  border: 'border-violet-500/60',  bg: 'bg-violet-500/[0.18]',  title: 'Hybrid',  desc: 'On-premises Active Directory' },
 ];
 
 const STEPS = [
@@ -73,7 +73,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
       <Navbar />
 
       {searchParams.subscribed && (
-        <div className="bg-white/10 border-b border-white/20 text-center py-2 text-sm text-white">
+        <div className="bg-[#1a1a1a] border-b border-white/30 text-center py-2 text-sm text-white">
           You&apos;re subscribed! Check your inbox to confirm.
         </div>
       )}
@@ -105,7 +105,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
 
           <div className="relative mx-auto max-w-4xl px-4 sm:px-6 pt-24 pb-8 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white mb-8 animate-float-up">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/[0.14] px-4 py-1.5 text-xs font-medium text-white mb-8 animate-float-up">
               <Zap className="h-3 w-3" />
               Built by an IT pro with 10+ years in the field
             </div>
@@ -196,7 +196,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {SCRIPTS.map((s, i) => {
                 const cardContent = (
-                  <Card className={`p-5 group transition-colors duration-200 h-full ${s.task ? 'hover:border-white/35 hover:bg-white/4' : 'hover:border-white/20 hover:bg-white/2'}`}>
+                  <Card className={`p-5 group transition-[border-color,box-shadow] duration-200 h-full ${s.task ? 'hover:border-white/45 hover:shadow-[0_4px_20px_rgba(0,0,0,0.6)]' : 'hover:border-white/28 hover:shadow-[0_4px_20px_rgba(0,0,0,0.5)]'}`}>
                     <div className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${s.bg} mb-4 group-hover:scale-110 transition-transform duration-200`}>
                       <s.icon className={`h-5 w-5 ${s.color}`} />
                     </div>
@@ -235,8 +235,8 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="grid sm:grid-cols-3 gap-5">
               {STEPS.map((step, i) => (
                 <FadeInSection key={step.num} delay={i * 100}>
-                  <Card className="p-6 h-full flex flex-col items-center text-center hover:border-white/35 transition-colors duration-200 group">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white font-bold text-lg mb-5 group-hover:border-white/40 group-hover:bg-white/8 transition-all duration-200">
+                  <Card className="p-6 h-full flex flex-col items-center text-center hover:border-white/45 hover:shadow-[0_4px_20px_rgba(0,0,0,0.6)] transition-[border-color,box-shadow] duration-200 group">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-[#1a1a1a] text-white font-bold text-lg mb-5 group-hover:border-white/45 group-hover:bg-[#222] transition-all duration-200">
                       {step.num}
                     </div>
                     <h3 className="font-semibold text-white mb-2">{step.title}</h3>
@@ -254,7 +254,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="grid lg:grid-cols-2 gap-10 items-center">
               <FadeInSection>
                 <div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-3 py-1 text-xs font-medium text-white mb-5">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/[0.12] px-3 py-1 text-xs font-medium text-white mb-5">
                     <Zap className="h-3 w-3 text-cyan-400" /> Works everywhere
                   </div>
                   <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
@@ -418,7 +418,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             </FadeInSection>
             <div className="grid md:grid-cols-2 gap-6">
               <FadeInSection delay={0}>
-                <Card className="p-6 border-red-500/55 bg-red-950/8 h-full hover:border-red-500/75 transition-colors duration-200">
+                <Card className="p-6 border-red-500/55 bg-red-950/[0.18] h-full hover:border-red-500/75 hover:shadow-[0_4px_20px_rgba(239,68,68,0.12)] transition-[border-color,box-shadow] duration-200">
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-500/15 border border-red-500/55">
                       <XCircle className="h-4 w-4 text-red-400" />
@@ -436,7 +436,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 </Card>
               </FadeInSection>
               <FadeInSection delay={120}>
-                <Card className="p-6 border-emerald-500/55 bg-emerald-950/8 h-full hover:border-emerald-500/75 transition-colors duration-200">
+                <Card className="p-6 border-emerald-500/55 bg-emerald-950/[0.18] h-full hover:border-emerald-500/75 hover:shadow-[0_4px_20px_rgba(52,211,153,0.12)] transition-[border-color,box-shadow] duration-200">
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/55">
                       <Rocket className="h-4 w-4 text-emerald-400" />
@@ -472,7 +472,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <div className="pointer-events-none absolute inset-x-0 -top-20 flex justify-center">
                   <div className="glow-pricing-card h-40 w-80 rounded-full blur-3xl opacity-75" />
                 </div>
-                <Card className="relative overflow-hidden p-8 border-indigo-500/55 bg-gradient-to-b from-indigo-950/25 to-transparent hover:border-indigo-500/75 transition-colors duration-300">
+                <Card className="relative overflow-hidden p-8 border-indigo-500/55 bg-gradient-to-b from-indigo-950/[0.35] to-[#0D0D0D] hover:border-indigo-500/75 hover:shadow-[0_8px_32px_rgba(99,102,241,0.12)] transition-[border-color,box-shadow] duration-300">
                   {/* Top gradient accent line */}
                   <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/80 to-transparent" />
                   <div className="mb-6">
@@ -520,7 +520,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="space-y-4">
               {FAQS.map((faq, i) => (
                 <FadeInSection key={faq.q} delay={i * 50}>
-                  <Card className="p-6 hover:border-white/30 transition-colors duration-200">
+                  <Card className="p-6 hover:border-white/38 hover:shadow-[0_4px_20px_rgba(0,0,0,0.55)] transition-[border-color,box-shadow] duration-200">
                     <h3 className="font-semibold text-white mb-3">{faq.q}</h3>
                     <p className="text-sm text-[#A0A0A0] leading-relaxed">{faq.a}</p>
                   </Card>
@@ -537,8 +537,8 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
           <div className="mx-auto max-w-lg px-4 sm:px-6">
             <FadeInSection>
-              <Card className="p-8 sm:p-10 text-center hover:border-white/30 transition-colors duration-300">
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-4 py-1.5 text-xs font-medium text-white mb-6">
+              <Card className="p-8 sm:p-10 text-center hover:border-white/38 hover:shadow-[0_4px_20px_rgba(0,0,0,0.55)] transition-[border-color,box-shadow] duration-300">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/[0.12] px-4 py-1.5 text-xs font-medium text-white mb-6">
                   Free weekly tips
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
@@ -561,7 +561,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   Describe your environment and the problem. I&apos;ll give you an honest answer within one business day.
                 </p>
               </div>
-              <Card className="p-6 sm:p-8 hover:border-white/30 transition-colors duration-300">
+              <Card className="p-6 sm:p-8 hover:border-white/38 hover:shadow-[0_4px_20px_rgba(0,0,0,0.55)] transition-[border-color,box-shadow] duration-300">
                 <ContactForm />
               </Card>
             </FadeInSection>

@@ -208,7 +208,7 @@ function ScriptBlock({ script, filename, language, locked = false }: {
   const displayScript = locked ? script.split('\n').slice(0, 18).join('\n') : script;
   return (
     <div className="rounded-xl border border-white/25 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2.5 bg-white/8 border-b border-white/20">
+      <div className="flex items-center justify-between px-4 py-2.5 bg-[#111111] border-b border-white/20">
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5">
             <div className="h-3 w-3 rounded-full bg-white/12" />

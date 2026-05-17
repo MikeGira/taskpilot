@@ -320,7 +320,7 @@
   transition: border-color 200ms ease, box-shadow 200ms ease;
 }
 .card-glow:hover {
-  box-shadow: 0 0 28px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 28px rgba(255, 255, 255, 0.08);
 }
 
 /* ── Live pill — iPhone Dynamic Island style ─────────────────────────────── */

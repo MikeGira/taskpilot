@@ -23,9 +23,9 @@ const buttonVariants = cva(
           'hover:bg-zinc-50 hover:shadow-[0_0_28px_rgba(255,255,255,0.28),0_4px_16px_rgba(0,0,0,0.4)] ' +
           'active:bg-zinc-100 active:shadow-sm',
         outline:
-          'border border-white/25 bg-transparent text-white ' +
-          'hover:bg-white/8 hover:border-white/50 hover:text-white hover:shadow-[0_0_22px_rgba(255,255,255,0.14)] ' +
-          'active:bg-white/12 active:border-white/30',
+          'border border-white/40 bg-[#1a1a1a] text-white ' +
+          'hover:bg-[#222222] hover:border-white/60 hover:shadow-[0_0_22px_rgba(255,255,255,0.14)] ' +
+          'active:bg-[#1a1a1a] active:border-white/45',
         ghost:
           'text-[#888] ' +
           'hover:text-white hover:bg-white/8 ' +
