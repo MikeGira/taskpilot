@@ -347,53 +347,52 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 </Link>
               </FadeInSection>
 
-              {/* ── Workflow Generator card ── */}
+              {/* ── Workflow Generator card — TaskPilot "Neon Terminal" palette ── */}
               <FadeInSection delay={80} className="h-full">
                 <Link
                   href="/workflow"
                   className="card-lift-snap group relative flex flex-col h-full rounded-2xl overflow-hidden
-                    border border-white/10 bg-[#1F192A] p-6
-                    hover:border-white/20"
+                    border border-[#3ECF8E]/22 bg-[#050F0A] p-6
+                    hover:border-[#3ECF8E]/42
+                    hover:shadow-[0_0_32px_rgba(62,207,142,0.08)]"
                 >
-                  {/* orange→red glow overlay matching n8n "Code when you need it" card */}
-                  <div className="pointer-events-none absolute inset-0 rounded-2xl"
-                    style={{background: 'radial-gradient(ellipse at -10% -10%, rgba(253,137,37,0.38) 0%, rgba(255,12,0,0.22) 45%, transparent 70%)'}}
-                  />
+                  {/* TaskPilot brand glow: emerald bottom-left + faint electric-blue top-right */}
+                  <div className="glow-workflow-card pointer-events-none absolute inset-0 rounded-2xl" />
 
                   <div className="relative flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-xl border border-[#FD8925]/40 bg-[#FD8925]/15 flex items-center justify-center shrink-0">
-                      <Workflow className="h-5 w-5 text-[#FD8925]" />
+                    <div className="h-10 w-10 rounded-xl border border-[#3ECF8E]/35 bg-[#3ECF8E]/12 flex items-center justify-center shrink-0">
+                      <Workflow className="h-5 w-5 text-[#3ECF8E]" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="font-semibold text-white text-sm">n8n Workflow Generator</p>
-                        <span className="text-[10px] font-bold bg-[#FD8925]/25 border border-[#FD8925]/45 text-[#FD8925] px-1.5 py-0.5 rounded">NEW</span>
+                        <span className="text-[10px] font-bold bg-[#3ECF8E]/18 border border-[#3ECF8E]/40 text-[#3ECF8E] px-1.5 py-0.5 rounded">FREE</span>
                       </div>
-                      <p className="text-xs text-[#FD8925]/75">Free · No sign-in needed</p>
+                      <p className="text-xs text-[#3ECF8E]/65">No sign-in needed · Import-ready JSON</p>
                     </div>
                   </div>
 
-                  <p className="relative text-sm text-[#FCFCFD]/85 leading-relaxed mb-4 flex-1">
-                    Describe your automation, pick your integrations, and get a complete n8n workflow JSON you can import directly. Slack, GitHub, Stripe, Claude AI, and 30+ integrations.
+                  <p className="relative text-sm text-[#FCFCFD]/80 leading-relaxed mb-4 flex-1">
+                    Describe your automation in plain English. Pick your integrations. Get production-ready n8n workflow JSON to import directly — Slack, GitHub, Stripe, Claude AI, and 30+ more.
                   </p>
 
                   <div className="relative flex flex-wrap gap-1.5 mb-5">
                     {['Slack', 'GitHub', 'Gmail', 'Stripe', 'Claude AI', '30+ more'].map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs px-2.5 py-1 rounded-full border border-[#FD8925]/40 bg-[#FD8925]/12 text-[#FD8925] cursor-pointer
-                          hover:bg-[#FD8925] hover:border-[#FD8925] hover:text-white hover:-translate-y-px
-                          hover:shadow-[0_4px_12px_rgba(253,137,37,0.45)]
+                        className="text-xs px-2.5 py-1 rounded-full border border-[#3ECF8E]/32 bg-[#3ECF8E]/8 text-[#3ECF8E] cursor-pointer
+                          hover:bg-[#3ECF8E] hover:border-[#3ECF8E] hover:text-black hover:-translate-y-px
+                          hover:shadow-[0_4px_14px_rgba(62,207,142,0.45)]
                           transition-[background-color,border-color,color,box-shadow,transform] duration-150"
                       >{tag}</span>
                     ))}
                   </div>
 
-                  <div className="relative mt-auto flex items-center gap-1.5 pt-4 border-t border-white/15 group-hover:border-white/30">
-                    <span className="text-sm font-semibold opacity-70 group-hover:opacity-100 transition-opacity duration-100">
-                      Try it free
+                  <div className="relative mt-auto flex items-center gap-1.5 pt-4 border-t border-[#3ECF8E]/18 group-hover:border-[#3ECF8E]/38 transition-colors duration-150">
+                    <span className="text-sm font-semibold text-[#3ECF8E]/70 group-hover:text-[#3ECF8E] transition-colors duration-100">
+                      Generate a workflow
                     </span>
-                    <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0
+                    <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0 text-[#3ECF8E]
                       group-hover:translate-x-0 group-hover:opacity-100
                       transition-[transform,opacity] duration-100" />
                   </div>
@@ -456,7 +455,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         {/* Pricing */}
         <section id="pricing" className="relative overflow-hidden py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
           <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center">
-            <div className="h-48 w-[500px] rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at top, rgba(99,102,241,0.12) 0%, transparent 70%)' }} />
+            <div className="glow-pricing-section h-48 w-[500px] rounded-full blur-3xl" />
           </div>
           <div className="mx-auto max-w-md px-4 sm:px-6 text-center">
             <FadeInSection>
@@ -466,8 +465,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               <div className="relative">
                 {/* Glow above the pricing card */}
                 <div className="pointer-events-none absolute inset-x-0 -top-20 flex justify-center">
-                  <div className="h-40 w-80 rounded-full blur-3xl opacity-75"
-                    style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.3) 0%, transparent 70%)' }} />
+                  <div className="glow-pricing-card h-40 w-80 rounded-full blur-3xl opacity-75" />
                 </div>
                 <Card className="relative overflow-hidden p-8 border-indigo-500/30 bg-gradient-to-b from-indigo-950/20 to-transparent hover:border-indigo-500/50 transition-colors duration-300">
                   {/* Top gradient accent line */}
@@ -530,7 +528,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         {/* Newsletter */}
         <section className="relative overflow-hidden py-20 border-t border-white/12 bg-black bg-grid-pattern-subtle">
           <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-center">
-            <div className="h-40 w-[500px] rounded-full blur-3xl" style={{ background: 'radial-gradient(ellipse at top, rgba(34,211,238,0.08) 0%, transparent 70%)' }} />
+            <div className="glow-newsletter-section h-40 w-[500px] rounded-full blur-3xl" />
           </div>
           <div className="mx-auto max-w-lg px-4 sm:px-6">
             <FadeInSection>

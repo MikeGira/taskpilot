@@ -308,3 +308,23 @@
 .animate-live-pill-glow {
   animation: live-pill-glow 3.2s ease-in-out infinite;
 }
+
+/* ── Glow overlays (extracted from inline styles) ── */
+
+.glow-workflow-card {
+  background:
+    radial-gradient(ellipse at -18% 118%, rgba(62,207,142,0.30) 0%, rgba(0,210,120,0.16) 48%, transparent 70%),
+    radial-gradient(ellipse at 118% -12%, rgba(0,191,255,0.07) 0%, transparent 52%);
+}
+
+.glow-pricing-section {
+  background: radial-gradient(ellipse at top, rgba(99,102,241,0.12) 0%, transparent 70%);
+}
+
+.glow-pricing-card {
+  background: radial-gradient(ellipse, rgba(99,102,241,0.3) 0%, transparent 70%);
+}
+
+.glow-newsletter-section {
+  background: radial-gradient(ellipse at top, rgba(34,211,238,0.08) 0%, transparent 70%);
+}
