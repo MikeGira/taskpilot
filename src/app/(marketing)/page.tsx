@@ -352,24 +352,24 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <Link
                   href="/workflow"
                   className="card-lift-snap group relative flex flex-col h-full rounded-2xl overflow-hidden
-                    border border-[#EA4B71]/60 bg-[#0C0F24] p-6
-                    shadow-[0_0_0_1px_rgba(234,75,113,0.20),0_8px_32px_rgba(0,0,0,0.82)]
-                    hover:border-[#EA4B71]/85
-                    hover:shadow-[0_0_0_1px_rgba(234,75,113,0.38),0_0_55px_rgba(234,75,113,0.22),0_8px_32px_rgba(0,0,0,0.82)]"
+                    border border-white/45 bg-[#060A1A] p-6
+                    shadow-[0_0_0_1px_rgba(255,255,255,0.10),0_8px_32px_rgba(0,0,0,0.85)]
+                    hover:border-white/70
+                    hover:shadow-[0_0_0_1px_rgba(129,140,248,0.40),0_0_55px_rgba(96,165,250,0.18),0_8px_32px_rgba(0,0,0,0.85)]"
                 >
-                  {/* n8n pink glow — bottom-left primary, top-right warm counter-glow */}
+                  {/* Globe palette: blue+indigo bottom-left, violet+pink top-right, cyan top */}
                   <div className="glow-workflow-card pointer-events-none absolute inset-0 rounded-2xl" />
 
                   <div className="relative flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-xl border border-[#EA4B71]/62 bg-[#EA4B71]/18 flex items-center justify-center shrink-0">
-                      <Workflow className="h-5 w-5 text-[#EA4B71]" />
+                    <div className="h-10 w-10 rounded-xl border border-indigo-400/58 bg-indigo-400/14 flex items-center justify-center shrink-0">
+                      <Workflow className="h-5 w-5 text-indigo-400" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="font-semibold text-white text-sm">n8n Workflow Generator</p>
-                        <span className="text-[10px] font-bold bg-[#EA4B71]/22 border border-[#EA4B71]/62 text-[#EA4B71] px-1.5 py-0.5 rounded">FREE</span>
+                        <span className="text-[10px] font-bold bg-indigo-400/18 border border-indigo-400/58 text-indigo-300 px-1.5 py-0.5 rounded">FREE</span>
                       </div>
-                      <p className="text-xs text-[#EA4B71]/85">No sign-in needed · Import-ready JSON</p>
+                      <p className="text-xs text-indigo-300/80">No sign-in needed · Import-ready JSON</p>
                     </div>
                   </div>
 
@@ -377,23 +377,21 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     Describe your automation in plain English. Pick your integrations. Get production-ready n8n workflow JSON to import directly: Slack, GitHub, Stripe, Claude AI, and 30+ more.
                   </p>
 
+                  {/* Each tag = one arc color from the globe */}
                   <div className="relative flex flex-wrap gap-1.5 mb-5">
-                    {['Slack', 'GitHub', 'Gmail', 'Stripe', 'Claude AI', '30+ more'].map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs px-2.5 py-1 rounded-full border border-[#EA4B71]/52 bg-[#EA4B71]/14 text-[#EA4B71] cursor-pointer
-                          hover:bg-[#EA4B71] hover:border-[#EA4B71] hover:text-white hover:-translate-y-px
-                          hover:shadow-[0_4px_14px_rgba(234,75,113,0.55)]
-                          transition-[background-color,border-color,color,box-shadow,transform] duration-150"
-                      >{tag}</span>
-                    ))}
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-blue-400/52 bg-blue-400/12 text-blue-300 cursor-pointer hover:bg-blue-400 hover:border-blue-400 hover:text-black hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(96,165,250,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Slack</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-white/42 bg-white/8 text-white/75 cursor-pointer hover:bg-white hover:border-white hover:text-black hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(255,255,255,0.35)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">GitHub</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-emerald-400/52 bg-emerald-400/12 text-emerald-300 cursor-pointer hover:bg-emerald-400 hover:border-emerald-400 hover:text-black hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(52,211,153,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Gmail</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-indigo-400/52 bg-indigo-400/12 text-indigo-300 cursor-pointer hover:bg-indigo-400 hover:border-indigo-400 hover:text-white hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(129,140,248,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Stripe</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-cyan-400/52 bg-cyan-400/12 text-cyan-300 cursor-pointer hover:bg-cyan-400 hover:border-cyan-400 hover:text-black hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(34,211,238,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">Claude AI</span>
+                    <span className="text-xs px-2.5 py-1 rounded-full border border-pink-400/52 bg-pink-400/12 text-pink-300 cursor-pointer hover:bg-pink-400 hover:border-pink-400 hover:text-white hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(244,114,182,0.55)] transition-[background-color,border-color,color,box-shadow,transform] duration-150">30+ more</span>
                   </div>
 
-                  <div className="relative mt-auto flex items-center gap-1.5 pt-4 border-t border-[#EA4B71]/35 group-hover:border-[#EA4B71]/62 transition-colors duration-150">
-                    <span className="text-sm font-semibold text-[#EA4B71]/88 group-hover:text-[#EA4B71] transition-colors duration-100">
+                  <div className="relative mt-auto flex items-center gap-1.5 pt-4 border-t border-white/20 group-hover:border-white/42 transition-colors duration-150">
+                    <span className="text-sm font-semibold text-white/75 group-hover:text-white transition-colors duration-100">
                       Generate a workflow
                     </span>
-                    <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0 text-[#EA4B71]
+                    <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0 text-white
                       group-hover:translate-x-0 group-hover:opacity-100
                       transition-[transform,opacity] duration-100" />
                   </div>
