@@ -28,7 +28,7 @@ export function DownloadCard({ purchase, downloadUrl }: DownloadCardProps) {
   });
 
   return (
-    <Card className="card-lift-subtle hover:border-white/30 transition-colors duration-200">
+    <Card className="hover:border-white/35 transition-colors duration-200">
       <CardContent className="p-5 flex items-center gap-4">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/5 border border-white/15">
           <Package className="h-5 w-5 text-white/70" />

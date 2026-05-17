@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Terminal } from 'lucide-react';
 import { SignOutButton } from '@/components/dashboard/sign-out-button';
 import { DashboardNav } from '@/components/dashboard/dashboard-nav';
+import { Footer } from '@/components/layout/footer';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
@@ -36,6 +37,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <DashboardNav isAdmin={isAdmin} />
         <main className="flex-1 min-w-0 pb-20 sm:pb-0">{children}</main>
       </div>
+
+      <Footer />
     </div>
   );
 }
