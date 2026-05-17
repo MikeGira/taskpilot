@@ -24,7 +24,7 @@ const buttonVariants = cva(
           'active:bg-zinc-100 active:shadow-sm',
         outline:
           'border border-white/25 bg-transparent text-white ' +
-          'hover:bg-white/8 hover:border-white/45 hover:shadow-[0_0_18px_rgba(255,255,255,0.07)] ' +
+          'hover:bg-white/8 hover:border-white/50 hover:text-white hover:shadow-[0_0_22px_rgba(255,255,255,0.14)] ' +
           'active:bg-white/12 active:border-white/30',
         ghost:
           'text-[#888] ' +
