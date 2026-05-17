@@ -83,7 +83,7 @@ export function WorldMap({ countryCounts, uniqueCountries }: WorldMapProps) {
       </div>
 
       <div className="flex items-center justify-between mt-3 px-1">
-        <span className="text-xs text-[#6B7280]">
+        <span className="text-xs text-[#9CA3AF]">
           {hasData ? (
             <>
               <span className="text-emerald-400 font-semibold">{uniqueCountries}</span>
@@ -93,7 +93,7 @@ export function WorldMap({ countryCounts, uniqueCountries }: WorldMapProps) {
             'Awaiting visitor data'
           )}
         </span>
-        <div className="flex items-center gap-3 text-[10px] text-[#4B5563]">
+        <div className="flex items-center gap-3 text-[10px] text-[#6B7280]">
           <span className="flex items-center gap-1">
             <span className="inline-block w-2 h-2 rounded-sm bg-emerald-400" />
             High traffic

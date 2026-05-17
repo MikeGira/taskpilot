@@ -35,7 +35,13 @@ export default async function StatsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-black">
       <Navbar />
-      <main className="flex-1 flex flex-col items-center px-4 py-12 sm:py-20">
+      <main
+        className="flex-1 flex flex-col items-center px-4 py-12 sm:py-20"
+        style={{
+          backgroundImage: 'radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+        }}
+      >
         <div className="w-full max-w-5xl">
 
           <div className="mb-8">
@@ -49,13 +55,13 @@ export default async function StatsPage() {
           </div>
 
           <div className="mb-8 text-center">
-            <p className="text-xs text-emerald-400/80 uppercase tracking-widest font-mono mb-2">
+            <p className="text-xs text-emerald-400 uppercase tracking-widest font-mono mb-2">
               live · aggregate data
             </p>
             <h1 className="text-2xl font-semibold text-white mb-2">
               TaskPilot Usage Stats
             </h1>
-            <p className="text-sm text-[#A0A0A0]">
+            <p className="text-sm text-[#D1D5DB]">
               Scripts generated, satisfaction rate, global reach, and visitor analytics.
             </p>
           </div>
