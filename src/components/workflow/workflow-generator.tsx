@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { LivePill } from '@/components/ui/live-pill';
 import {
   Webhook, Clock, Play, Mail, FormInput, Database,
   ArrowRight, ArrowLeft, Wand2, Copy, Download, CheckCircle2,
@@ -170,8 +169,6 @@ export function WorkflowGenerator() {
   const [feedbackComment, setFeedbackComment] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
-  const [pillVisible, setPillVisible] = useState(false);
-
   useEffect(() => {
     if (step === 'generating') {
       setLoadingMsg(0);
@@ -226,7 +223,6 @@ export function WorkflowGenerator() {
       } else {
         setResult(data);
         setStep('result');
-        setTimeout(() => setPillVisible(true), 600);
       }
     } catch {
       setError('Network error. Please try again.');
@@ -258,7 +254,6 @@ export function WorkflowGenerator() {
   }
 
   function reset() {
-    setPillVisible(false);
     setStep('trigger');
     setTriggerType('');
     setSelectedIntegrations([]);
@@ -618,23 +613,7 @@ export function WorkflowGenerator() {
             </div>
           )}
 
-          {/* Live pill — download or regenerate */}
-          <div className="flex justify-center py-1">
-            <LivePill
-              label="Workflow ready"
-              sublabel={result.workflowName ?? undefined}
-              visible={pillVisible}
-              acceptLabel={<Download className="h-3.5 w-3.5" />}
-              declineLabel={<RefreshCw className="h-3.5 w-3.5" />}
-              onAccept={() => {
-                if (workflowJson) downloadTextFile(workflowJson, `${result.workflowName?.toLowerCase().replace(/\s+/g, '-') ?? 'workflow'}.json`);
-                setPillVisible(false);
-              }}
-              onDecline={() => { setPillVisible(false); reset(); }}
-            />
-          </div>
-
-          {/* Download + reset fallback */}
+          {/* Download + reset */}
           <div className="flex flex-col sm:flex-row gap-2.5">
             <Button
               onClick={() => { if (workflowJson) downloadTextFile(workflowJson, `${result.workflowName?.toLowerCase().replace(/\s+/g, '-') ?? 'workflow'}.json`); }}
