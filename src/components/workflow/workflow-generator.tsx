@@ -291,6 +291,7 @@ export function WorkflowGenerator() {
               const Icon = t.icon;
               return (
                 <button
+                  type="button"
                   key={t.id}
                   onClick={() => { setTriggerType(t.id); setStep('integrations'); }}
                   className={cn(
@@ -318,7 +319,7 @@ export function WorkflowGenerator() {
       {step === 'integrations' && (
         <div className="animate-slide-up">
           <StepIndicator current={1} total={3} />
-          <button onClick={() => setStep('trigger')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/12 rounded-full px-3 py-1.5 mb-5 transition-colors">
+          <button type="button" onClick={() => setStep('trigger')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/12 rounded-full px-3 py-1.5 mb-5 transition-colors">
             <ArrowLeft className="h-3.5 w-3.5" /> Back
           </button>
           <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">Which apps do you need?</h2>
@@ -332,6 +333,7 @@ export function WorkflowGenerator() {
               const active = selectedIntegrations.includes(i.id);
               return (
                 <button
+                  type="button"
                   key={i.id}
                   onClick={() => toggleIntegration(i.id)}
                   className={cn(
@@ -355,6 +357,7 @@ export function WorkflowGenerator() {
             <div className="grid grid-cols-3 gap-2">
               {COMPLEXITY_OPTIONS.map((c) => (
                 <button
+                  type="button"
                   key={c.id}
                   onClick={() => setComplexity(c.id)}
                   className={cn(
@@ -381,7 +384,7 @@ export function WorkflowGenerator() {
       {step === 'describe' && (
         <div className="animate-slide-up">
           <StepIndicator current={2} total={3} />
-          <button onClick={() => setStep('integrations')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/12 rounded-full px-3 py-1.5 mb-5 transition-colors">
+          <button type="button" onClick={() => setStep('integrations')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/12 rounded-full px-3 py-1.5 mb-5 transition-colors">
             <ArrowLeft className="h-3.5 w-3.5" /> Back
           </button>
           <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">Describe your automation</h2>
@@ -445,7 +448,7 @@ export function WorkflowGenerator() {
           </p>
           {slowGen && (
             <p className="text-xs text-[#4B5563] mt-3 animate-fade-in">
-              Complex workflows can take up to 30 seconds — still building…
+              Complex workflows can take up to 30 seconds. Still building…
             </p>
           )}
         </div>
@@ -577,7 +580,7 @@ export function WorkflowGenerator() {
           {feedbackSubmitted ? (
             <div className="rounded-xl border border-white/8 bg-white/2 px-4 py-3 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-              <p className="text-sm text-[#9CA3AF]">Thanks — your feedback improves the AI.</p>
+              <p className="text-sm text-[#9CA3AF]">Thanks. Your feedback helps improve the AI.</p>
             </div>
           ) : (
             <div className="rounded-xl border border-white/8 bg-white/2 p-4">
@@ -652,7 +655,7 @@ export function WorkflowGenerator() {
           <div className="rounded-xl border border-white/8 bg-white/2 p-4 flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-[#F9FAFB] mb-0.5">Need production-ready scripts too?</p>
-              <p className="text-xs text-[#6B7280]">The Starter Kit includes 9 pre-built PowerShell scripts for the most common IT tasks — just $19.</p>
+              <p className="text-xs text-[#6B7280]">The Starter Kit includes 9 pre-built PowerShell scripts for the most common IT tasks. Just $19.</p>
             </div>
             <Button asChild size="sm" className="shrink-0">
               <a href="/checkout">Get the Kit →</a>

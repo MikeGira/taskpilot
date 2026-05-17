@@ -57,38 +57,38 @@ const TOOL_OPTIONS: Tool[] = [
   { category: 'Scripting',                  id: 'bash',               label: 'Bash / Shell',        desc: 'Linux/Unix system admin, cron jobs, pipelines',                icon: Terminal,  color: 'border-green-500/60   bg-green-500/20   hover:border-green-400   hover:bg-green-500/30',   accent: 'text-green-300'   },
   { category: 'Scripting',                  id: 'python',             label: 'Python',              desc: 'Cross-platform automation, APIs, data processing',             icon: Code,      color: 'border-yellow-500/60  bg-yellow-500/20  hover:border-yellow-400  hover:bg-yellow-500/30',  accent: 'text-yellow-300'  },
   // Infrastructure as Code
-  { category: 'Infrastructure as Code',     id: 'terraform',          label: 'Terraform',           desc: 'IaC — provision VMs, networks, cloud resources',               icon: Server,    color: 'border-violet-500/60  bg-violet-500/20  hover:border-violet-400  hover:bg-violet-500/30',  accent: 'text-violet-300'  },
-  { category: 'Infrastructure as Code',     id: 'pulumi',             label: 'Pulumi',              desc: 'IaC in TypeScript/Python — modern Terraform alternative',       icon: Code,      color: 'border-fuchsia-500/60 bg-fuchsia-500/20 hover:border-fuchsia-400 hover:bg-fuchsia-500/30', accent: 'text-fuchsia-300' },
-  { category: 'Infrastructure as Code',     id: 'aws-cdk',            label: 'AWS CDK',             desc: 'AWS Cloud Development Kit — TypeScript/Python IaC',             icon: Cloud,     color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
-  { category: 'Infrastructure as Code',     id: 'azure-bicep',        label: 'Azure Bicep',         desc: 'Azure-native IaC DSL — modern replacement for ARM JSON',        icon: Cloud,     color: 'border-sky-500/60     bg-sky-500/20     hover:border-sky-400     hover:bg-sky-500/30',     accent: 'text-sky-300'     },
-  { category: 'Infrastructure as Code',     id: 'arm-templates',      label: 'ARM Templates',       desc: 'Azure Resource Manager JSON — enterprise legacy & marketplace', icon: Code,      color: 'border-slate-400/60   bg-slate-400/15   hover:border-slate-300   hover:bg-slate-400/25',  accent: 'text-slate-300'   },
+  { category: 'Infrastructure as Code',     id: 'terraform',          label: 'Terraform',           desc: 'IaC: provision VMs, networks, cloud resources',                icon: Server,    color: 'border-violet-500/60  bg-violet-500/20  hover:border-violet-400  hover:bg-violet-500/30',  accent: 'text-violet-300'  },
+  { category: 'Infrastructure as Code',     id: 'pulumi',             label: 'Pulumi',              desc: 'TypeScript/Python IaC, modern Terraform alternative',           icon: Code,      color: 'border-fuchsia-500/60 bg-fuchsia-500/20 hover:border-fuchsia-400 hover:bg-fuchsia-500/30', accent: 'text-fuchsia-300' },
+  { category: 'Infrastructure as Code',     id: 'aws-cdk',            label: 'AWS CDK',             desc: 'AWS Cloud Development Kit in TypeScript/Python',                icon: Cloud,     color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
+  { category: 'Infrastructure as Code',     id: 'azure-bicep',        label: 'Azure Bicep',         desc: 'Azure-native IaC DSL, modern replacement for ARM JSON',         icon: Cloud,     color: 'border-sky-500/60     bg-sky-500/20     hover:border-sky-400     hover:bg-sky-500/30',     accent: 'text-sky-300'     },
+  { category: 'Infrastructure as Code',     id: 'arm-templates',      label: 'ARM Templates',       desc: 'Azure Resource Manager JSON, enterprise legacy and marketplace', icon: Code,      color: 'border-slate-400/60   bg-slate-400/15   hover:border-slate-300   hover:bg-slate-400/25',  accent: 'text-slate-300'   },
   { category: 'Infrastructure as Code',     id: 'packer',             label: 'Packer',              desc: 'Build hardened VM and container images across providers',        icon: Package,   color: 'border-teal-500/60    bg-teal-500/20    hover:border-teal-400    hover:bg-teal-500/30',    accent: 'text-teal-300'    },
   // Configuration Management
-  { category: 'Configuration Management',   id: 'ansible',            label: 'Ansible',             desc: 'YAML playbooks — agentless SSH config management',             icon: Settings,  color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
-  { category: 'Configuration Management',   id: 'puppet',             label: 'Puppet',              desc: 'Manifests + Hiera — agent-based config management',            icon: Settings,  color: 'border-amber-500/60   bg-amber-500/20   hover:border-amber-400   hover:bg-amber-500/30',   accent: 'text-amber-300'   },
+  { category: 'Configuration Management',   id: 'ansible',            label: 'Ansible',             desc: 'YAML playbooks, agentless SSH config management',              icon: Settings,  color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
+  { category: 'Configuration Management',   id: 'puppet',             label: 'Puppet',              desc: 'Manifests and Hiera, agent-based config management',           icon: Settings,  color: 'border-amber-500/60   bg-amber-500/20   hover:border-amber-400   hover:bg-amber-500/30',   accent: 'text-amber-300'   },
   // CI/CD & GitOps
   { category: 'CI/CD & GitOps',             id: 'github-actions',     label: 'GitHub Actions',      desc: 'CI/CD pipelines with security scanning built in',              icon: GitBranch, color: 'border-white/30       bg-white/8        hover:border-white/50    hover:bg-white/12',       accent: 'text-white'       },
-  { category: 'CI/CD & GitOps',             id: 'gitlab-ci',          label: 'GitLab CI',           desc: 'CI/CD pipelines with SAST/DAST — .gitlab-ci.yml',              icon: GitBranch, color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
-  { category: 'CI/CD & GitOps',             id: 'jenkins',            label: 'Jenkins',             desc: 'Declarative Jenkinsfile pipeline — Groovy DSL',                 icon: Workflow,  color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
-  { category: 'CI/CD & GitOps',             id: 'azure-devops',       label: 'Azure DevOps',        desc: 'Azure Pipelines YAML — multi-stage with approval gates',        icon: Workflow,  color: 'border-blue-500/60    bg-blue-500/20    hover:border-blue-400    hover:bg-blue-500/30',    accent: 'text-blue-300'    },
-  { category: 'CI/CD & GitOps',             id: 'argocd',             label: 'ArgoCD',              desc: 'GitOps continuous delivery — App-of-Apps pattern',             icon: GitBranch, color: 'border-emerald-500/60 bg-emerald-500/20 hover:border-emerald-400 hover:bg-emerald-500/30', accent: 'text-emerald-300' },
+  { category: 'CI/CD & GitOps',             id: 'gitlab-ci',          label: 'GitLab CI',           desc: 'CI/CD pipelines with SAST/DAST, .gitlab-ci.yml',               icon: GitBranch, color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
+  { category: 'CI/CD & GitOps',             id: 'jenkins',            label: 'Jenkins',             desc: 'Declarative Jenkinsfile pipeline, Groovy DSL',                  icon: Workflow,  color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
+  { category: 'CI/CD & GitOps',             id: 'azure-devops',       label: 'Azure DevOps',        desc: 'Azure Pipelines YAML, multi-stage with approval gates',         icon: Workflow,  color: 'border-blue-500/60    bg-blue-500/20    hover:border-blue-400    hover:bg-blue-500/30',    accent: 'text-blue-300'    },
+  { category: 'CI/CD & GitOps',             id: 'argocd',             label: 'ArgoCD',              desc: 'GitOps continuous delivery, App-of-Apps pattern',              icon: GitBranch, color: 'border-emerald-500/60 bg-emerald-500/20 hover:border-emerald-400 hover:bg-emerald-500/30', accent: 'text-emerald-300' },
   // Containers & Orchestration
-  { category: 'Containers & Orchestration', id: 'docker',             label: 'Docker',              desc: 'Dockerfile — multi-stage, non-root, health checks',            icon: Box,       color: 'border-cyan-500/60    bg-cyan-500/20    hover:border-cyan-400    hover:bg-cyan-500/30',    accent: 'text-cyan-300'    },
-  { category: 'Containers & Orchestration', id: 'kubernetes',         label: 'Kubernetes / Helm',   desc: 'Manifests + Helm charts — security context, policies',          icon: Layers,    color: 'border-indigo-500/60  bg-indigo-500/20  hover:border-indigo-400  hover:bg-indigo-500/30',  accent: 'text-indigo-300'  },
+  { category: 'Containers & Orchestration', id: 'docker',             label: 'Docker',              desc: 'Dockerfile: multi-stage, non-root, health checks',             icon: Box,       color: 'border-cyan-500/60    bg-cyan-500/20    hover:border-cyan-400    hover:bg-cyan-500/30',    accent: 'text-cyan-300'    },
+  { category: 'Containers & Orchestration', id: 'kubernetes',         label: 'Kubernetes / Helm',   desc: 'Manifests and Helm charts with security context and policies',  icon: Layers,    color: 'border-indigo-500/60  bg-indigo-500/20  hover:border-indigo-400  hover:bg-indigo-500/30',  accent: 'text-indigo-300'  },
   // Security & Compliance
-  { category: 'Security & Compliance',      id: 'cis-hardening',      label: 'CIS Hardening',       desc: 'CIS Benchmark scripts — harden Linux or Windows servers',       icon: Shield,    color: 'border-rose-500/60    bg-rose-500/20    hover:border-rose-400    hover:bg-rose-500/30',    accent: 'text-rose-300'    },
-  { category: 'Security & Compliance',      id: 'vault',              label: 'HashiCorp Vault',     desc: 'Secrets management — policies, dynamic creds, PKI',            icon: Key,       color: 'border-yellow-500/60  bg-yellow-500/20  hover:border-yellow-400  hover:bg-yellow-500/30',  accent: 'text-yellow-300'  },
-  { category: 'Security & Compliance',      id: 'security-scanning',  label: 'Security Scanning',   desc: 'Trivy, Semgrep, Gitleaks, Checkov — multi-layer SAST/SCA',    icon: Shield,    color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
+  { category: 'Security & Compliance',      id: 'cis-hardening',      label: 'CIS Hardening',       desc: 'CIS Benchmark scripts to harden Linux or Windows servers',      icon: Shield,    color: 'border-rose-500/60    bg-rose-500/20    hover:border-rose-400    hover:bg-rose-500/30',    accent: 'text-rose-300'    },
+  { category: 'Security & Compliance',      id: 'vault',              label: 'HashiCorp Vault',     desc: 'Secrets management: policies, dynamic creds, PKI',             icon: Key,       color: 'border-yellow-500/60  bg-yellow-500/20  hover:border-yellow-400  hover:bg-yellow-500/30',  accent: 'text-yellow-300'  },
+  { category: 'Security & Compliance',      id: 'security-scanning',  label: 'Security Scanning',   desc: 'Trivy, Semgrep, Gitleaks, Checkov: multi-layer SAST and SCA',  icon: Shield,    color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
   // AI / ML & Data
   { category: 'AI / ML & Data',             id: 'mlops',              label: 'AI/ML Ops',           desc: 'MLflow, model serving, drift monitoring, inference API',        icon: Brain,     color: 'border-violet-500/60  bg-violet-500/20  hover:border-violet-400  hover:bg-violet-500/30',  accent: 'text-violet-300'  },
   { category: 'AI / ML & Data',             id: 'langchain',          label: 'LangChain / RAG',     desc: 'LLM pipelines, RAG, vector stores, prompt engineering',         icon: Brain,     color: 'border-fuchsia-500/60 bg-fuchsia-500/20 hover:border-fuchsia-400 hover:bg-fuchsia-500/30', accent: 'text-fuchsia-300' },
   // Monitoring & Observability
   { category: 'Monitoring & Observability', id: 'prometheus-grafana',  label: 'Prometheus + Grafana', desc: 'Metrics, alerting rules, dashboards as code',                 icon: Activity,  color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
-  { category: 'Monitoring & Observability', id: 'elk-stack',           label: 'ELK Stack',           desc: 'Elasticsearch, Logstash, Kibana — log pipelines + ILM',       icon: Activity,  color: 'border-teal-500/60    bg-teal-500/20    hover:border-teal-400    hover:bg-teal-500/30',    accent: 'text-teal-300'    },
+  { category: 'Monitoring & Observability', id: 'elk-stack',           label: 'ELK Stack',           desc: 'Elasticsearch, Logstash, Kibana: log pipelines and ILM',      icon: Activity,  color: 'border-teal-500/60    bg-teal-500/20    hover:border-teal-400    hover:bg-teal-500/30',    accent: 'text-teal-300'    },
   // Database & Storage
-  { category: 'Database & Storage',         id: 'database-admin',      label: 'Database Admin',      desc: 'PostgreSQL / MySQL — backup, replication, user management',   icon: Database,  color: 'border-blue-500/60    bg-blue-500/20    hover:border-blue-400    hover:bg-blue-500/30',    accent: 'text-blue-300'    },
+  { category: 'Database & Storage',         id: 'database-admin',      label: 'Database Admin',      desc: 'PostgreSQL / MySQL: backup, replication, user management',    icon: Database,  color: 'border-blue-500/60    bg-blue-500/20    hover:border-blue-400    hover:bg-blue-500/30',    accent: 'text-blue-300'    },
   // Network Automation
-  { category: 'Network Automation',         id: 'network-automation',  label: 'Network Automation',  desc: 'netmiko / NAPALM / Nornir — multi-vendor network config',     icon: Network,   color: 'border-green-500/60   bg-green-500/20   hover:border-green-400   hover:bg-green-500/30',   accent: 'text-green-300'   },
+  { category: 'Network Automation',         id: 'network-automation',  label: 'Network Automation',  desc: 'netmiko, NAPALM, Nornir: multi-vendor network config',        icon: Network,   color: 'border-green-500/60   bg-green-500/20   hover:border-green-400   hover:bg-green-500/30',   accent: 'text-green-300'   },
 ];
 
 const CLOUD_PROVIDERS: Cloud[] = [
@@ -515,7 +515,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
             {task.length > 800 && (
               <p className="text-xs text-yellow-500/70 mt-1.5 flex items-start gap-1.5">
                 <span className="shrink-0">⚡</span>
-                Focused tasks generate the most complete scripts. For complex multi-system requests, describe the core goal — the script will include TODO markers for advanced features.
+                Focused tasks generate the most complete scripts. For complex multi-system requests, describe the core goal. The script will include TODO markers for advanced features.
               </p>
             )}
           </div>
@@ -562,7 +562,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           </p>
           {slowGen && (
             <p className="text-xs text-[#6B7280] mt-3 animate-fade-in">
-              Complex scripts can take up to 30 seconds — still working…
+              Complex scripts can take up to 30 seconds. Still working…
             </p>
           )}
         </div>
@@ -749,7 +749,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           <div className="rounded-xl border border-white/12 bg-white/5 p-4 flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-[#F9FAFB] mb-0.5">Want 9 production-ready scripts?</p>
-              <p className="text-xs text-[#9CA3AF]">The Starter Kit includes pre-built, pre-tested scripts for the most common IT tasks — just $19.</p>
+              <p className="text-xs text-[#9CA3AF]">The Starter Kit includes 9 pre-built, pre-tested scripts for the most common IT tasks. Just $19.</p>
             </div>
             <Button asChild size="sm" className="shrink-0">
               <a href="/checkout">Get the Kit →</a>
