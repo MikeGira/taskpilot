@@ -373,7 +373,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   </div>
 
                   <p className="relative text-sm text-[#FCFCFD]/80 leading-relaxed mb-4 flex-1">
-                    Describe your automation in plain English. Pick your integrations. Get production-ready n8n workflow JSON to import directly — Slack, GitHub, Stripe, Claude AI, and 30+ more.
+                    Describe your automation in plain English. Pick your integrations. Get production-ready n8n workflow JSON to import directly: Slack, GitHub, Stripe, Claude AI, and 30+ more.
                   </p>
 
                   <div className="relative flex flex-wrap gap-1.5 mb-5">

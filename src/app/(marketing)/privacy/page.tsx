@@ -29,7 +29,7 @@ export default function PrivacyPage() {
               <li><strong className="text-[#F9FAFB]">Purchase data:</strong> Email, Stripe session ID, product purchased, amount paid, purchase date. We never store card numbers.</li>
               <li><strong className="text-[#F9FAFB]">Newsletter:</strong> Email address, subscription date, confirmation status.</li>
               <li><strong className="text-[#F9FAFB]">Contact requests:</strong> Name, email, company (optional), message, budget range (optional).</li>
-              <li><strong className="text-[#F9FAFB]">Analytics:</strong> Page views via Vercel Analytics — cookie-free, no personal identifiers collected.</li>
+              <li><strong className="text-[#F9FAFB]">Analytics:</strong> Page views via Vercel Analytics (cookie-free, no personal identifiers collected).</li>
             </ul>
           </section>
 
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-[#F9FAFB] mb-3">4. Data Retention</h2>
             <ul className="text-sm text-[#9CA3AF] space-y-2 list-disc list-inside">
-              <li><strong className="text-[#F9FAFB]">Purchase records:</strong> 7 years (anonymized — PII removed on account deletion, transaction amounts retained for tax compliance).</li>
+              <li><strong className="text-[#F9FAFB]">Purchase records:</strong> 7 years (anonymized: PII removed on account deletion, transaction amounts retained for tax compliance).</li>
               <li><strong className="text-[#F9FAFB]">Account / profile:</strong> Until you delete your account.</li>
               <li><strong className="text-[#F9FAFB]">Newsletter:</strong> Until you unsubscribe.</li>
               <li><strong className="text-[#F9FAFB]">Contact requests:</strong> 2 years.</li>
@@ -56,10 +56,10 @@ export default function PrivacyPage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-[#F9FAFB] mb-3">5. Third Parties</h2>
             <ul className="text-sm text-[#9CA3AF] space-y-2 list-disc list-inside">
-              <li><strong className="text-[#F9FAFB]">Supabase</strong> (Supabase Inc.) — database and authentication. <a href="https://supabase.com/privacy" className="text-white">Privacy policy</a></li>
-              <li><strong className="text-[#F9FAFB]">Stripe</strong> (Stripe, Inc.) — payment processing. We never see card data. <a href="https://stripe.com/privacy" className="text-white">Privacy policy</a></li>
-              <li><strong className="text-[#F9FAFB]">Resend</strong> (Resend, Inc.) — transactional email. <a href="https://resend.com/privacy" className="text-white">Privacy policy</a></li>
-              <li><strong className="text-[#F9FAFB]">Vercel</strong> (Vercel, Inc.) — hosting and analytics. <a href="https://vercel.com/legal/privacy-policy" className="text-white">Privacy policy</a></li>
+              <li><strong className="text-[#F9FAFB]">Supabase</strong> (Supabase Inc.): database and authentication. <a href="https://supabase.com/privacy" className="text-white">Privacy policy</a></li>
+              <li><strong className="text-[#F9FAFB]">Stripe</strong> (Stripe, Inc.): payment processing. We never see card data. <a href="https://stripe.com/privacy" className="text-white">Privacy policy</a></li>
+              <li><strong className="text-[#F9FAFB]">Resend</strong> (Resend, Inc.): transactional email. <a href="https://resend.com/privacy" className="text-white">Privacy policy</a></li>
+              <li><strong className="text-[#F9FAFB]">Vercel</strong> (Vercel, Inc.): hosting and analytics. <a href="https://vercel.com/legal/privacy-policy" className="text-white">Privacy policy</a></li>
             </ul>
           </section>
 
@@ -75,11 +75,11 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-semibold text-[#F9FAFB] mb-3">7. Your Rights</h2>
             <p className="text-sm text-[#9CA3AF] mb-3 leading-relaxed">Under GDPR, you have the right to:</p>
             <ul className="text-sm text-[#9CA3AF] space-y-2 list-disc list-inside">
-              <li><strong className="text-[#F9FAFB]">Access</strong> your data — available via Dashboard → Account → Export my data.</li>
-              <li><strong className="text-[#F9FAFB]">Portability</strong> (Article 20) — download your data as JSON from your account settings.</li>
-              <li><strong className="text-[#F9FAFB]">Erasure</strong> (Article 17) — delete your account from Dashboard → Account → Delete account.</li>
-              <li><strong className="text-[#F9FAFB]">Withdraw consent</strong> — unsubscribe from any email using the link in the footer.</li>
-              <li><strong className="text-[#F9FAFB]">Rectification</strong> — contact us at privacy@taskpilot.dev.</li>
+              <li><strong className="text-[#F9FAFB]">Access</strong> your data: available via Dashboard &gt; Account &gt; Export my data.</li>
+              <li><strong className="text-[#F9FAFB]">Portability</strong> (Article 20): download your data as JSON from your account settings.</li>
+              <li><strong className="text-[#F9FAFB]">Erasure</strong> (Article 17): delete your account from Dashboard &gt; Account &gt; Delete account.</li>
+              <li><strong className="text-[#F9FAFB]">Withdraw consent</strong>: unsubscribe from any email using the link in the footer.</li>
+              <li><strong className="text-[#F9FAFB]">Rectification</strong>: contact us at privacy@taskpilot.dev.</li>
             </ul>
           </section>
 
