@@ -53,7 +53,10 @@ function Card({ children, delay = 0, className = '' }: {
 
   return (
     <div
-      className={`rounded-xl border border-white/32 bg-black p-5 transition-all duration-500 ${
+      className={`rounded-xl border border-white/32 bg-black p-5
+        shadow-[0_0_28px_rgba(52,211,153,0.05)]
+        hover:shadow-[0_0_40px_rgba(52,211,153,0.12)]
+        transition-all duration-500 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
       } ${className}`}
     >
@@ -103,7 +106,7 @@ function BreakdownCard({
     <Card delay={delay}>
       <SectionLabel>{label}</SectionLabel>
       {items.length === 0 ? (
-        <p className="text-xs text-[#9CA3AF]">No data yet</p>
+        <p className="text-xs text-[#374151]">No data yet</p>
       ) : (
         <div className="space-y-3">
           {items.map((item, i) => (
@@ -153,7 +156,7 @@ function VisitorSection({ v, baseDelay }: { v: VisitorStats; baseDelay: number }
       <Card delay={baseDelay + 160}>
         <SectionLabel>Browsers</SectionLabel>
         {v.topBrowsers.length === 0 ? (
-          <p className="text-xs text-[#9CA3AF]">No data yet</p>
+          <p className="text-xs text-[#374151]">No data yet</p>
         ) : (
           <div className="space-y-3">
             {v.topBrowsers.map((b, i) => (
@@ -172,7 +175,7 @@ function VisitorSection({ v, baseDelay }: { v: VisitorStats; baseDelay: number }
       <Card delay={baseDelay + 220}>
         <SectionLabel>Devices</SectionLabel>
         {v.topDevices.length === 0 ? (
-          <p className="text-xs text-[#9CA3AF]">No data yet</p>
+          <p className="text-xs text-[#374151]">No data yet</p>
         ) : (
           <div className="space-y-3">
             {v.topDevices.map((d, i) => (
@@ -191,7 +194,7 @@ function VisitorSection({ v, baseDelay }: { v: VisitorStats; baseDelay: number }
       <Card delay={baseDelay + 280}>
         <SectionLabel>Visitor OS</SectionLabel>
         {v.topOs.length === 0 ? (
-          <p className="text-xs text-[#9CA3AF]">No data yet</p>
+          <p className="text-xs text-[#374151]">No data yet</p>
         ) : (
           <div className="space-y-3">
             {v.topOs.map((o, i) => (
@@ -243,10 +246,10 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs font-mono text-[#9CA3AF]">
+          <span className="text-xs font-mono text-[#6B7280]">
             live · updates every 60s
           </span>
-          {loading && <span className="text-xs text-[#9CA3AF] animate-pulse">loading…</span>}
+          {loading && <span className="text-xs text-[#4B5563] animate-pulse">loading...</span>}
         </div>
         <div className="flex items-center gap-1">
           {PERIODS.map((p) => (
@@ -258,7 +261,7 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
                 'px-3 py-1 text-xs font-mono rounded border transition-all duration-150 disabled:opacity-50',
                 period === p.value
                   ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-400'
-                  : 'border-white/28 text-[#9CA3AF] hover:text-white hover:border-white/52',
+                  : 'border-white/10 text-[#6B7280] hover:text-[#9CA3AF] hover:border-white/20',
               ].join(' ')}
             >
               {p.label}
@@ -291,7 +294,7 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
             label="Estimated Time Saved"
             value={d.timeSavedDollars}
             prefix="$"
-            note="2 hr avg × $50/hr sysadmin rate"
+            note="2 hr avg x $50/hr sysadmin rate"
             delay={120}
           />
 
@@ -320,9 +323,30 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
         )
       )}
 
-      <p className="text-xs text-[#9CA3AF] text-center pt-1">
-        Aggregate data only · No personal data stored
-      </p>
+      {/* Footer */}
+      <div className="flex flex-col items-center gap-3 pt-2">
+        <a
+          href="https://ko-fi.com/mtwagirayezu"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[11px] font-mono
+            text-[#f0ab00] bg-[rgba(240,171,0,0.08)] border border-[rgba(240,171,0,0.2)]
+            hover:bg-[rgba(240,171,0,0.15)] hover:border-[rgba(240,171,0,0.4)]
+            transition-all duration-150"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+            <line x1="6" y1="1" x2="6" y2="4"/>
+            <line x1="10" y1="1" x2="10" y2="4"/>
+            <line x1="14" y1="1" x2="14" y2="4"/>
+          </svg>
+          Support on Ko-fi
+        </a>
+        <p className="text-xs text-[#374151] text-center">
+          Aggregate data only · No personal data stored
+        </p>
+      </div>
     </div>
   );
 }
