@@ -308,7 +308,6 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   href="/generate"
                   className="card-lift group flex flex-col h-full rounded-2xl
                     border border-white/25 bg-[#141414] p-6
-                    transition-colors duration-200
                     hover:border-white/45"
                 >
                   <div className="flex items-center gap-3 mb-4">
@@ -330,19 +329,17 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                       <span
                         key={tag}
                         className="text-xs px-2.5 py-1 rounded-md border border-white/20 bg-white/6 text-[#D1D5DB]
-                          hover:bg-white/14 hover:border-white/38 hover:text-white
-                          transition-colors duration-150"
+                          group-hover:bg-white/14 group-hover:border-white/38 group-hover:text-white"
                       >{tag}</span>
                     ))}
                   </div>
 
-                  <div className="mt-auto flex items-center gap-1.5 pt-4 border-t border-white/12 group-hover:border-white/25 transition-colors duration-200">
-                    <span className="text-sm font-semibold text-[#9CA3AF] group-hover:text-white transition-colors duration-150">
+                  <div className="mt-auto flex items-center gap-1.5 pt-4 border-t border-white/12 group-hover:border-white/25">
+                    <span className="text-sm font-semibold opacity-60 group-hover:opacity-100 transition-opacity duration-150">
                       Try it free
                     </span>
-                    {/* transition-[transform,opacity] — GPU-only, never triggers paint */}
-                    <ArrowRight className="h-4 w-4 text-[#9CA3AF] group-hover:text-white
-                      -translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100
+                    <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0
+                      group-hover:translate-x-0 group-hover:opacity-100
                       transition-[transform,opacity] duration-150" />
                   </div>
                 </Link>
@@ -354,7 +351,6 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   href="/workflow"
                   className="card-lift group flex flex-col h-full rounded-2xl
                     border border-violet-500/38 bg-[#0E0817] p-6
-                    transition-colors duration-200
                     hover:border-violet-400/60"
                 >
                   <div className="flex items-center gap-3 mb-4">
@@ -379,18 +375,17 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                       <span
                         key={tag}
                         className="text-xs px-2.5 py-1 rounded-md border border-violet-400/22 bg-violet-500/10 text-violet-200
-                          hover:bg-violet-500/25 hover:border-violet-400/48 hover:text-white
-                          transition-colors duration-150"
+                          group-hover:bg-violet-500/25 group-hover:border-violet-400/48 group-hover:text-white"
                       >{tag}</span>
                     ))}
                   </div>
 
-                  <div className="mt-auto flex items-center gap-1.5 pt-4 border-t border-violet-500/18 group-hover:border-violet-400/35 transition-colors duration-200">
-                    <span className="text-sm font-semibold text-violet-400/75 group-hover:text-violet-200 transition-colors duration-150">
+                  <div className="mt-auto flex items-center gap-1.5 pt-4 border-t border-violet-500/18 group-hover:border-violet-400/35">
+                    <span className="text-sm font-semibold opacity-60 group-hover:opacity-100 transition-opacity duration-150">
                       Try it free
                     </span>
-                    <ArrowRight className="h-4 w-4 text-violet-400/75 group-hover:text-violet-200
-                      -translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100
+                    <ArrowRight className="h-4 w-4 -translate-x-1 opacity-0
+                      group-hover:translate-x-0 group-hover:opacity-100
                       transition-[transform,opacity] duration-150" />
                   </div>
                 </Link>

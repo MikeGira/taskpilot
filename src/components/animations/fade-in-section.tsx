@@ -29,7 +29,7 @@ export function FadeInSection({ children, className, delay = 0, threshold = 0.12
     <div
       ref={ref}
       className={cn(
-        'transition-all duration-700 ease-out',
+        'transition-[opacity,transform] duration-700 ease-out',
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6',
         className
       )}
