@@ -53,7 +53,7 @@ function Card({ children, delay = 0, className = '' }: {
 
   return (
     <div
-      className={`rounded-xl border border-white/[0.18] bg-black p-5
+      className={`rounded-xl border border-white/35 bg-black p-5
         shadow-[0_0_28px_rgba(52,211,153,0.06)]
         hover:shadow-[0_0_40px_rgba(52,211,153,0.14)]
         transition-all duration-500 ${
@@ -317,7 +317,7 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
         </div>
       ) : (
         !loading && (
-          <div className="rounded-xl border border-white/[0.18] bg-black p-8 text-center">
+          <div className="rounded-xl border border-white/35 bg-black p-8 text-center">
             <p className="text-sm text-[#D1D5DB]">No data available yet.</p>
           </div>
         )

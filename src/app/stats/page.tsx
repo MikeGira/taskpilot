@@ -35,13 +35,7 @@ export default async function StatsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-black">
       <Navbar />
-      <main
-        className="flex-1 flex flex-col items-center px-4 py-12 sm:py-20"
-        style={{
-          backgroundImage: 'radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-        }}
-      >
+      <main className="flex-1 flex flex-col items-center px-4 py-12 sm:py-20 bg-grid-pattern-subtle">
         <div className="w-full max-w-5xl">
 
           <div className="mb-8">
