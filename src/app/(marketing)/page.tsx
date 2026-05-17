@@ -351,11 +351,11 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               <FadeInSection delay={80} className="h-full">
                 <Link
                   href="/workflow"
-                  className="card-lift-snap group relative flex flex-col h-full rounded-2xl overflow-hidden
-                    border border-white/45 bg-[#060A1A] p-6
-                    shadow-[0_0_0_1px_rgba(255,255,255,0.10),0_8px_32px_rgba(0,0,0,0.85)]
-                    hover:border-white/70
-                    hover:shadow-[0_0_0_1px_rgba(129,140,248,0.40),0_0_55px_rgba(96,165,250,0.18),0_8px_32px_rgba(0,0,0,0.85)]"
+                  className="sphere-bg card-lift-snap group relative flex flex-col h-full rounded-2xl overflow-hidden
+                    border border-white/48 p-6
+                    shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_0_0_2px_rgba(129,140,248,0.08),0_8px_32px_rgba(0,0,0,0.90)]
+                    hover:border-white/72
+                    hover:shadow-[0_0_0_1px_rgba(255,255,255,0.22),0_0_0_2px_rgba(129,140,248,0.18),0_0_55px_rgba(96,165,250,0.18),0_8px_32px_rgba(0,0,0,0.90)]"
                 >
                   {/* Globe palette: blue+indigo bottom-left, violet+pink top-right, cyan top */}
                   <div className="glow-workflow-card pointer-events-none absolute inset-0 rounded-2xl" />

@@ -41,6 +41,23 @@
       font-size: 16px !important;
     }
   }
+
+  /* ── Browser autofill: force dark background so text is readable ── */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #111111 inset !important;
+    -webkit-text-fill-color: #F9FAFB !important;
+    caret-color: #F9FAFB;
+    transition: background-color 5000s ease-in-out 0s;
+  }
 }
 
 @layer utilities {
@@ -99,12 +116,17 @@
 }
 
 /* ── IDE terminal component ──────────────────────────────────────────────── */
-.ide-terminal     { background: #000; box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 24px 64px rgba(0,0,0,0.85); }
-.ide-title-bar    { background: #0a0a0a; }
-.ide-filename     { color: #4a4a4a; }
+.ide-terminal     { background: #000; box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 24px 64px rgba(0,0,0,0.85); }
+.ide-title-bar    { background: #0d0d0d; }
+.ide-filename     { color: #555; }
 .ide-body         { background: #000; }
 .ide-line-number  { color: #3a3a3a; }
 .ide-cursor-block { background: #c0c0c0; }
+
+/* ── Globe/sphere card background (matches svg radialGradient sphere-bg) ── */
+.sphere-bg {
+  background: radial-gradient(ellipse at 38% 32%, #0d0d28 0%, #07071a 55%, #030308 100%);
+}
 
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(24px); }

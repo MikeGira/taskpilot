@@ -57,9 +57,9 @@ export function AnimatedTerminal() {
   }, []);
 
   return (
-    <div className="ide-terminal mx-auto mt-12 max-w-lg rounded-xl overflow-hidden border border-white/22">
+    <div className="ide-terminal mx-auto mt-12 max-w-lg rounded-xl overflow-hidden border border-white/42">
       {/* macOS title bar */}
-      <div className="ide-title-bar flex items-center gap-1.5 px-4 py-2.5 border-b border-white/10">
+      <div className="ide-title-bar flex items-center gap-1.5 px-4 py-2.5 border-b border-white/28">
         <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
         <div className="h-3 w-3 rounded-full bg-[#febc2e]" />
         <div className="h-3 w-3 rounded-full bg-[#28c840]" />

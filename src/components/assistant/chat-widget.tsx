@@ -391,7 +391,7 @@ export function ChatWidget() {
                   onChange={(e) => setChatInput(e.target.value)}
                   placeholder="Ask Pilot anything…"
                   className="flex-1 min-w-0 rounded-full px-4 py-2.5 text-white placeholder:text-[#9CA3AF] focus:outline-none focus:ring-1 focus:ring-indigo-500/50 transition-all"
-                  style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.35)', fontSize: '16px' }}
+                  style={{ backgroundColor: '#111', border: '1px solid rgba(99,102,241,0.55)', fontSize: '16px' }}
                   disabled={chatLoading}
                 />
                 <button type="submit" disabled={!chatInput.trim() || chatLoading}
@@ -537,7 +537,7 @@ export function ChatWidget() {
                   rows={4}
                   maxLength={2000}
                   className="w-full rounded-xl text-white placeholder:text-[#9CA3AF] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-3 leading-relaxed"
-                  style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.35)', fontSize: '16px' }}
+                  style={{ backgroundColor: '#111', border: '1px solid rgba(99,102,241,0.55)', fontSize: '16px' }}
                 />
                 <div>
                   <p className="text-[10px] text-[#aaa] mb-1.5 uppercase tracking-wider">Examples</p>
@@ -581,7 +581,7 @@ export function ChatWidget() {
                   rows={3}
                   maxLength={1000}
                   className="w-full rounded-xl text-white placeholder:text-[#9CA3AF] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-3 leading-relaxed"
-                  style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.35)', fontSize: '16px' }}
+                  style={{ backgroundColor: '#111', border: '1px solid rgba(99,102,241,0.55)', fontSize: '16px' }}
                   autoFocus
                 />
                 <button
@@ -720,7 +720,7 @@ export function ChatWidget() {
                               placeholder="What went wrong? (optional)"
                               rows={2}
                               className="w-full rounded-lg text-[11px] text-white placeholder:text-[#9CA3AF] resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50 p-2 leading-relaxed"
-                              style={{ backgroundColor: '#1a1a2e', border: '1px solid rgba(99,102,241,0.25)', fontSize: '16px' }}
+                              style={{ backgroundColor: '#111', border: '1px solid rgba(99,102,241,0.48)', fontSize: '16px' }}
                             />
                             <div className="flex gap-2">
                               <button
