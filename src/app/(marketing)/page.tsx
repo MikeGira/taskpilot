@@ -352,10 +352,10 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <Link
                   href="/workflow"
                   className="sphere-bg card-lift-snap group relative flex flex-col h-full rounded-2xl overflow-hidden
-                    border border-white/48 p-6
-                    shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_0_0_2px_rgba(129,140,248,0.08),0_8px_32px_rgba(0,0,0,0.90)]
-                    hover:border-white/72
-                    hover:shadow-[0_0_0_1px_rgba(255,255,255,0.22),0_0_0_2px_rgba(129,140,248,0.18),0_0_55px_rgba(96,165,250,0.18),0_8px_32px_rgba(0,0,0,0.90)]"
+                    border-2 border-white/62 p-6
+                    shadow-[0_0_0_1px_rgba(255,255,255,0.22),0_0_0_3px_rgba(129,140,248,0.12),0_8px_32px_rgba(0,0,0,0.90)]
+                    hover:border-white/85
+                    hover:shadow-[0_0_0_1px_rgba(255,255,255,0.35),0_0_0_3px_rgba(129,140,248,0.22),0_0_55px_rgba(96,165,250,0.20),0_8px_32px_rgba(0,0,0,0.90)]"
                 >
                   {/* Globe palette: blue+indigo bottom-left, violet+pink top-right, cyan top */}
                   <div className="glow-workflow-card pointer-events-none absolute inset-0 rounded-2xl" />

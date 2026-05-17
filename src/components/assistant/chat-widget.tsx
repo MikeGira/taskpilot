@@ -300,7 +300,7 @@ export function ChatWidget() {
         'fixed bottom-[88px] right-2 left-2 sm:left-auto sm:right-6 z-50',
         'sm:w-[400px]',
         // Height: caps at viewport height minus space for trigger + safe area
-        'flex flex-col rounded-2xl border border-indigo-500/50',
+        'flex flex-col rounded-2xl border-2 border-indigo-400/75',
         'shadow-2xl shadow-black/80 shadow-indigo-950/40',
         'transition-all duration-300 ease-out origin-bottom-right',
         open ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
