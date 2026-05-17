@@ -52,10 +52,10 @@ export default function WorkflowPage() {
             {FEATURES.map(({ icon: Icon, label }) => (
               <div
                 key={label}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/8 bg-white/3 px-3 py-1.5"
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/8 px-3 py-1.5"
               >
-                <Icon className="h-3 w-3 text-[#6B7280]" />
-                <span className="text-xs text-[#6B7280]">{label}</span>
+                <Icon className="h-3 w-3 text-[#D1D5DB]" />
+                <span className="text-xs text-[#D1D5DB] font-medium">{label}</span>
               </div>
             ))}
           </div>
@@ -68,22 +68,29 @@ export default function WorkflowPage() {
       </section>
 
       {/* Feature grid */}
-      <section className="border-t border-white/8 bg-[#0D0D0D] py-16 px-4">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[10px] font-semibold text-[#4B5563] uppercase tracking-widest text-center mb-10">
-            What makes this different
-          </p>
-          <div className="grid sm:grid-cols-2 gap-4">
+      <section className="relative border-t border-white/12 bg-[#0A0A0A] py-16 px-4 overflow-hidden">
+        {/* Dot grid texture — cards sit on top of this */}
+        <div className="absolute inset-0 bg-grid-pattern-subtle pointer-events-none" />
+
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-sm font-semibold text-white uppercase tracking-widest mb-2">
+              What makes this different
+            </p>
+            <p className="text-sm text-[#9CA3AF]">Built for IT admins and DevOps engineers who already use n8n.</p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-5">
             {FEATURES.map(({ icon: Icon, label, desc }) => (
               <div
                 key={label}
-                className="rounded-xl border border-white/8 bg-white/2 p-5 group hover:border-white/14 hover:bg-white/4 transition-all duration-200"
+                className="rounded-xl border border-white/20 bg-[#111111] p-6 group hover:border-white/35 hover:bg-[#161616] transition-all duration-200 shadow-lg"
               >
-                <div className="h-8 w-8 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center mb-3 group-hover:border-white/20 transition-colors">
-                  <Icon className="h-4 w-4 text-[#9CA3AF]" />
+                <div className="h-9 w-9 rounded-lg border border-white/25 bg-white/10 flex items-center justify-center mb-4 group-hover:border-white/40 group-hover:bg-white/15 transition-all duration-200">
+                  <Icon className="h-4 w-4 text-white" />
                 </div>
-                <p className="font-semibold text-[#F9FAFB] text-sm mb-1">{label}</p>
-                <p className="text-xs text-[#6B7280] leading-relaxed">{desc}</p>
+                <p className="font-semibold text-white text-sm mb-1.5">{label}</p>
+                <p className="text-sm text-[#A0A0A0] leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -91,21 +98,28 @@ export default function WorkflowPage() {
       </section>
 
       {/* How it works */}
-      <section className="py-16 px-4">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[10px] font-semibold text-[#4B5563] uppercase tracking-widest text-center mb-10">
-            How it works
-          </p>
-          <div className="grid sm:grid-cols-3 gap-4">
+      <section className="relative py-16 px-4 overflow-hidden">
+        {/* Dot grid texture */}
+        <div className="absolute inset-0 bg-grid-pattern-subtle pointer-events-none" />
+
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-sm font-semibold text-white uppercase tracking-widest mb-2">
+              How it works
+            </p>
+            <p className="text-sm text-[#9CA3AF]">From description to importable JSON in under 30 seconds.</p>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-5">
             {[
               { step: '01', title: 'Describe', body: 'Pick your trigger event and integrations, then describe what your automation should do in plain English.' },
               { step: '02', title: 'Generate', body: 'WorkflowPilot builds a complete n8n workflow JSON using real node types, proper connections, and error paths.' },
               { step: '03', title: 'Import', body: 'Copy or download the JSON, then paste it into n8n via Import Workflow. Configure credentials and activate.' },
             ].map(({ step, title, body }) => (
-              <div key={step} className="rounded-xl border border-white/8 bg-white/2 p-5">
-                <p className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mb-3">{step}</p>
-                <p className="font-semibold text-[#F9FAFB] text-sm mb-1.5">{title}</p>
-                <p className="text-xs text-[#6B7280] leading-relaxed">{body}</p>
+              <div key={step} className="rounded-xl border border-white/20 bg-[#111111] p-6 shadow-lg">
+                <p className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest mb-3">{step}</p>
+                <p className="font-semibold text-white text-sm mb-2">{title}</p>
+                <p className="text-sm text-[#A0A0A0] leading-relaxed">{body}</p>
               </div>
             ))}
           </div>
