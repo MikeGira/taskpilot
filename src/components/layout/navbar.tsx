@@ -66,8 +66,12 @@ export function Navbar() {
   }, [supabase]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/8 bg-black/90 backdrop-blur-sm">
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-50 w-full px-4 sm:px-6 pt-3 pb-0.5">
+      <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-5
+        rounded-2xl
+        bg-[rgba(8,8,15,0.82)] backdrop-blur-2xl
+        border border-white/12
+        shadow-[0_4px_24px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.05)]">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 font-semibold text-base group">
@@ -111,7 +115,7 @@ export function Navbar() {
       </nav>
 
       {mobileOpen && (
-        <div className="md:hidden border-t border-white/8 bg-black px-4 py-4 flex flex-col gap-1">
+        <div className="md:hidden mt-1 mx-4 sm:mx-6 rounded-2xl border border-white/12 bg-[rgba(8,8,15,0.92)] backdrop-blur-2xl px-3 py-3 flex flex-col gap-0.5">
           {NAV_LINKS.map(({ href, label }) => (
             <Link key={href} href={href} onClick={() => setMobileOpen(false)}
               className="text-sm text-[#A0A0A0] hover:text-white font-medium px-3 py-2.5 rounded-full hover:bg-white/7 transition-all duration-200">

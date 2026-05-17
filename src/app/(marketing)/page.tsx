@@ -328,8 +328,10 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     {['PowerShell', 'Bash', 'Python', 'Terraform', 'Ansible', '20+ more'].map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs px-2.5 py-1 rounded-md border border-white/25 bg-white/8 text-white
-                          group-hover:bg-white/16 group-hover:border-white/45"
+                        className="text-xs px-2.5 py-1 rounded-full border border-white/30 bg-white/8 text-[#D1D5DB] cursor-pointer
+                          hover:bg-white hover:border-white hover:text-black hover:-translate-y-px
+                          hover:shadow-[0_4px_12px_rgba(255,255,255,0.25)]
+                          transition-[background-color,border-color,color,box-shadow,transform] duration-150"
                       >{tag}</span>
                     ))}
                   </div>
@@ -375,8 +377,10 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                     {['Slack', 'GitHub', 'Gmail', 'Stripe', 'Claude AI', '30+ more'].map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs px-2.5 py-1 rounded-md border border-[#EA4B71]/35 bg-[#EA4B71]/12 text-[#EA4B71]
-                          group-hover:bg-[#EA4B71]/25 group-hover:border-[#EA4B71]/60 group-hover:text-white"
+                        className="text-xs px-2.5 py-1 rounded-full border border-[#EA4B71]/40 bg-[#EA4B71]/12 text-[#EA4B71] cursor-pointer
+                          hover:bg-[#EA4B71] hover:border-[#EA4B71] hover:text-white hover:-translate-y-px
+                          hover:shadow-[0_4px_12px_rgba(234,75,113,0.45)]
+                          transition-[background-color,border-color,color,box-shadow,transform] duration-150"
                       >{tag}</span>
                     ))}
                   </div>

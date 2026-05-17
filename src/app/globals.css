@@ -233,13 +233,17 @@
   transition: transform 100ms ease-out, box-shadow 100ms ease-out;
   will-change: transform;
   cursor: pointer;
+  /* backface-visibility prevents sub-pixel text blur during GPU transform */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 .card-lift-snap:hover {
-  transform: translateY(-5px) scale(1.018);
+  /* No scale — scale causes text blur. translateY alone gives clean lift. */
+  transform: translateY(-5px);
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5);
 }
 .card-lift-snap:active {
-  transform: translateY(0px) scale(0.975);
+  transform: translateY(0px);
   transition: transform 50ms ease-out, box-shadow 50ms ease-out;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
