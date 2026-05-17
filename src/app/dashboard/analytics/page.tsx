@@ -71,7 +71,7 @@ export default async function AnalyticsPage() {
           { label: 'Needs Work', value: String(negative), color: 'text-amber-400' },
           { label: 'Satisfaction', value: `${positiveRate}%`, color: positiveRate >= 70 ? 'text-white' : 'text-amber-400' },
         ].map((s) => (
-          <div key={s.label} className="rounded-xl border border-white/20 bg-[#0D0D0D] p-4">
+          <div key={s.label} className="card-glow rounded-xl border border-white/20 bg-[#0D0D0D] p-4">
             <p className="text-xs text-[#6B7280] mb-1">{s.label}</p>
             <p className={`text-2xl font-bold ${s.color || 'text-[#F9FAFB]'}`}>{s.value}</p>
           </div>
@@ -158,7 +158,7 @@ function BreakdownCard({
   );
 
   return (
-    <div className="rounded-xl border border-white/20 bg-[#0D0D0D] p-4">
+    <div className="card-glow rounded-xl border border-white/20 bg-[#0D0D0D] p-4">
       <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">{title}</p>
       {entries.length === 0 ? (
         <p className="text-xs text-[#374151]">No data yet</p>

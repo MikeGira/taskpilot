@@ -131,9 +131,9 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-                <Link href="/generate">
+                <Link href="/#free-tools">
                   <Wand2 className="h-4 w-4" />
-                  Try Generator Free
+                  Free Tools
                 </Link>
               </Button>
             </div>
@@ -283,7 +283,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
         </section>
 
         {/* Free Tools Banner */}
-        <section className="relative py-16 border-t border-white/12 bg-[#0A0A0A] overflow-hidden">
+        <section id="free-tools" className="relative py-16 border-t border-white/12 bg-[#0A0A0A] overflow-hidden">
           {/* Dot grid fills section but solid card bgs will mask it */}
           <div className="absolute inset-0 bg-grid-pattern-subtle pointer-events-none" />
 
@@ -305,8 +305,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <Link href="/generate" className="card-lift group block h-full rounded-2xl">
                   <div className="rounded-2xl border border-white/25 bg-[#141414] p-6 h-full flex flex-col
                     transition-colors duration-200
-                    group-hover:border-white/45
-                    group-hover:shadow-[0_0_0_1px_rgba(255,255,255,0.06)]">
+                    group-hover:border-white/45">
 
                     <div className="flex items-center gap-3 mb-4">
                       <div className="h-10 w-10 rounded-xl border border-white/25 bg-white/8 flex items-center justify-center shrink-0
@@ -347,8 +346,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <Link href="/workflow" className="card-lift group block h-full rounded-2xl">
                   <div className="rounded-2xl border border-violet-500/40 bg-[#0E0817] p-6 h-full flex flex-col
                     transition-colors duration-200
-                    group-hover:border-violet-400/65
-                    group-hover:shadow-[0_0_0_1px_rgba(167,139,250,0.12)]">
+                    group-hover:border-violet-400/65">
 
                     <div className="flex items-center gap-3 mb-4">
                       <div className="h-10 w-10 rounded-xl border border-violet-400/35 bg-violet-500/15 flex items-center justify-center shrink-0
