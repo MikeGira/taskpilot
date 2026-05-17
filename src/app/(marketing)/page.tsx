@@ -130,7 +130,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="w-full sm:w-auto bg-black border-white/40 hover:bg-black hover:border-white/60 hover:shadow-none hover:scale-[1.04] hover:translate-y-0 transition-all duration-[350ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] active:scale-[0.97] active:duration-[50ms]">
+              <Button asChild variant="outline" size="lg" className="w-full sm:w-auto bg-black border-2 border-white/55 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_0_18px_rgba(255,255,255,0.08),inset_0_1px_0_rgba(255,255,255,0.1)] hover:bg-black hover:border-white/75 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.1),0_0_24px_rgba(255,255,255,0.14),inset_0_1px_0_rgba(255,255,255,0.12)] hover:scale-[1.04] hover:translate-y-0 transition-all duration-[350ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] active:scale-[0.97] active:duration-[50ms]">
                 <Link href="/#free-tools">
                   <Wand2 className="h-4 w-4" />
                   Free Tools
