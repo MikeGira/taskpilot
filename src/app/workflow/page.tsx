@@ -89,7 +89,7 @@ export default function WorkflowPage() {
               {FEATURES.map(({ icon: Icon, label, desc }) => (
                 <div
                   key={label}
-                  className="card-glow rounded-xl border border-white/32 bg-[#111111] p-6 group"
+                  className="card-glow rounded-xl border border-white/32 bg-black p-6 group"
                 >
                   <div className="h-9 w-9 rounded-lg border border-white/38 bg-white/13 flex items-center justify-center mb-4
                     group-hover:border-white/40 group-hover:bg-white/12 transition-colors duration-200">

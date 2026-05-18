@@ -477,7 +477,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   <div className="glow-pricing-card h-40 w-80 rounded-full blur-3xl opacity-75" />
                 </div>
                 <Card
-                  className="relative overflow-hidden p-8 border-indigo-500/55 bg-gradient-to-b from-indigo-950/[0.35] to-[#0D0D0D] card-cta"
+                  className="relative overflow-hidden p-8 border-indigo-500/55 bg-gradient-to-b from-indigo-950/[0.35] to-black card-cta"
                   data-spring
                   style={{ '--card-hover-border': 'rgba(99, 102, 241, 0.60)', '--card-top-bar': 'rgba(129, 140, 248, 0.90)' } as CSSProperties}
                 >
