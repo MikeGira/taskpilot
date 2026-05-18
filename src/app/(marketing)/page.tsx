@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import {
   ShieldCheck, HardDrive, Users, Activity, FileText, Laptop,
@@ -196,7 +197,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {SCRIPTS.map((s, i) => {
                 const cardContent = (
-                  <Card className={`p-5 group transition-[border-color,box-shadow] duration-200 h-full ${s.task ? 'hover:border-white/45 hover:shadow-[0_4px_20px_rgba(0,0,0,0.6)]' : 'hover:border-white/28 hover:shadow-[0_4px_20px_rgba(0,0,0,0.5)]'}`}>
+                  <Card className={`p-5 group h-full ${s.task ? '' : 'card-glow'}`}>
                     <div className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${s.bg} mb-4 group-hover:scale-110 transition-transform duration-200`}>
                       <s.icon className={`h-5 w-5 ${s.color}`} />
                     </div>
@@ -210,7 +211,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 return (
                   <FadeInSection key={s.name} delay={i * 60}>
                     {s.task ? (
-                      <Link href={`/generate?task=${encodeURIComponent(s.task)}`} className="card-lift block rounded-xl">
+                      <Link href={`/generate?task=${encodeURIComponent(s.task)}`} className="card-lift block rounded-xl" data-spring>
                         {cardContent}
                       </Link>
                     ) : cardContent}
@@ -235,7 +236,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="grid sm:grid-cols-3 gap-5">
               {STEPS.map((step, i) => (
                 <FadeInSection key={step.num} delay={i * 100}>
-                  <Card className="p-6 h-full flex flex-col items-center text-center hover:border-white/45 hover:shadow-[0_4px_20px_rgba(0,0,0,0.6)] transition-[border-color,box-shadow] duration-200 group">
+                  <Card className="p-6 h-full flex flex-col items-center text-center card-glow group">
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-[#1a1a1a] text-white font-bold text-lg mb-5 group-hover:border-white/45 group-hover:bg-[#222] transition-all duration-200">
                       {step.num}
                     </div>
@@ -307,8 +308,8 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <Link
                   href="/generate"
                   className="card-lift-snap group flex flex-col h-full rounded-2xl
-                    border border-white/45 bg-black p-6
-                    hover:border-white/70"
+                    border border-white/45 bg-black p-6"
+                  data-spring
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="h-10 w-10 rounded-xl border border-white/30 bg-white/8 flex items-center justify-center shrink-0">
@@ -351,11 +352,14 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               <FadeInSection delay={80} className="h-full">
                 <Link
                   href="/workflow"
-                  className="sphere-bg card-lift-snap group relative flex flex-col h-full rounded-2xl overflow-hidden
-                    border-2 border-white/78 p-6
+                  className="sphere-bg card-top-bar group relative flex flex-col h-full rounded-2xl overflow-hidden
+                    border-2 border-white/78 p-6 cursor-pointer
                     shadow-[0_0_0_1px_rgba(255,255,255,0.32),0_0_0_3px_rgba(129,140,248,0.14),0_8px_32px_rgba(0,0,0,0.90)]
-                    hover:border-white/82
-                    hover:shadow-[0_0_0_1px_rgba(255,255,255,0.22),0_0_0_3px_rgba(129,140,248,0.12),0_0_40px_rgba(96,165,250,0.12),0_8px_32px_rgba(0,0,0,0.90)]"
+                    hover:border-white/82 hover:-translate-y-[5px]
+                    hover:shadow-[0_0_0_1px_rgba(255,255,255,0.22),0_0_0_3px_rgba(129,140,248,0.12),0_0_40px_rgba(96,165,250,0.12),0_8px_32px_rgba(0,0,0,0.90)]
+                    transition-[transform,box-shadow,border-color] duration-100"
+                  data-spring
+                  style={{ '--card-top-bar': 'rgba(129, 140, 248, 0.85)' } as CSSProperties}
                 >
                   {/* Globe palette: blue+indigo bottom-left, violet+pink top-right, cyan top */}
                   <div className="glow-workflow-card pointer-events-none absolute inset-0 rounded-2xl" />
@@ -418,7 +422,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             </FadeInSection>
             <div className="grid md:grid-cols-2 gap-6">
               <FadeInSection delay={0}>
-                <Card className="p-6 border-red-500/55 bg-red-950/[0.18] h-full hover:border-red-500/75 hover:shadow-[0_4px_20px_rgba(239,68,68,0.12)] transition-[border-color,box-shadow] duration-200">
+                <Card className="p-6 border-red-500/55 bg-red-950/[0.18] h-full card-glow" style={{ '--card-hover-border': 'rgba(239, 68, 68, 0.65)', '--card-top-bar': 'rgba(239, 68, 68, 0.85)' } as CSSProperties}>
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-500/15 border border-red-500/55">
                       <XCircle className="h-4 w-4 text-red-400" />
@@ -436,7 +440,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 </Card>
               </FadeInSection>
               <FadeInSection delay={120}>
-                <Card className="p-6 border-emerald-500/55 bg-emerald-950/[0.18] h-full hover:border-emerald-500/75 hover:shadow-[0_4px_20px_rgba(52,211,153,0.12)] transition-[border-color,box-shadow] duration-200">
+                <Card className="p-6 border-emerald-500/55 bg-emerald-950/[0.18] h-full card-glow">
                   <h3 className="font-semibold text-white mb-5 flex items-center gap-2">
                     <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/55">
                       <Rocket className="h-4 w-4 text-emerald-400" />
@@ -472,7 +476,11 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 <div className="pointer-events-none absolute inset-x-0 -top-20 flex justify-center">
                   <div className="glow-pricing-card h-40 w-80 rounded-full blur-3xl opacity-75" />
                 </div>
-                <Card className="relative overflow-hidden p-8 border-indigo-500/55 bg-gradient-to-b from-indigo-950/[0.35] to-[#0D0D0D] hover:border-indigo-500/75 hover:shadow-[0_8px_32px_rgba(99,102,241,0.12)] transition-[border-color,box-shadow] duration-300">
+                <Card
+                  className="relative overflow-hidden p-8 border-indigo-500/55 bg-gradient-to-b from-indigo-950/[0.35] to-[#0D0D0D] card-cta"
+                  data-spring
+                  style={{ '--card-hover-border': 'rgba(99, 102, 241, 0.60)', '--card-top-bar': 'rgba(129, 140, 248, 0.90)' } as CSSProperties}
+                >
                   {/* Top gradient accent line */}
                   <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/80 to-transparent" />
                   <div className="mb-6">
@@ -520,7 +528,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
             <div className="space-y-4">
               {FAQS.map((faq, i) => (
                 <FadeInSection key={faq.q} delay={i * 50}>
-                  <Card className="p-6 hover:border-white/38 hover:shadow-[0_4px_20px_rgba(0,0,0,0.55)] transition-[border-color,box-shadow] duration-200">
+                  <Card className="p-6 card-info">
                     <h3 className="font-semibold text-white mb-3">{faq.q}</h3>
                     <p className="text-sm text-[#A0A0A0] leading-relaxed">{faq.a}</p>
                   </Card>
@@ -537,7 +545,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
           </div>
           <div className="mx-auto max-w-lg px-4 sm:px-6">
             <FadeInSection>
-              <Card className="p-8 sm:p-10 text-center hover:border-white/38 hover:shadow-[0_4px_20px_rgba(0,0,0,0.55)] transition-[border-color,box-shadow] duration-300">
+              <Card className="p-8 sm:p-10 text-center card-cta">
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/[0.12] px-4 py-1.5 text-xs font-medium text-white mb-6">
                   Free weekly tips
                 </div>
@@ -561,7 +569,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                   Describe your environment and the problem. I&apos;ll give you an honest answer within one business day.
                 </p>
               </div>
-              <Card className="p-6 sm:p-8 hover:border-white/38 hover:shadow-[0_4px_20px_rgba(0,0,0,0.55)] transition-[border-color,box-shadow] duration-300">
+              <Card className="p-6 sm:p-8 card-cta">
                 <ContactForm />
               </Card>
             </FadeInSection>

@@ -137,6 +137,25 @@ supabase/schema.sql               ← run once in Supabase SQL editor
 scripts/ps/                       ← the product being sold (7 PowerShell scripts)
 ```
 
+## Card Hover System (Bio-grade, 3-tier)
+
+All cards use the `--card-hover-border` (`rgba(62,207,142,0.40)`) and `--card-hover-glow` CSS variables. Override per-card with inline `style`.
+
+| Class | Bio equivalent | Behavior | Use for |
+|-------|---------------|----------|---------|
+| `card-cta` + `data-spring` | `.proj-card` | Top-bar slide + `-3px` lift + spring + Dynamic Island click | Pricing, Newsletter, Contact, Download, any card with a button/form CTA |
+| `card-glow` | `.impact-card` | Top-bar slide + `-4px` lift + glow | Non-CTA informational cards (Steps, Before/After, Analytics, Profile, Terminal) |
+| `card-info` | `.exp-card` | `-2px` lift + border + glow, no top-bar | FAQ cards, simple informational cards |
+| `card-lift` + `data-spring` | `.proj-card` (link wrapper) | Top-bar slide + spring lift + glow | Link wrappers around Card component (script cards) |
+| `card-lift-snap` + `data-spring` | `.proj-card` (direct) | Top-bar slide + snap lift + glow | Direct link elements that ARE the card (free tool cards) |
+| `card-top-bar` | — | Top-bar only (no lift/border override) | Cards with own inline hover styles (n8n card) |
+
+Per-card color override:
+```tsx
+style={{ '--card-hover-border': 'rgba(99,102,241,0.60)', '--card-top-bar': 'rgba(129,140,248,0.90)' } as CSSProperties}
+```
+Dynamic Island spring is handled by `CardSpringProvider` in layout.tsx — it listens for `click` on any `data-spring` element.
+
 ## Theme
 - Background: `#000000` (true black, Vercel-style)
 - Surfaces/cards: `#0D0D0D`
