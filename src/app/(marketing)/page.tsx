@@ -211,7 +211,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 return (
                   <FadeInSection key={s.name} delay={i * 60}>
                     {s.task ? (
-                      <Link href={`/generate?task=${encodeURIComponent(s.task)}`} className="card-lift block rounded-xl" data-spring>
+                      <Link href={`/generate?task=${encodeURIComponent(s.task)}`} className="card-lift block rounded-3xl" data-spring>
                         {cardContent}
                       </Link>
                     ) : cardContent}
@@ -307,7 +307,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               <FadeInSection delay={0} className="h-full">
                 <Link
                   href="/generate"
-                  className="card-lift-snap group flex flex-col h-full rounded-2xl
+                  className="card-lift-snap group flex flex-col h-full rounded-3xl
                     border border-white/45 bg-black p-6"
                   data-spring
                 >
@@ -352,7 +352,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
               <FadeInSection delay={80} className="h-full">
                 <Link
                   href="/workflow"
-                  className="sphere-bg card-top-bar group relative flex flex-col h-full rounded-2xl overflow-hidden
+                  className="sphere-bg card-top-bar group relative flex flex-col h-full rounded-3xl overflow-hidden
                     border-2 border-white/78 p-6 cursor-pointer
                     shadow-[0_0_0_1px_rgba(255,255,255,0.32),0_0_0_3px_rgba(129,140,248,0.14),0_8px_32px_rgba(0,0,0,0.90)]
                     hover:border-white/82 hover:-translate-y-[5px]

@@ -89,7 +89,7 @@ export default function WorkflowPage() {
               {FEATURES.map(({ icon: Icon, label, desc }) => (
                 <div
                   key={label}
-                  className="card-glow rounded-xl border border-white/32 bg-black p-6 group"
+                  className="card-glow rounded-3xl border border-white/32 bg-black p-6 group"
                 >
                   <div className="h-9 w-9 rounded-lg border border-white/38 bg-white/13 flex items-center justify-center mb-4
                     group-hover:border-white/40 group-hover:bg-white/12 transition-colors duration-200">
@@ -116,7 +116,7 @@ export default function WorkflowPage() {
                 { step: '02', title: 'Generate', body: 'WorkflowPilot builds a complete n8n workflow JSON using real node types, proper connections, and error paths.' },
                 { step: '03', title: 'Import', body: 'Copy or download the JSON, paste it into n8n via Import Workflow. Configure credentials and activate.' },
               ].map(({ step, title, body }) => (
-                <div key={step} className="card-glow rounded-xl border border-white/32 bg-white/7 p-6">
+                <div key={step} className="card-glow rounded-3xl border border-white/32 bg-white/7 p-6">
                   <p className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest mb-3">{step}</p>
                   <p className="font-bold text-white text-sm mb-2">{title}</p>
                   <p className="text-sm text-[#C9CACB] leading-relaxed">{body}</p>

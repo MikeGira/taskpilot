@@ -339,7 +339,7 @@ export function WorkflowGenerator() {
                     !active && selectedIntegrations.length >= 8 && 'opacity-40 cursor-not-allowed'
                   )}
                 >
-                  {active && <span className="mr-1 text-emerald-400">✓</span>}
+                  {active && <Check className="h-3.5 w-3.5 mr-1 inline text-emerald-400" />}
                   {i.label}
                 </button>
               );
