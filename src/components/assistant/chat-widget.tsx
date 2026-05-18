@@ -139,6 +139,8 @@ function stripMarkdown(text: string): string {
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<Panel>('chat');
+  const [springing, setSpringing] = useState(false);
+  const [panelOpening, setPanelOpening] = useState(false);
 
   // Chat state
   const [messages, setMessages] = useState<Message[]>([{ role: 'assistant', content: WELCOME }]);
@@ -296,19 +298,19 @@ export function ChatWidget() {
     <>
       {/* ── Panel ─────────────────────────────────────────────────────────── */}
       <div className={cn(
-        // Position: above trigger button, full-width on mobile, 400px on desktop
         'fixed bottom-[88px] right-2 left-2 sm:left-auto sm:right-6 z-50',
         'sm:w-[400px]',
-        // Height: caps at viewport height minus space for trigger + safe area
         'flex flex-col rounded-2xl border-2 border-indigo-400/75',
         'shadow-2xl shadow-black/80 shadow-indigo-950/40',
         'transition-all duration-300 ease-out origin-bottom-right',
-        open ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
+        open ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none',
+        panelOpening && 'pilot-panel-spring'
       )}
       style={{
         background: '#000000',
         maxHeight: 'min(580px, calc(100dvh - 104px))',
-      }}>
+      }}
+      onAnimationEnd={(e) => { if (e.animationName === 'pilot-panel-spring') setPanelOpening(false); }}>
 
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-white/28 bg-black rounded-t-2xl shrink-0">
@@ -753,9 +755,18 @@ export function ChatWidget() {
 
       {/* ── Trigger button ─────────────────────────────────────────────────── */}
       <button
-        onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-5 right-4 sm:right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white text-black shadow-lg transition-all duration-200 hover:scale-105 active:scale-95"
-        style={{ boxShadow: '0 0 0 4px rgba(99,102,241,0.2), 0 8px 30px rgba(99,102,241,0.15)' }}
+        onClick={() => {
+          setSpringing(true);
+          const newOpen = !open;
+          setOpen(newOpen);
+          if (newOpen) setPanelOpening(true);
+          else setPanelOpening(false);
+        }}
+        onAnimationEnd={(e) => { if (e.animationName === 'pilot-spring') setSpringing(false); }}
+        className={cn(
+          'fixed bottom-5 right-4 sm:right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white text-black pilot-btn-glow',
+          springing && 'pilot-spring'
+        )}
         aria-label={open ? 'Close Pilot' : 'Open Pilot'}
       >
         {open ? (
