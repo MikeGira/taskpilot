@@ -220,7 +220,7 @@ export async function POST(request: Request) {
 
   const parsed = WorkflowSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.errors[0]?.message ?? 'Invalid request' }, { status: 400 });
+    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid request' }, { status: 400 });
   }
 
   const { triggerType, integrations, complexity, taskDescription, clarificationAnswer, previousQuestion } = parsed.data;
