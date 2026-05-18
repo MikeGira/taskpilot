@@ -204,7 +204,6 @@
 }
 .pilot-spring {
   animation: pilot-spring 0.68s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards !important;
-  transition: none !important;
 }
 
 @keyframes pilot-panel-spring {
@@ -237,6 +236,21 @@
   }
 }
 .pilot-btn-glow { animation: pilot-glow-pulse 2.8s ease-in-out infinite; }
+
+/* ── Pilot button dark-forge hover theme (matches Phoenix AI on Bio) ─── */
+.pilot-btn {
+  transition: background 0.28s ease, color 0.22s ease, border-color 0.28s ease;
+}
+.pilot-btn:hover {
+  background: radial-gradient(circle at 35% 28%, rgba(18,14,45,.97), rgba(5,3,15,.99)) !important;
+  color: #ffffff !important;
+  border: 1.5px solid rgba(99,102,241,0.72) !important;
+  box-shadow:
+    0 0 0 3px  rgba(99,102,241,0.65),
+    0 0 24px   rgba(99,102,241,0.70),
+    0 0 58px   rgba(99,102,241,0.25),
+    0 8px 30px rgba(0,0,0,0.55) !important;
+}
 
 .aurora-blob {
   position: absolute;

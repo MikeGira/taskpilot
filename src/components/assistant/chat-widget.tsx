@@ -762,9 +762,10 @@ export function ChatWidget() {
           if (newOpen) setPanelOpening(true);
           else setPanelOpening(false);
         }}
+        onMouseEnter={() => setSpringing(true)}
         onAnimationEnd={(e) => { if (e.animationName === 'pilot-spring') setSpringing(false); }}
         className={cn(
-          'fixed bottom-5 right-4 sm:right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white text-black pilot-btn-glow',
+          'fixed bottom-5 right-4 sm:right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white text-black pilot-btn-glow pilot-btn',
           springing && 'pilot-spring'
         )}
         aria-label={open ? 'Close Pilot' : 'Open Pilot'}
