@@ -1,6 +1,7 @@
 name: Pilot AI Audit
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 9 * * 0'
   push:
