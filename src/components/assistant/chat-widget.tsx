@@ -91,7 +91,7 @@ const GEN_EXAMPLES = [
   'Restart failed services automatically and log each event',
 ];
 
-const WELCOME = "Hey, I'm Pilot 👨‍✈️ your TaskPilot co-pilot. I can answer questions about the platform or generate a custom script for you. What do you need?";
+const WELCOME = "Hey, I'm Pilot 👨‍✈️ your TaskPilot co-pilot. I can answer questions about the platform, help you use the AI Script Generator, or point you to the n8n Workflow Generator. What do you need?";
 const STARTERS = [
   'How do I configure the password reset script?',
   'What does the $19 kit include?',
