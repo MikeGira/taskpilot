@@ -538,11 +538,15 @@
 /* ── Glow overlays (extracted from inline styles) ── */
 
 .glow-workflow-card {
-  /* Globe arc palette — subtle so sphere-bg darkness dominates */
+  /* Exact globe arc colors (from AnimatedArcs ANIM_DEFS) spread across the card face.
+     Gradient positions mirror where each arc color appears on the sphere surface. */
   background:
-    radial-gradient(ellipse at -15% 112%, rgba(96,165,250,0.20) 0%, rgba(129,140,248,0.10) 52%, transparent 70%),
-    radial-gradient(ellipse at 112% -15%, rgba(167,139,250,0.14) 0%, rgba(244,114,182,0.07) 55%, transparent 70%),
-    radial-gradient(ellipse at 50%  -8%, rgba(34,211,238,0.05)  0%, transparent 50%);
+    radial-gradient(ellipse at 75% 20%, rgba(96,165,250,0.22)  0%, transparent 52%),
+    radial-gradient(ellipse at 38% 45%, rgba(129,140,248,0.18) 0%, transparent 58%),
+    radial-gradient(ellipse at 15% 20%, rgba(52,211,153,0.13)  0%, transparent 46%),
+    radial-gradient(ellipse at 68% 62%, rgba(34,211,238,0.11)  0%, transparent 48%),
+    radial-gradient(ellipse at 25% 75%, rgba(167,139,250,0.13) 0%, transparent 52%),
+    radial-gradient(ellipse at 82% 85%, rgba(244,114,182,0.09) 0%, transparent 42%);
 }
 
 .glow-pricing-section {
