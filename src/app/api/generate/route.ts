@@ -671,6 +671,22 @@ export async function POST(request: Request) {
 
   const { os, environment, cloudProviders, tool, taskDescription, clarificationAnswer, previousQuestion } = parsed.data;
 
+  // Prompt injection guard on free-text fields
+  const INJECTION_PATTERNS = [
+    /ignore\s+(all\s+|previous\s+|above\s+|prior\s+)?instructions/i,
+    /\[SYSTEM\]/i,
+    /you\s+are\s+now\s+/i,
+    /<\|im_start\|>/i,
+    /forget\s+(everything|all|your\s+instructions)/i,
+    /pretend\s+(you\s+are|to\s+be)/i,
+    /disregard\s+(your\s+|all\s+)?previous/i,
+  ];
+  const freeTextInputs = [taskDescription, clarificationAnswer, previousQuestion].filter(Boolean) as string[];
+  if (freeTextInputs.some(t => INJECTION_PATTERNS.some(p => p.test(t)))) {
+    console.warn('[generate] prompt injection attempt from', ip.slice(0, 8));
+    return NextResponse.json({ error: 'Invalid input detected.' }, { status: 400 });
+  }
+
   if (!process.env.ANTHROPIC_API_KEY) {
     console.error('[generate] ANTHROPIC_API_KEY not configured');
     return NextResponse.json({ error: 'Script generation is not configured yet.' }, { status: 503 });
@@ -679,10 +695,14 @@ export async function POST(request: Request) {
   const systemPrompt = buildSystemPrompt(os, environment, cloudProviders, tool);
   const userMessage = buildUserMessage(taskDescription, clarificationAnswer, previousQuestion);
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 60000);
+
   try {
     const anthropicResponse = await withRetry(() =>
       fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
+        signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': process.env.ANTHROPIC_API_KEY!,
@@ -712,9 +732,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unexpected response format. Please try again.' }, { status: 502 });
     }
 
+    // Post-generation output filter — warn if script contains patterns that suggest hardcoded secrets
+    if (result.script) {
+      const DANGEROUS = [
+        /password\s*=\s*["'][^"']{4,}/i,
+        /secret\s*=\s*["'][^"']{4,}/i,
+      ];
+      if (DANGEROUS.some(p => p.test(result.script!))) {
+        result.explanation = (result.explanation ?? '') + '\n\n⚠️ Review Note: This script may contain placeholder credentials. Replace any hardcoded values with environment variables or a secrets manager before deploying.';
+      }
+    }
+
     return NextResponse.json(result);
   } catch (err) {
+    if ((err as Error).name === 'AbortError') {
+      console.error('[generate] request timed out');
+      return NextResponse.json({ error: 'Generation timed out. Please try again.' }, { status: 504 });
+    }
     console.error('[generate] Fetch error:', err);
     return NextResponse.json({ error: 'Network error reaching AI service. Please try again.' }, { status: 502 });
+  } finally {
+    clearTimeout(timeout);
   }
 }

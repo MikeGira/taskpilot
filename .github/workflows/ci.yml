@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: '0 9 * * 1'  # Weekly Monday 9am UTC — dependency audit
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,6 +18,19 @@ permissions:
   actions: read
 
 jobs:
+  # ── 0. Dependency audit (runs on schedule + PRs) ────────────────────────────
+  dependency-audit:
+    name: npm audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm audit --audit-level=high
+
   # ── 1. Secret detection ─────────────────────────────────────────────────────
   secret-scan:
     name: Secret Scan (Gitleaks)

@@ -83,6 +83,23 @@ Setting up and configuring the scripts (config.json fields, Active Directory set
 WHAT YOU CANNOT DO:
 Access external systems, execute code, or see the user's IT environment. Process payments, modify accounts, or access any server or log data. Never tell users to "contact the team" or "contact support" for script generation — direct them to the generator instead.`;
 
+const INJECTION_PATTERNS = [
+  /ignore\s+(all\s+|previous\s+|above\s+|prior\s+)?instructions/i,
+  /\[SYSTEM\]/i,
+  /you\s+are\s+now\s+/i,
+  /<\|im_start\|>/i,
+  /forget\s+(everything|all|your\s+instructions)/i,
+  /pretend\s+(you\s+are|to\s+be)/i,
+  /disregard\s+(your\s+|all\s+)?previous/i,
+  /new\s+prompt:/i,
+];
+
+function hasInjection(messages: { role: string; content: string }[]): boolean {
+  return messages.some(m =>
+    m.role === 'user' && INJECTION_PATTERNS.some(p => p.test(m.content))
+  );
+}
+
 export async function POST(request: Request) {
   const ip = getClientIp(request);
   const limit = rateLimit(`assistant:${ip}`, 30, 60 * 60 * 1000);
@@ -109,9 +126,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Assistant not configured' }, { status: 503 });
   }
 
+  if (hasInjection(parsed.data.messages)) {
+    console.warn('[assistant] prompt injection attempt from', ip.slice(0, 8));
+    return NextResponse.json({ content: "I'm Pilot, here to help with TaskPilot and IT automation. What can I help you with?" });
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
+      signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': process.env.ANTHROPIC_API_KEY,
@@ -134,7 +160,13 @@ export async function POST(request: Request) {
     const content: string = data.content?.[0]?.text ?? '';
     return NextResponse.json({ content });
   } catch (err) {
+    if ((err as Error).name === 'AbortError') {
+      console.error('[assistant] request timed out');
+      return NextResponse.json({ error: 'Request timed out. Please try again.' }, { status: 504 });
+    }
     console.error('[assistant] fetch error:', err);
     return NextResponse.json({ error: 'Network error. Please try again.' }, { status: 502 });
+  } finally {
+    clearTimeout(timeout);
   }
 }
