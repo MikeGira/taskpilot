@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { ChatWidget } from '@/components/assistant/chat-widget';
 import { ScrollToTop } from '@/components/ui/scroll-to-top';
+import { CardSpringProvider } from '@/components/ui/spring-cards';
 import { VisitorTracker } from '@/components/analytics/visitor-tracker';
 import './globals.css';
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} font-sans bg-black text-white antialiased`}>
+        <CardSpringProvider />
         {children}
         <ChatWidget />
         <ScrollToTop />

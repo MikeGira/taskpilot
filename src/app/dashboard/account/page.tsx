@@ -16,7 +16,7 @@ export default async function AccountPage() {
         <p className="text-sm text-[#9CA3AF] mt-1">Manage your data and privacy preferences.</p>
       </div>
 
-      <Card>
+      <Card className="card-glow">
         <CardHeader>
           <CardTitle>Profile</CardTitle>
           <CardDescription>Your account details</CardDescription>

@@ -209,7 +209,7 @@ export function SecurityAuditClient() {
                 { label: 'Warn',  value: result.summary.warn,  color: 'text-amber-400' },
                 { label: 'Fail',  value: result.summary.fail,  color: 'text-red-400' },
               ].map(({ label, value, color }) => (
-                <div key={label} className="rounded-xl border border-white/22 bg-[#0D0D0D] p-3 text-center">
+                <div key={label} className="rounded-3xl border border-white/22 bg-black p-3 text-center">
                   <p className={`text-xl font-bold ${color}`}>{value}</p>
                   <p className="text-[10px] text-[#9CA3AF] mt-0.5 uppercase tracking-wider">{label}</p>
                 </div>
@@ -234,7 +234,7 @@ export function SecurityAuditClient() {
         )}
 
         {!result && !loading && !error && (
-          <div className="rounded-xl border border-white/22 bg-[#0D0D0D] p-8 text-center">
+          <div className="rounded-3xl border border-white/22 bg-black p-8 text-center">
             <Shield className="h-8 w-8 text-[#374151] mx-auto mb-3" />
             <p className="text-sm text-[#9CA3AF]">Run a scan to check env vars, RLS, security headers, and API reachability.</p>
           </div>
@@ -306,7 +306,7 @@ export function SecurityAuditClient() {
           )}
 
           {autoFixable.length === 0 && manualFixes.length === 0 && (
-            <div className="rounded-xl border border-white/22 bg-[#0D0D0D] px-4 py-3 text-xs text-[#9CA3AF]">
+            <div className="rounded-3xl border border-white/22 bg-black px-4 py-3 text-xs text-[#9CA3AF]">
               No automated fixes available for the current warnings. Expand each check for step-by-step instructions.
             </div>
           )}

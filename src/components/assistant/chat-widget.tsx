@@ -1,7 +1,13 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { X, Send, Loader2, ChevronDown, Wand2, MessageSquare, Download, Copy, Check, ArrowLeft, ThumbsUp, ThumbsDown, CheckCircle2 } from 'lucide-react';
+import {
+  X, Send, Loader2, ChevronDown, Wand2, MessageSquare, Download, Copy, Check,
+  ArrowLeft, ThumbsUp, ThumbsDown, CheckCircle2,
+  Monitor, Terminal, Apple, Layers, Code, Server, Cloud, Package,
+  Settings, GitBranch, Workflow, Box, Shield, Key, Brain, Activity, Database, Network,
+} from 'lucide-react';
+import type { ElementType } from 'react';
 import { cn, copyToClipboard, downloadTextFile, buildDownloadContent } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
 
@@ -10,11 +16,11 @@ interface Message { role: 'user' | 'assistant'; content: string; }
 type Panel = 'chat' | 'generate';
 type GenStep = 'os' | 'env' | 'tool' | 'task' | 'clarify' | 'loading' | 'result';
 
-const OS_OPTS = [
-  { id: 'windows',        label: 'Windows',        emoji: '⊞' },
-  { id: 'linux',          label: 'Linux',           emoji: '$' },
-  { id: 'macos',          label: 'macOS',           emoji: '' },
-  { id: 'cross-platform', label: 'Cross-Platform',  emoji: '⚡' },
+const OS_OPTS: { id: string; label: string; icon: ElementType }[] = [
+  { id: 'windows',        label: 'Windows',        icon: Monitor  },
+  { id: 'linux',          label: 'Linux',           icon: Terminal },
+  { id: 'macos',          label: 'macOS',           icon: Apple    },
+  { id: 'cross-platform', label: 'Cross-Platform',  icon: Layers   },
 ];
 const ENV_OPTS = [
   { id: 'on-premises', label: 'On-Premises' },
@@ -22,53 +28,53 @@ const ENV_OPTS = [
   { id: 'cloud',       label: 'Cloud'       },
   { id: 'multi-cloud', label: 'Multi-Cloud' },
 ];
-const TOOL_CATEGORIES_PILOT = [
+const TOOL_CATEGORIES_PILOT: { label: string; tools: { id: string; label: string; icon: ElementType }[] }[] = [
   { label: 'Scripting', tools: [
-    { id: 'powershell',        label: 'PowerShell',        emoji: '❯_' },
-    { id: 'bash',              label: 'Bash / Shell',       emoji: '$_' },
-    { id: 'python',            label: 'Python',             emoji: '🐍' },
+    { id: 'powershell',        label: 'PowerShell',        icon: Terminal  },
+    { id: 'bash',              label: 'Bash / Shell',       icon: Terminal  },
+    { id: 'python',            label: 'Python',             icon: Code      },
   ]},
   { label: 'IaC', tools: [
-    { id: 'terraform',         label: 'Terraform',          emoji: '🏗' },
-    { id: 'pulumi',            label: 'Pulumi',             emoji: '🔷' },
-    { id: 'aws-cdk',           label: 'AWS CDK',            emoji: '☁' },
-    { id: 'azure-bicep',       label: 'Azure Bicep',        emoji: '🔵' },
-    { id: 'arm-templates',     label: 'ARM Templates',      emoji: '{}' },
-    { id: 'packer',            label: 'Packer',             emoji: '📦' },
+    { id: 'terraform',         label: 'Terraform',          icon: Server    },
+    { id: 'pulumi',            label: 'Pulumi',             icon: Code      },
+    { id: 'aws-cdk',           label: 'AWS CDK',            icon: Cloud     },
+    { id: 'azure-bicep',       label: 'Azure Bicep',        icon: Cloud     },
+    { id: 'arm-templates',     label: 'ARM Templates',      icon: Code      },
+    { id: 'packer',            label: 'Packer',             icon: Package   },
   ]},
   { label: 'Config Management', tools: [
-    { id: 'ansible',           label: 'Ansible',            emoji: '📋' },
-    { id: 'puppet',            label: 'Puppet',             emoji: '🎭' },
+    { id: 'ansible',           label: 'Ansible',            icon: Settings  },
+    { id: 'puppet',            label: 'Puppet',             icon: Settings  },
   ]},
   { label: 'CI/CD & GitOps', tools: [
-    { id: 'github-actions',    label: 'GitHub Actions',     emoji: '⚙' },
-    { id: 'gitlab-ci',         label: 'GitLab CI',          emoji: '🦊' },
-    { id: 'jenkins',           label: 'Jenkins',            emoji: '🔧' },
-    { id: 'azure-devops',      label: 'Azure DevOps',       emoji: '🔵' },
-    { id: 'argocd',            label: 'ArgoCD',             emoji: '🔄' },
+    { id: 'github-actions',    label: 'GitHub Actions',     icon: GitBranch },
+    { id: 'gitlab-ci',         label: 'GitLab CI',          icon: GitBranch },
+    { id: 'jenkins',           label: 'Jenkins',            icon: Workflow  },
+    { id: 'azure-devops',      label: 'Azure DevOps',       icon: Workflow  },
+    { id: 'argocd',            label: 'ArgoCD',             icon: GitBranch },
   ]},
   { label: 'Containers', tools: [
-    { id: 'docker',            label: 'Docker',             emoji: '🐳' },
-    { id: 'kubernetes',        label: 'K8s / Helm',         emoji: '☸' },
+    { id: 'docker',            label: 'Docker',             icon: Box       },
+    { id: 'kubernetes',        label: 'K8s / Helm',         icon: Layers    },
   ]},
   { label: 'Security', tools: [
-    { id: 'cis-hardening',     label: 'CIS Hardening',      emoji: '🛡' },
-    { id: 'vault',             label: 'Vault',              emoji: '🔑' },
-    { id: 'security-scanning', label: 'Sec Scanning',       emoji: '🔍' },
+    { id: 'cis-hardening',     label: 'CIS Hardening',      icon: Shield    },
+    { id: 'vault',             label: 'Vault',              icon: Key       },
+    { id: 'security-scanning', label: 'Sec Scanning',       icon: Shield    },
   ]},
   { label: 'AI / ML', tools: [
-    { id: 'mlops',             label: 'AI/ML Ops',          emoji: '🧠' },
-    { id: 'langchain',         label: 'LangChain/RAG',      emoji: '🤖' },
+    { id: 'mlops',             label: 'AI/ML Ops',          icon: Brain     },
+    { id: 'langchain',         label: 'LangChain/RAG',      icon: Brain     },
   ]},
   { label: 'Monitoring', tools: [
-    { id: 'prometheus-grafana', label: 'Prometheus',        emoji: '📊' },
-    { id: 'elk-stack',          label: 'ELK Stack',         emoji: '📈' },
+    { id: 'prometheus-grafana', label: 'Prometheus',        icon: Activity  },
+    { id: 'elk-stack',          label: 'ELK Stack',         icon: Activity  },
   ]},
   { label: 'Database', tools: [
-    { id: 'database-admin',    label: 'DB Admin',           emoji: '🗄' },
+    { id: 'database-admin',    label: 'DB Admin',           icon: Database  },
   ]},
   { label: 'Network', tools: [
-    { id: 'network-automation', label: 'Network Auto',      emoji: '🌐' },
+    { id: 'network-automation', label: 'Network Auto',      icon: Network   },
   ]},
 ];
 const TOOL_OPTS = TOOL_CATEGORIES_PILOT.flatMap((c) => c.tools);
@@ -416,11 +422,11 @@ export function ChatWidget() {
                 <p className="text-xs font-semibold text-white mb-1">What OS are you targeting?</p>
                 <p className="text-[11px] text-[#A0A0A0] mb-4">Determines the scripting language used.</p>
                 <div className="grid grid-cols-2 gap-2">
-                  {OS_OPTS.map((o) => (
-                    <button key={o.id} onClick={() => { setGenOs(o.id); setGenStep('env'); }}
+                  {OS_OPTS.map(({ id, icon: Icon, label }) => (
+                    <button key={id} onClick={() => { setGenOs(id); setGenStep('env'); }}
                       className="flex items-center gap-2 rounded-xl border border-white/22 bg-white/6 hover:border-indigo-500/55 hover:bg-indigo-950/45 px-3 py-3 text-sm text-white transition-all group">
-                      <span className="text-base">{o.emoji}</span>
-                      <span className="font-medium">{o.label}</span>
+                      <Icon className="h-4 w-4 shrink-0 text-[#9CA3AF]" />
+                      <span className="font-medium">{label}</span>
                     </button>
                   ))}
                 </div>
@@ -504,16 +510,16 @@ export function ChatWidget() {
                   <div key={cat.label} className="mb-3">
                     <p className="text-[9px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-1.5">{cat.label}</p>
                     <div className="grid grid-cols-2 gap-1.5">
-                      {cat.tools.map((t) => (
-                        <button key={t.id} onClick={() => { setGenTool(t.id); setGenStep('task'); }}
+                      {cat.tools.map(({ id, icon: Icon, label }) => (
+                        <button key={id} onClick={() => { setGenTool(id); setGenStep('task'); }}
                           className={cn(
                             'flex items-center gap-1.5 rounded-lg border px-2.5 py-2 text-[11px] font-medium text-white transition-all',
-                            genTool === t.id
+                            genTool === id
                               ? 'border-indigo-500/60 bg-indigo-950/40'
                               : 'border-white/22 bg-white/6 hover:border-indigo-500/55 hover:bg-indigo-950/45'
                           )}>
-                          <span className="text-sm">{t.emoji}</span>
-                          <span>{t.label}</span>
+                          <Icon className="h-3.5 w-3.5 shrink-0 text-[#9CA3AF]" />
+                          <span>{label}</span>
                         </button>
                       ))}
                     </div>

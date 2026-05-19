@@ -115,7 +115,7 @@ export default function LoginPage({
             </p>
           </div>
         ) : (
-          <div className="rounded-xl border border-white/20 bg-[#0D0D0D] overflow-hidden">
+          <div className="rounded-3xl border border-white/20 bg-black overflow-hidden">
             {/* Tab switcher */}
             <div className="flex border-b border-white/12">
               {(['password', 'magic'] as const).map((m) => (

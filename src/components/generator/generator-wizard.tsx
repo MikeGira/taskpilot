@@ -8,7 +8,7 @@ import {
   Monitor, Terminal, Apple, Layers, Server, GitMerge, Cloud,
   ArrowRight, ArrowLeft, Wand2, Copy, Download, CheckCircle2,
   RefreshCw, Loader2, AlertCircle, Check, ChevronRight, ThumbsUp, ThumbsDown,
-  Code, Box, GitBranch, Settings, Shield, Key, Brain, Database, Activity, Package, Workflow, Network,
+  Code, Box, GitBranch, Settings, Shield, Key, Brain, Database, Activity, Package, Workflow, Network, Zap,
 } from 'lucide-react';
 import { cn, copyToClipboard, downloadTextFile, buildDownloadContent } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
@@ -433,7 +433,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
                         : 'border-white/22 bg-white/7 text-[#C9CACB] hover:border-white/35 hover:bg-white/12'
                     )}
                   >
-                    {cloudProviders.includes(c.id) && <span className="mr-1">✓</span>}
+                    {cloudProviders.includes(c.id) && <Check className="h-3.5 w-3.5 mr-1 inline" />}
                     {c.short}
                   </button>
                 ))}
@@ -515,7 +515,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
             </div>
             {task.length > 800 && (
               <p className="text-xs text-yellow-500/70 mt-1.5 flex items-start gap-1.5">
-                <span className="shrink-0">⚡</span>
+                <Zap className="h-3.5 w-3.5 shrink-0 text-yellow-500/70" />
                 Focused tasks generate the most complete scripts. For complex multi-system requests, describe the core goal. The script will include TODO markers for advanced features.
               </p>
             )}
