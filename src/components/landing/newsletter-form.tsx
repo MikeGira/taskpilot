@@ -56,7 +56,7 @@ export function NewsletterForm() {
         className="flex-1"
         aria-label="Email address"
       />
-      <Button type="submit" disabled={status === 'loading'} className="shrink-0">
+      <Button type="submit" disabled={status === 'loading'} className="shrink-0" data-spring>
         {status === 'loading' ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (

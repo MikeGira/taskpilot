@@ -478,7 +478,6 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                 </div>
                 <Card
                   className="relative overflow-hidden p-8 border-indigo-500/55 bg-gradient-to-b from-indigo-950/[0.35] to-black card-cta"
-                  data-spring
                   style={{ '--card-hover-border': 'rgba(99, 102, 241, 0.60)', '--card-top-bar': 'rgba(129, 140, 248, 0.90)' } as CSSProperties}
                 >
                   {/* Top gradient accent line */}
@@ -502,7 +501,7 @@ export default function HomePage({ searchParams }: { searchParams: { subscribed?
                       </li>
                     ))}
                   </ul>
-                  <Button asChild size="lg" className="w-full">
+                  <Button asChild size="lg" className="w-full" data-spring>
                     <Link href="/checkout">
                       Buy Now $19
                       <ArrowRight className="h-4 w-4" />

@@ -28,7 +28,7 @@ export function DownloadCard({ purchase, downloadUrl }: DownloadCardProps) {
   });
 
   return (
-    <Card className="card-cta" data-spring>
+    <Card className="card-cta">
       <CardContent className="p-5 flex items-center gap-4">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/8 border border-white/30">
           <Package className="h-5 w-5 text-white/70" />
@@ -52,6 +52,7 @@ export function DownloadCard({ purchase, downloadUrl }: DownloadCardProps) {
           disabled={!downloadUrl}
           size="sm"
           className="shrink-0 gap-1.5"
+          data-spring
         >
           <Download className="h-3.5 w-3.5" />
           Download

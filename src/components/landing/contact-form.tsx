@@ -112,7 +112,7 @@ export function ContactForm() {
         <a href="/privacy" className="text-[#6B7280] hover:text-[#9CA3AF] underline">privacy policy</a>.
       </p>
       {errorMsg && <p className="text-sm text-white">{errorMsg}</p>}
-      <Button type="submit" disabled={status === 'loading'} size="lg" className="w-full">
+      <Button type="submit" disabled={status === 'loading'} size="lg" className="w-full" data-spring>
         {status === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send Message'}
       </Button>
     </form>

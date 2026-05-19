@@ -79,13 +79,13 @@ export default async function DashboardPage() {
           ))}
         </div>
       ) : (
-        <div className="card-cta rounded-3xl border border-white/32 bg-black p-10 text-center" data-spring>
+        <div className="card-cta rounded-3xl border border-white/32 bg-black p-10 text-center">
           <ShoppingBag className="h-10 w-10 text-[#6B7280] mx-auto mb-4" />
           <h2 className="font-semibold text-[#F9FAFB] mb-2">No purchases yet</h2>
           <p className="text-sm text-[#9CA3AF] mb-6">
             Get the IT Helpdesk Automation Starter Kit and automate your most repetitive tasks.
           </p>
-          <Button asChild>
+          <Button asChild data-spring>
             <Link href="/checkout">Get the Kit $19</Link>
           </Button>
         </div>
