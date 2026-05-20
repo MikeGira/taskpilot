@@ -9,7 +9,7 @@ App is being renamed from **TaskPilot** to **PilotKit** at **pilotkit.dev**.
 
 **Why:** taskpilot.app is an existing NZ field service SaaS (B2B, has LinkedIn/Facebook/X/Instagram handles). SEO conflict, trademark risk, can't rank for "taskpilot" or own any handles. Must rename before LinkedIn launch.
 
-**How to apply:** Ask Mike if he has purchased pilotkit.dev. If yes, execute the rename immediately. LinkedIn launch is blocked until rename is live.
+**How to apply:** Mike is purchasing pilotkit.dev on 2026-05-27. If the session is on or after that date, confirm purchase and execute the rename immediately. LinkedIn launch is blocked until rename is live.
 
 ---
 
