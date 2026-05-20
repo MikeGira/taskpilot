@@ -59,7 +59,7 @@ The generator creates production-ready, import-ready n8n workflow JSON from a pl
 Trigger types: Webhook, Schedule/Cron, Manual, Email, Form Submission, Database Change.
 Complexity levels: Simple (2-4 nodes), Standard (5-10 nodes), Complex (10-15 nodes).
 30+ integrations including: Slack, Gmail, Notion, GitHub, Stripe, PostgreSQL, Supabase, HTTP Request, Claude AI, Google Sheets, Airtable, Discord, Microsoft Teams, Jira, Trello, HubSpot, Salesforce, Twilio, Telegram, WhatsApp, Linear, Asana, PagerDuty, Datadog, AWS S3, Dropbox, SendGrid, Mailchimp, RSS Feed.
-Features: asks clarifying questions before generating, shows a node diagram preview, includes credential references, adds error handling branches, provides step-by-step import instructions.
+Features: asks clarifying questions before generating, shows a node diagram preview, includes credential references, adds error handling branches, provides step-by-step import instructions. Download produces two files: workflow.json (importable n8n JSON) and a setup guide .md with credentials, import steps, and node overview.
 Rate limited to 10 workflows per hour per IP, no account required.
 Never generate workflow JSON yourself in chat. Always direct users to /workflow for workflow generation.
 
