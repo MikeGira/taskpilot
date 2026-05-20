@@ -1,10 +1,17 @@
 # TaskPilot — Session Progress
 
-_Last updated: 2026-04-28_
+_Last updated: 2026-05-20_
 
-## Current Status: DEPLOYED ✅
+## Current Status: LIVE & FIRST SALE ✅
 
 The app is live at **https://taskpilot-umber.vercel.app**
+
+### Milestone: First real purchase confirmed
+- Stripe switched from test mode → **live production** ✅
+- First real purchase made by Mike (founder) using a personal credit card ✅
+- Payment received in bank account ✅
+- Transaction visible in Stripe live dashboard ✅
+- Stripe live keys deployed to Vercel ✅
 
 ## What's Built & Working
 
@@ -19,15 +26,36 @@ The app is live at **https://taskpilot-umber.vercel.app**
 - [x] Newsletter signup + HMAC unsubscribe tokens
 
 ### AI Script Generator (/generate)
-- [x] 3-step wizard: OS → Environment → Task description
+- [x] 4-step wizard: OS → Environment → Tool → Task description
 - [x] OS options: Windows, Linux, macOS, Cross-Platform
 - [x] Environment options: On-Prem, Hybrid, Cloud, Multi-Cloud
-- [x] Cloud sub-selection: AWS, Azure, GCP, DigitalOcean, Linode
+- [x] Cloud sub-selection: AWS, Azure, GCP, DigitalOcean, Linode, Supabase
+- [x] 27 tool/language options across 10 categories
 - [x] Clarification loop (Claude asks 1 question if needed, then generates)
-- [x] Script download + copy to clipboard
+- [x] Download produces TWO files: script + setup guide .md
+- [x] Copy to clipboard
 - [x] Config notes ("Before you run" section)
 - [x] Rate limiting: 10/hr per IP
 - [x] Robust JSON parsing (handles markdown fences + literal newlines)
+
+### n8n Workflow Generator (/workflow)
+- [x] 3-step wizard: Trigger → Integrations → Description
+- [x] 6 trigger types: Webhook, Schedule, Manual, Email, Form, Database
+- [x] 30+ integrations (Slack, GitHub, Notion, Stripe, Claude AI, etc.)
+- [x] 3 complexity levels: Simple / Standard / Complex
+- [x] Node diagram preview
+- [x] Credentials required section
+- [x] Import instructions
+- [x] Download produces TWO files: workflow.json + setup guide .md
+- [x] Rate limiting: 10/hr per IP
+
+### Pilot AI Assistant (floating widget, all pages)
+- [x] Chat panel: answers platform questions, guides to generators
+- [x] Generate Script panel: inline 4-step script wizard
+- [x] Download produces TWO files matching main page behavior
+- [x] Prompt injection detection
+- [x] Rate limiting: 30/hr per IP
+- [x] Powered by Claude Haiku
 
 ### Feedback & Analytics (admin only)
 - [x] 👍/👎 feedback widget on result step
@@ -52,9 +80,11 @@ The app is live at **https://taskpilot-umber.vercel.app**
 - [ ] Feedback widget → email received by admin
 
 ### Not Yet Done
-- [ ] Switch Stripe from test mode → live mode before real sales
-- [ ] Custom domain (taskpilot.dev or similar)
-- [ ] Marketing: launch posts, Product Hunt, Reddit r/sysadmin
+- [x] Switch Stripe from test mode → live mode ✅ done 2026-05-13
+- [ ] App rename — "TaskPilot" name conflict with taskpilot.app (NZ field team mgmt). Name change required before LinkedIn launch.
+- [ ] Custom domain (after rename is decided)
+- [ ] Next.js 14 → 16 upgrade (plan documented in memory, all changes mapped)
+- [ ] Marketing: LinkedIn launch post (ready, waiting on rename), Product Hunt, Reddit r/sysadmin
 
 ## Recent Changes (this session)
 
