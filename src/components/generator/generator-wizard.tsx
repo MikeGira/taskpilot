@@ -10,7 +10,7 @@ import {
   RefreshCw, Loader2, AlertCircle, Check, ChevronRight, ThumbsUp, ThumbsDown,
   Code, Box, GitBranch, Settings, Shield, Key, Brain, Database, Activity, Package, Workflow, Network, Zap,
 } from 'lucide-react';
-import { cn, copyToClipboard, downloadTextFile, buildDownloadContent } from '@/lib/utils';
+import { cn, copyToClipboard, downloadTextFile, buildDownloadContent, buildScriptGuide } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -731,14 +731,17 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
             <Button
               onClick={() => {
                 if (!result.script) return;
-                downloadTextFile(buildDownloadContent(result), result.filename ?? 'script.txt');
+                const filename = result.filename ?? 'script.txt';
+                downloadTextFile(buildDownloadContent(result), filename);
+                const guideName = filename.replace(/\.[^.]+$/, '') + '-guide.md';
+                setTimeout(() => downloadTextFile(buildScriptGuide(result), guideName), 150);
               }}
               disabled={!result.script}
               variant="outline"
               className="flex-1 gap-2"
             >
               <Download className="h-4 w-4" />
-              Download {result.filename ?? 'script'}
+              Download (script + guide)
             </Button>
             <Button onClick={reset} variant="ghost" className="flex-1 gap-2">
               <RefreshCw className="h-4 w-4" />
