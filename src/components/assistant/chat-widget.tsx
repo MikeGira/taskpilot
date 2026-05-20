@@ -8,7 +8,7 @@ import {
   Settings, GitBranch, Workflow, Box, Shield, Key, Brain, Activity, Database, Network,
 } from 'lucide-react';
 import type { ElementType } from 'react';
-import { cn, copyToClipboard, downloadTextFile, buildDownloadContent } from '@/lib/utils';
+import { cn, copyToClipboard, downloadTextFile, buildDownloadContent, buildScriptGuide } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
@@ -294,7 +294,10 @@ export function ChatWidget() {
 
   function downloadScript() {
     if (!genResult?.script) return;
-    downloadTextFile(buildDownloadContent(genResult), genResult.filename ?? 'script.txt');
+    const filename = genResult.filename ?? 'script.txt';
+    downloadTextFile(buildDownloadContent(genResult), filename);
+    const guideName = filename.replace(/\.[^.]+$/, '') + '-guide.md';
+    setTimeout(() => downloadTextFile(buildScriptGuide(genResult), guideName), 150);
   }
 
   const showStarters = messages.length <= 1 && !chatLoading;
