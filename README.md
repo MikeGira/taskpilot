@@ -2,7 +2,7 @@
 
 > Put your IT on autopilot.
 
-IT helpdesk automation platform — sells production-ready PowerShell scripts for solo IT admins and small teams, plus a free AI-powered script generator.
+IT helpdesk automation platform for solo IT admins and small teams. Sell production-ready PowerShell scripts, generate custom automation scripts with AI, and build n8n workflows from plain English — all free to try, no account required.
 
 [![CI](https://github.com/MikeGira/taskpilot/actions/workflows/ci.yml/badge.svg)](https://github.com/MikeGira/taskpilot/actions/workflows/ci.yml)
 
@@ -15,7 +15,9 @@ IT helpdesk automation platform — sells production-ready PowerShell scripts fo
 | Product | Price | What it is |
 |---------|-------|-----------|
 | Starter Kit | $19 one-time | 9 production-ready PowerShell scripts + config.json + scheduler.xml + setup guide |
-| AI Generator | Free | Generate any IT automation script for any OS + environment — no account needed |
+| AI Script Generator | Free | Generate any IT automation script for any OS + tool — no account needed. Downloads script + setup guide. |
+| n8n Workflow Generator | Free | Describe your automation in plain English, get import-ready n8n workflow JSON + setup guide instantly. |
+| Pilot AI Assistant | Free | Built-in AI co-pilot — answers platform questions, helps write task descriptions, guides you to the right generator. |
 | Pro Generator | Coming soon | Unlimited generation + script history + download library |
 
 ---
@@ -24,7 +26,7 @@ IT helpdesk automation platform — sells production-ready PowerShell scripts fo
 
 | Layer | Technology | Notes |
 |-------|-----------|-------|
-| Framework | Next.js 14 App Router, TypeScript | Strict mode, @/* alias |
+| Framework | Next.js 14 App Router, TypeScript | Strict mode, @/* alias — upgrade to 16 pending |
 | UI | Tailwind CSS + shadcn/ui | True-black + colorful glows theme |
 | Auth | Supabase Auth (magic link + password) | @supabase/ssr, getUser() only |
 | Database | Supabase PostgreSQL | RLS on all tables |
