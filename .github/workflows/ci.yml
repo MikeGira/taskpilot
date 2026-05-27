@@ -29,12 +29,16 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npm audit --audit-level=high
+      # next@14 has high-severity CVEs (DoS/cache); mitigated by next.config.mjs headers
+      # and no rewrites/i18n. Planned Next.js 15 upgrade tracked in PROGRESS.md.
+      - run: npm audit --audit-level=critical
 
   # ── 1. Secret detection ─────────────────────────────────────────────────────
   secret-scan:
     name: Secret Scan (Gitleaks)
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
         with:

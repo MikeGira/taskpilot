@@ -10,3 +10,8 @@ paths = [
   "README.md",
   "CLAUDE.md",
 ]
+
+[[allowlists]]
+description = "Ignore placeholder secrets used as CI/CD env var examples — these are not real credentials"
+regexes = ["(?i)placeholder"]
+regexTarget = "secret"
