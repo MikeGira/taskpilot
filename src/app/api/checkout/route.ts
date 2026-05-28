@@ -1,15 +1,12 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createCheckoutSession } from '@/lib/stripe';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { CheckoutSchema } from '@/lib/validations';
-import { parseRequestBody } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit } from '@/lib/api-utils';
 
 export async function POST(request: Request) {
-  const ip = getClientIp(request);
-  if (!rateLimit(`checkout:${ip}`, 10, 60 * 60 * 1000).allowed) {
-    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
-  }
+  const rlResult = checkRateLimit(request, 'checkout', 10, 60 * 60 * 1000);
+  if (!rlResult.ok) return rlResult.response;
 
   const raw = await request.text();
   const bodyResult = parseRequestBody(raw, CheckoutSchema, 2048, 'Invalid product slug');

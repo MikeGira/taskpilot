@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
-import { parseRequestBody } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit } from '@/lib/api-utils';
 
 const MessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -95,16 +94,21 @@ const INJECTION_PATTERNS = [
   /new\s+prompt:/i,
 ];
 
+function normalizeText(text: string): string {
+  return text.normalize('NFKC').replace(/\s+/g, ' ');
+}
+
 function hasInjection(messages: { role: string; content: string }[]): boolean {
-  return messages.some(m => INJECTION_PATTERNS.some(p => p.test(m.content)));
+  return messages.some(m => {
+    const normalized = normalizeText(m.content);
+    return INJECTION_PATTERNS.some(p => p.test(normalized));
+  });
 }
 
 export async function POST(request: Request) {
-  const ip = getClientIp(request);
-  const limit = rateLimit(`assistant:${ip}`, 30, 60 * 60 * 1000);
-  if (!limit.allowed) {
-    return NextResponse.json({ error: 'Rate limit reached. Try again in an hour.' }, { status: 429 });
-  }
+  const rlResult = checkRateLimit(request, 'assistant', 30, 60 * 60 * 1000, 'Rate limit reached. Try again in an hour.');
+  if (!rlResult.ok) return rlResult.response;
+  const { ip } = rlResult;
 
   const raw = await request.text();
   const bodyResult = parseRequestBody(raw, RequestSchema, 16384);

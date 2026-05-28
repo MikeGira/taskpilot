@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { withRetry } from '@/lib/utils';
-import { parseRequestBody } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit } from '@/lib/api-utils';
 import { z } from 'zod';
 
 export const maxDuration = 300;
@@ -648,14 +647,9 @@ function buildUserMessage(taskDescription: string, clarificationAnswer?: string,
 }
 
 export async function POST(request: Request) {
-  const ip = getClientIp(request);
-  const limit = rateLimit(`generate:${ip}`, 10, 60 * 60 * 1000);
-  if (!limit.allowed) {
-    return NextResponse.json(
-      { error: 'Rate limit reached. You can generate up to 10 scripts per hour. Try again later.' },
-      { status: 429 }
-    );
-  }
+  const rlResult = checkRateLimit(request, 'generate', 10, 60 * 60 * 1000, 'Rate limit reached. You can generate up to 10 scripts per hour. Try again later.');
+  if (!rlResult.ok) return rlResult.response;
+  const { ip } = rlResult;
 
   const raw = await request.text();
   const bodyResult = parseRequestBody(raw, GenerateSchema, 8192);
