@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { withRetry } from '@/lib/utils';
+import { parseRequestBody } from '@/lib/api-utils';
 import { z } from 'zod';
 
 export const maxDuration = 300;
@@ -647,9 +648,6 @@ function buildUserMessage(taskDescription: string, clarificationAnswer?: string,
 }
 
 export async function POST(request: Request) {
-  const raw = await request.text();
-  if (raw.length > 8192) return NextResponse.json({ error: 'Request too large' }, { status: 413 });
-
   const ip = getClientIp(request);
   const limit = rateLimit(`generate:${ip}`, 10, 60 * 60 * 1000);
   if (!limit.allowed) {
@@ -659,17 +657,11 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: unknown;
-  try { body = JSON.parse(raw); } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
-  }
+  const raw = await request.text();
+  const bodyResult = parseRequestBody(raw, GenerateSchema, 8192);
+  if (!bodyResult.ok) return bodyResult.response;
 
-  const parsed = GenerateSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid request' }, { status: 400 });
-  }
-
-  const { os, environment, cloudProviders, tool, taskDescription, clarificationAnswer, previousQuestion } = parsed.data;
+  const { os, environment, cloudProviders, tool, taskDescription, clarificationAnswer, previousQuestion } = bodyResult.data;
 
   // Prompt injection guard on free-text fields
   const INJECTION_PATTERNS = [

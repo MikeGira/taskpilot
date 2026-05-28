@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { parseRequestBody } from '@/lib/api-utils';
 
 const MessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -95,9 +96,7 @@ const INJECTION_PATTERNS = [
 ];
 
 function hasInjection(messages: { role: string; content: string }[]): boolean {
-  return messages.some(m =>
-    m.role === 'user' && INJECTION_PATTERNS.some(p => p.test(m.content))
-  );
+  return messages.some(m => INJECTION_PATTERNS.some(p => p.test(m.content)));
 }
 
 export async function POST(request: Request) {
@@ -108,27 +107,16 @@ export async function POST(request: Request) {
   }
 
   const raw = await request.text();
-  if (raw.length > 16384) {
-    return NextResponse.json({ error: 'Request too large' }, { status: 413 });
-  }
-
-  let body: unknown;
-  try { body = JSON.parse(raw); } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
-  }
-
-  const parsed = RequestSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
-  }
+  const bodyResult = parseRequestBody(raw, RequestSchema, 16384);
+  if (!bodyResult.ok) return bodyResult.response;
 
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({ error: 'Assistant not configured' }, { status: 503 });
   }
 
-  if (hasInjection(parsed.data.messages)) {
+  if (hasInjection(bodyResult.data.messages)) {
     console.warn('[assistant] prompt injection attempt from', ip.slice(0, 8));
-    return NextResponse.json({ content: "I'm Pilot, here to help with TaskPilot and IT automation. What can I help you with?" });
+    return NextResponse.json({ error: 'Invalid input detected.' }, { status: 400 });
   }
 
   const controller = new AbortController();
@@ -147,7 +135,7 @@ export async function POST(request: Request) {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 800,
         system: SYSTEM,
-        messages: parsed.data.messages,
+        messages: bodyResult.data.messages,
       }),
     });
 
