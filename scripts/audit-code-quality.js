@@ -27,6 +27,10 @@ function readFile(filePath) {
   try { return fs.readFileSync(filePath, 'utf8'); } catch { return ''; }
 }
 
+function readExceptions() {
+  return readFile('.github/audit-exceptions.md');
+}
+
 function prepareContent(filePath) {
   const raw = readFile(filePath);
   if (!raw) return null;
@@ -36,6 +40,11 @@ function prepareContent(filePath) {
 }
 
 async function callClaude(bundle) {
+  const exceptions = readExceptions();
+  const exceptionsBlock = exceptions
+    ? `\nKNOWN DESIGN DECISIONS — do not flag anything listed here:\n${exceptions}\n`
+    : '';
+
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -49,13 +58,14 @@ async function callClaude(bundle) {
       messages: [{
         role: 'user',
         content: `You are a senior engineer reviewing production Next.js API route handlers (TypeScript).
-
+${exceptionsBlock}
 Identify ONLY real, actionable issues in these categories:
 - SIMPLIFICATION: Code more complex than needed (multiple lines reducible to fewer, roundabout logic)
 - SECURITY: Missing input validation, unsafe patterns, missing auth checks, Stripe webhook verification gaps
 - DUPLICATION: Repeated logic that should be consolidated into a shared helper
 
 Do NOT report: style preferences, missing docs, or theoretical issues with no practical exploit path.
+Do NOT report any issue that matches a known design decision listed above.
 
 FILES UNDER REVIEW:
 ${bundle}
