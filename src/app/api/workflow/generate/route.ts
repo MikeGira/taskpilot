@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { withRetry } from '@/lib/utils';
 import { z } from 'zod';
-import { containsInjection, ONE_HOUR_MS } from '@/lib/api-utils';
+import { containsInjection, ONE_HOUR_MS, checkRateLimit, parseRequestBody } from '@/lib/api-utils';
 
 export const maxDuration = 300;
 
@@ -198,29 +197,15 @@ function buildUserMessage(
 }
 
 export async function POST(request: Request) {
+  const rlResult = checkRateLimit(request, 'workflow', 10, ONE_HOUR_MS);
+  if (!rlResult.ok) return rlResult.response;
+  const { ip } = rlResult;
+
   const raw = await request.text();
-  if (raw.length > 8192) return NextResponse.json({ error: 'Request too large' }, { status: 413 });
+  const bodyResult = parseRequestBody(raw, WorkflowSchema, 8192);
+  if (!bodyResult.ok) return bodyResult.response;
 
-  const ip = getClientIp(request);
-  const limit = rateLimit(`workflow:${ip}`, 10, ONE_HOUR_MS);
-  if (!limit.allowed) {
-    return NextResponse.json(
-      { error: 'Rate limit reached. You can generate up to 10 workflows per hour. Try again later.' },
-      { status: 429 }
-    );
-  }
-
-  let body: unknown;
-  try { body = JSON.parse(raw); } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
-  }
-
-  const parsed = WorkflowSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Invalid request' }, { status: 400 });
-  }
-
-  const { triggerType, integrations, complexity, taskDescription, clarificationAnswer, previousQuestion } = parsed.data;
+  const { triggerType, integrations, complexity, taskDescription, clarificationAnswer, previousQuestion } = bodyResult.data;
 
   const freeTextInputs = [taskDescription, clarificationAnswer, previousQuestion].filter(Boolean) as string[];
   if (freeTextInputs.some(containsInjection)) {

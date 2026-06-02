@@ -704,14 +704,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unexpected response format. Please try again.' }, { status: 502 });
     }
 
-    // Post-generation output filter — warn if script contains patterns that suggest hardcoded secrets
+    // Post-generation output filter — warn if script contains patterns that suggest hardcoded secrets.
+    // Belt-and-suspenders: system prompt already instructs Claude to use env vars, but this catches
+    // edge cases where a placeholder looks like a real credential.
     if (result.script) {
-      const DANGEROUS = [
-        /password\s*=\s*["'][^"']{4,}/i,
-        /secret\s*=\s*["'][^"']{4,}/i,
+      const CREDENTIAL_PATTERNS = [
+        /(?:password|passwd|pwd)\s*=\s*["'][^"'$\s]{4,}/i,
+        /(?:secret|api[_-]?key|access[_-]?key|private[_-]?key|auth[_-]?token)\s*=\s*["'][^"'$\s]{4,}/i,
+        /(?:mysql|postgresql?|mongodb|redis|amqp):\/\/[^:\s]+:[^@\s]{4,}@/i,
       ];
-      if (DANGEROUS.some(p => p.test(result.script!))) {
-        result.explanation = (result.explanation ?? '') + '\n\n⚠️ Review Note: This script may contain placeholder credentials. Replace any hardcoded values with environment variables or a secrets manager before deploying.';
+      if (CREDENTIAL_PATTERNS.some(p => p.test(result.script!))) {
+        result.explanation = (result.explanation ?? '') + '\n\nReview note: This script may contain placeholder credentials. Replace any hardcoded values with environment variables or a secrets manager before deploying.';
       }
     }
 
