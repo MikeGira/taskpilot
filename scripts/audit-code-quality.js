@@ -17,10 +17,11 @@ if (!ANTHROPIC_KEY) {
 // Security-critical routes get reviewed every run
 const PRIORITY_FILES = [
   'src/app/api/checkout/route.ts',
-  'src/app/api/webhook/route.ts',
+  'src/app/api/webhook/stripe/route.ts',
   'src/app/api/generate/route.ts',
+  'src/app/api/workflow/generate/route.ts',
   'src/app/api/assistant/route.ts',
-  'src/app/api/account/route.ts',
+  'src/app/api/account/delete/route.ts',
 ];
 
 function readFile(filePath) {
@@ -36,7 +37,14 @@ function prepareContent(filePath) {
   if (!raw) return null;
   // Strip large string literals (system prompts, long templates) to keep token cost low
   const stripped = raw.replace(/`[\s\S]{400,}?`/g, '`/* ...long string omitted... */`');
-  return stripped.split('\n').slice(0, 200).join('\n');
+  const lines = stripped.split('\n');
+  // For large files always show both the top (imports/schemas) AND the bottom
+  // (request handlers). A hard head-only truncation causes false positives because
+  // Next.js POST handlers appear at the end of route files, not the beginning.
+  if (lines.length <= 300) return lines.join('\n');
+  const head = lines.slice(0, 150);
+  const tail = lines.slice(-150);
+  return [...head, '', '/* ...middle section omitted for brevity... */', '', ...tail].join('\n');
 }
 
 async function callClaude(bundle) {

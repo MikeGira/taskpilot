@@ -11,5 +11,14 @@ The /generate script generator is a free, public tool. Per-IP rate limiting (10 
 ## assistant/route.ts: Regex-based injection detection is best-effort by design
 The `normalizeText` + pattern-matching approach is documented as a best-effort filter. The upstream LLM (claude-haiku) has its own system-prompt constraints as the primary defense. The regex layer catches obvious attempts. Multi-message context analysis is out of scope for this tier.
 
-## All three routes: checkRateLimit + parseRequestBody pattern
+## All routes: checkRateLimit + parseRequestBody pattern
 The two-call pattern (`checkRateLimit` → `parseRequestBody`) in each route is the shared abstraction already in place via `src/lib/api-utils.ts`. Each route intentionally controls its own rate-limit key, window, and error message — further wrapping would lose that configurability for no practical gain.
+
+## generate/route.ts and workflow/generate/route.ts: injection detection IS present
+Both routes call `containsInjection()` (imported from `src/lib/api-utils.ts`) on all free-text user inputs (`taskDescription`, `clarificationAnswer`, `previousQuestion`) before any LLM call. The shared `containsInjection` applies NFKC normalization via `normalizeText` and checks 8 regex patterns including `new\s+prompt:`. Do not flag these routes for missing injection validation.
+
+## generate/route.ts: buildToolSection() handles per-tool prompt customization
+`buildToolSection(tool)` is a dedicated function (~460 lines) with a switch statement covering 20+ tools. It is injected into the system prompt via `buildSystemPrompt()`. This IS the recommended "data structure with conditional inclusion" pattern — do not flag it as missing tool-specific customization.
+
+## generate/route.ts: large file — POST handler is near the end
+The file is intentionally large because it contains all tool-specific prompt engineering inline. The POST handler starts near line 645. Do not flag structure visible only in the first 200 lines as representing the complete implementation.
