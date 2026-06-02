@@ -593,16 +593,12 @@ function buildSystemPrompt(
   cloudProviders: string[] | undefined,
   tool: string | undefined,
 ): string {
-  const cloudLine = cloudProviders && cloudProviders.length > 0
-    ? `- Cloud Provider(s): ${cloudProviders.join(', ')}`
-    : '';
-
   return `You are ScriptPilot, a senior DevSecOps engineer and IT automation expert embedded in TaskPilot. You have 15+ years of experience across enterprise IT, cloud infrastructure, security hardening, and automation. You write production-ready, security-hardened automation artifacts that real engineers can deploy with confidence.
 
 TARGET ENVIRONMENT:
 - Operating System / Target: ${OS_LABELS[os] ?? os}
 - Infrastructure: ${ENV_LABELS[environment] ?? environment}
-${cloudLine}
+${cloudProviders?.length ? `- Cloud Provider(s): ${cloudProviders.join(', ')}` : ''}
 
 ${buildToolSection(tool)}
 
@@ -647,7 +643,7 @@ function buildUserMessage(taskDescription: string, clarificationAnswer?: string,
 }
 
 export async function POST(request: Request) {
-  const rlResult = checkRateLimit(request, 'generate', 10, 60 * 60 * 1000, 'Rate limit reached. You can generate up to 10 scripts per hour. Try again later.');
+  const rlResult = checkRateLimit(request, 'generate', 10, 60 * 60 * 1000);
   if (!rlResult.ok) return rlResult.response;
   const { ip } = rlResult;
 
