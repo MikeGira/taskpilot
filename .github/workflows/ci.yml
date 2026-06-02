@@ -29,8 +29,10 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      # next@14 has high-severity CVEs (DoS/cache); mitigated by next.config.mjs headers
-      # and no rewrites/i18n. Planned Next.js 15 upgrade tracked in PROGRESS.md.
+      # next@14.2.35 has HIGH CVEs in next, eslint-config-next, glob, and postcss
+      # (all transitive). No 14.x patch available; only fix is next@15+ (deferred).
+      # Mitigated by: no rewrites/i18n config, security headers in next.config.mjs.
+      # Failing only on CRITICAL keeps CI signal meaningful while deferring the upgrade.
       - run: npm audit --audit-level=critical
 
   # ── 1. Secret detection ─────────────────────────────────────────────────────
