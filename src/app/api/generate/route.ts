@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { withRetry } from '@/lib/utils';
-import { parseRequestBody, checkRateLimit } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, containsInjection } from '@/lib/api-utils';
 import { z } from 'zod';
 
 export const maxDuration = 300;
@@ -653,18 +653,8 @@ export async function POST(request: Request) {
 
   const { os, environment, cloudProviders, tool, taskDescription, clarificationAnswer, previousQuestion } = bodyResult.data;
 
-  // Prompt injection guard on free-text fields
-  const INJECTION_PATTERNS = [
-    /ignore\s+(all\s+|previous\s+|above\s+|prior\s+)?instructions/i,
-    /\[SYSTEM\]/i,
-    /you\s+are\s+now\s+/i,
-    /<\|im_start\|>/i,
-    /forget\s+(everything|all|your\s+instructions)/i,
-    /pretend\s+(you\s+are|to\s+be)/i,
-    /disregard\s+(your\s+|all\s+)?previous/i,
-  ];
   const freeTextInputs = [taskDescription, clarificationAnswer, previousQuestion].filter(Boolean) as string[];
-  if (freeTextInputs.some(t => INJECTION_PATTERNS.some(p => p.test(t)))) {
+  if (freeTextInputs.some(containsInjection)) {
     console.warn('[generate] prompt injection attempt from', ip.slice(0, 8));
     return NextResponse.json({ error: 'Invalid input detected.' }, { status: 400 });
   }

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { withRetry } from '@/lib/utils';
 import { z } from 'zod';
+import { containsInjection } from '@/lib/api-utils';
 
 export const maxDuration = 300;
 
@@ -88,16 +89,12 @@ function buildSystemPrompt(
   integrations: string[],
   complexity: string,
 ): string {
-  const integrationLine = integrations.length > 0
-    ? `- Required integrations: ${integrations.join(', ')}`
-    : '';
-
   return `You are WorkflowPilot, a senior n8n workflow architect embedded in TaskPilot. You build production-ready, importable n8n workflow JSON for IT admins and DevOps engineers. You have deep knowledge of n8n's node library, connection schema, and best practices.
 
 TARGET WORKFLOW:
 - Trigger type: ${TRIGGER_LABELS[triggerType] ?? triggerType}
 - Complexity: ${COMPLEXITY_LABELS[complexity] ?? complexity}
-${integrationLine}
+${integrations.length > 0 ? `- Required integrations: ${integrations.join(', ')}` : ''}
 
 AVAILABLE NODE TYPES (use ONLY these real n8n node type strings):
 
@@ -224,6 +221,12 @@ export async function POST(request: Request) {
   }
 
   const { triggerType, integrations, complexity, taskDescription, clarificationAnswer, previousQuestion } = parsed.data;
+
+  const freeTextInputs = [taskDescription, clarificationAnswer, previousQuestion].filter(Boolean) as string[];
+  if (freeTextInputs.some(containsInjection)) {
+    console.warn('[workflow] prompt injection attempt from', ip.slice(0, 8));
+    return NextResponse.json({ error: 'Invalid input detected.' }, { status: 400 });
+  }
 
   if (!process.env.ANTHROPIC_API_KEY) {
     console.error('[workflow/generate] ANTHROPIC_API_KEY not configured');

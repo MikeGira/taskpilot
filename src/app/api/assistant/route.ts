@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { parseRequestBody, checkRateLimit } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, INJECTION_PATTERNS, normalizeText } from '@/lib/api-utils';
 
 const MessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -82,21 +82,6 @@ Setting up and configuring the scripts (config.json fields, Active Directory set
 
 WHAT YOU CANNOT DO:
 Access external systems, execute code, or see the user's IT environment. Process payments, modify accounts, or access any server or log data. Never tell users to "contact the team" or "contact support" for script generation — direct them to the generator instead.`;
-
-const INJECTION_PATTERNS = [
-  /ignore\s+(all\s+|previous\s+|above\s+|prior\s+)?instructions/i,
-  /\[SYSTEM\]/i,
-  /you\s+are\s+now\s+/i,
-  /<\|im_start\|>/i,
-  /forget\s+(everything|all|your\s+instructions)/i,
-  /pretend\s+(you\s+are|to\s+be)/i,
-  /disregard\s+(your\s+|all\s+)?previous/i,
-  /new\s+prompt:/i,
-];
-
-function normalizeText(text: string): string {
-  return text.normalize('NFKC').replace(/\s+/g, ' ');
-}
 
 function hasInjection(messages: { role: string; content: string }[]): boolean {
   return messages.some(m => {

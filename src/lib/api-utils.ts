@@ -46,3 +46,22 @@ export function checkRateLimit(
   }
   return { ok: true, ip };
 }
+
+export const INJECTION_PATTERNS = [
+  /ignore\s+(all\s+|previous\s+|above\s+|prior\s+)?instructions/i,
+  /\[SYSTEM\]/i,
+  /you\s+are\s+now\s+/i,
+  /<\|im_start\|>/i,
+  /forget\s+(everything|all|your\s+instructions)/i,
+  /pretend\s+(you\s+are|to\s+be)/i,
+  /disregard\s+(your\s+|all\s+)?previous/i,
+  /new\s+prompt:/i,
+];
+
+export function normalizeText(text: string): string {
+  return text.normalize('NFKC').replace(/\s+/g, ' ');
+}
+
+export function containsInjection(text: string): boolean {
+  return INJECTION_PATTERNS.some(p => p.test(normalizeText(text)));
+}
