@@ -3,13 +3,14 @@ import { createClient } from '@/lib/supabase/server';
 import { getAdminClient } from '@/lib/supabase/admin';
 import { getStripe } from '@/lib/stripe';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { ONE_HOUR_MS } from '@/lib/api-utils';
 
 export async function GET(
   request: Request,
   { params }: { params: { product: string } }
 ) {
   const ip = getClientIp(request);
-  const { allowed } = rateLimit(`download:${ip}`, 10, 3600000);
+  const { allowed } = rateLimit(`download:${ip}`, 10, ONE_HOUR_MS);
   if (!allowed) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
