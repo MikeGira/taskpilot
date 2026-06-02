@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { parseRequestBody, checkRateLimit, INJECTION_PATTERNS, normalizeText } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, INJECTION_PATTERNS, normalizeText, ONE_HOUR_MS } from '@/lib/api-utils';
 
 const MessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -91,7 +91,7 @@ function hasInjection(messages: { role: string; content: string }[]): boolean {
 }
 
 export async function POST(request: Request) {
-  const rlResult = checkRateLimit(request, 'assistant', 30, 60 * 60 * 1000, 'Rate limit reached. Try again in an hour.');
+  const rlResult = checkRateLimit(request, 'assistant', 30, ONE_HOUR_MS, 'Rate limit reached. Try again in an hour.');
   if (!rlResult.ok) return rlResult.response;
   const { ip } = rlResult;
 

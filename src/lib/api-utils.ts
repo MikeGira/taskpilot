@@ -47,6 +47,8 @@ export function checkRateLimit(
   return { ok: true, ip };
 }
 
+export const ONE_HOUR_MS = 60 * 60 * 1000;
+
 export const INJECTION_PATTERNS = [
   /ignore\s+(all\s+|previous\s+|above\s+|prior\s+)?instructions/i,
   /\[SYSTEM\]/i,

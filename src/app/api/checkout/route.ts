@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createCheckoutSession } from '@/lib/stripe';
 import { CheckoutSchema } from '@/lib/validations';
-import { parseRequestBody, checkRateLimit } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, ONE_HOUR_MS } from '@/lib/api-utils';
 
 export async function POST(request: Request) {
-  const rlResult = checkRateLimit(request, 'checkout', 10, 60 * 60 * 1000);
+  const rlResult = checkRateLimit(request, 'checkout', 10, ONE_HOUR_MS);
   if (!rlResult.ok) return rlResult.response;
 
   const raw = await request.text();

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { withRetry } from '@/lib/utils';
 import { z } from 'zod';
-import { containsInjection } from '@/lib/api-utils';
+import { containsInjection, ONE_HOUR_MS } from '@/lib/api-utils';
 
 export const maxDuration = 300;
 
@@ -202,7 +202,7 @@ export async function POST(request: Request) {
   if (raw.length > 8192) return NextResponse.json({ error: 'Request too large' }, { status: 413 });
 
   const ip = getClientIp(request);
-  const limit = rateLimit(`workflow:${ip}`, 10, 60 * 60 * 1000);
+  const limit = rateLimit(`workflow:${ip}`, 10, ONE_HOUR_MS);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: 'Rate limit reached. You can generate up to 10 workflows per hour. Try again later.' },

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { withRetry } from '@/lib/utils';
-import { parseRequestBody, checkRateLimit, containsInjection } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, containsInjection, ONE_HOUR_MS } from '@/lib/api-utils';
 import { z } from 'zod';
 
 export const maxDuration = 300;
@@ -643,7 +643,7 @@ function buildUserMessage(taskDescription: string, clarificationAnswer?: string,
 }
 
 export async function POST(request: Request) {
-  const rlResult = checkRateLimit(request, 'generate', 10, 60 * 60 * 1000);
+  const rlResult = checkRateLimit(request, 'generate', 10, ONE_HOUR_MS);
   if (!rlResult.ok) return rlResult.response;
   const { ip } = rlResult;
 

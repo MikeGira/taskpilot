@@ -4,6 +4,7 @@ import { createHash } from 'crypto';
 import { getAdminClient } from '@/lib/supabase/admin';
 import { getResend, FROM } from '@/lib/resend';
 import { getClientIp, rateLimit } from '@/lib/rate-limit';
+import { ONE_HOUR_MS } from '@/lib/api-utils';
 
 const FeedbackSchema = z.object({
   os: z.enum(['windows', 'linux', 'macos', 'cross-platform']),
@@ -22,7 +23,7 @@ const ENV_LABELS: Record<string, string> = {
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
-  const limit = rateLimit(`feedback:${ip}`, 5, 60 * 60 * 1000);
+  const limit = rateLimit(`feedback:${ip}`, 5, ONE_HOUR_MS);
   if (!limit.allowed) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
