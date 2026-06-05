@@ -1,0 +1,80 @@
+name: CodeQL Visibility Guard
+
+# Fires the moment the repo is changed from public → private.
+# Monthly schedule is a safety net in case the event is missed.
+on:
+  repository:
+    types: [privatized]
+  schedule:
+    - cron: '0 10 1 * *'  # 1st of every month, 10am UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  guard:
+    name: Disable CodeQL if repo is private
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check repo visibility
+        id: vis
+        run: |
+          VIS=$(gh api repos/${{ github.repository }} --jq '.visibility')
+          echo "visibility=$VIS" >> $GITHUB_OUTPUT
+          echo "Repo is: $VIS"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Repo is public — nothing to do
+        if: steps.vis.outputs.visibility == 'public'
+        run: echo "Repo is public. CodeQL stays enabled."
+
+      - uses: actions/checkout@v4
+        if: steps.vis.outputs.visibility == 'private'
+
+      - name: Check if CodeQL already disabled
+        if: steps.vis.outputs.visibility == 'private'
+        id: already
+        run: |
+          if grep -q "if: false" .github/workflows/ci.yml; then
+            echo "disabled=true" >> $GITHUB_OUTPUT
+          else
+            echo "disabled=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Already disabled — nothing to do
+        if: steps.vis.outputs.visibility == 'private' && steps.already.outputs.disabled == 'true'
+        run: echo "CodeQL already disabled in ci.yml."
+
+      - name: Open PR to disable CodeQL
+        if: steps.vis.outputs.visibility == 'private' && steps.already.outputs.disabled == 'false'
+        run: |
+          BRANCH="chore/disable-codeql-repo-is-private"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b $BRANCH
+
+          # Insert `if: false` on the line after `name: CodeQL Analysis`
+          sed -i '/    name: CodeQL Analysis/a\    if: false' .github/workflows/ci.yml
+
+          git add .github/workflows/ci.yml
+          git commit -m "chore: disable CodeQL — repo changed to private
+
+GitHub Advanced Security is required for CodeQL on private repos.
+Re-enable by removing \`if: false\` when GitHub Pro is active.
+
+[skip ci]"
+          git push origin $BRANCH
+
+          gh pr create \
+            --title "chore: disable CodeQL — repo is now private" \
+            --body "Repo visibility was changed to private. CodeQL requires GitHub Advanced Security on private repos (paid).
+
+This PR adds \`if: false\` to the CodeQL job in \`.github/workflows/ci.yml\` to prevent failed scans.
+
+**To re-enable later:** Remove \`if: false\` from the CodeQL job when GitHub Pro / Advanced Security is active." \
+            --base main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
