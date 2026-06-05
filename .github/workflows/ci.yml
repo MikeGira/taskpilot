@@ -50,11 +50,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # ── 2. Static analysis ──────────────────────────────────────────────────────
-  # Disabled: CodeQL requires GitHub Advanced Security on private repos (paid).
-  # Re-enable by removing `if: false` when upgrading to GitHub Pro.
+  # CodeQL is free on public repos. Re-disable (add `if: false`) if/when repo goes private
+  # and GitHub Advanced Security is not available.
   codeql:
     name: CodeQL Analysis
-    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

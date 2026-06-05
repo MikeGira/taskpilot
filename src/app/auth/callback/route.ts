@@ -4,9 +4,10 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const code       = searchParams.get('code');
-  const token_hash = searchParams.get('token_hash');
-  const rawType    = searchParams.get('type');
+  const code        = searchParams.get('code');
+  const rawTokenHash = searchParams.get('token_hash');
+  const token_hash   = rawTokenHash && /^[A-Za-z0-9_-]{20,500}$/.test(rawTokenHash) ? rawTokenHash : null;
+  const rawType      = searchParams.get('type');
   const VALID_OTP_TYPES: readonly string[] = ['signup', 'magiclink', 'recovery', 'email_change', 'invite', 'email'];
   const type: EmailOtpType | null = rawType !== null && VALID_OTP_TYPES.includes(rawType)
     ? rawType as EmailOtpType
