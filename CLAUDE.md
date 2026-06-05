@@ -29,6 +29,21 @@ npm run lint      # ESLint
 git push          # Triggers Vercel auto-deploy
 ```
 
+## Local Dev Loop Checks
+
+Use `/loop` in Claude Code to run a check repeatedly while you work. Stop by sending any message.
+
+```bash
+# TypeScript errors in real-time (~3s per run, fastest signal)
+/loop 30s npm run typecheck
+
+# Lint violations during refactoring
+/loop 45s npm run lint
+
+# Dev server liveness while working on API routes
+/loop 60s curl -s -o /dev/null -w "HTTP %{http_code}\n" http://localhost:3000
+```
+
 ## Environment Variables (all in Vercel dashboard + local .env)
 ```
 NEXT_PUBLIC_SITE_URL          # https://taskpilot-umber.vercel.app
