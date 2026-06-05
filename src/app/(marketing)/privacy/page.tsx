@@ -3,8 +3,6 @@ import { Footer } from '@/components/layout/footer';
 
 export const metadata = { title: 'Privacy Policy' };
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://taskpilot.vercel.app';
-
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#000000]">

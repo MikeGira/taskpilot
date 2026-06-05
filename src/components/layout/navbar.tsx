@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Terminal, Menu, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import type { User } from '@supabase/supabase-js';
 
 const NAV_LINKS = [

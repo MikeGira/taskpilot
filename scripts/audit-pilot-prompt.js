@@ -16,13 +16,6 @@ function readFile(filePath) {
   try { return fs.readFileSync(filePath, 'utf8'); } catch { return ''; }
 }
 
-function extractBetween(text, startStr, endStr) {
-  const start = text.indexOf(startStr);
-  if (start === -1) return '';
-  const end = text.indexOf(endStr, start + startStr.length);
-  return end === -1 ? text.slice(start) : text.slice(start, end + endStr.length);
-}
-
 function extractFeatures() {
   const features = [];
 

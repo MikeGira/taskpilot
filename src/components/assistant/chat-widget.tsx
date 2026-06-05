@@ -77,7 +77,6 @@ const TOOL_CATEGORIES_PILOT: { label: string; tools: { id: string; label: string
     { id: 'network-automation', label: 'Network Auto',      icon: Network   },
   ]},
 ];
-const TOOL_OPTS = TOOL_CATEGORIES_PILOT.flatMap((c) => c.tools);
 const CLOUD_PROVIDER_OPTS = [
   { id: 'AWS',          label: 'AWS'          },
   { id: 'Azure',        label: 'Azure'        },

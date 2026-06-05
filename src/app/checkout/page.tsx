@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { createCheckoutSession } from '@/lib/stripe';
-import { Loader2 } from 'lucide-react';
 
 export const metadata = { title: 'Checkout' };
 

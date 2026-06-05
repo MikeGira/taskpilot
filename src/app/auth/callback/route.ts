@@ -6,7 +6,11 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code       = searchParams.get('code');
   const token_hash = searchParams.get('token_hash');
-  const type       = searchParams.get('type') as EmailOtpType | null;
+  const rawType    = searchParams.get('type');
+  const VALID_OTP_TYPES: readonly string[] = ['signup', 'magiclink', 'recovery', 'email_change', 'invite', 'email'];
+  const type: EmailOtpType | null = rawType !== null && VALID_OTP_TYPES.includes(rawType)
+    ? rawType as EmailOtpType
+    : null;
   const next       = searchParams.get('next') ?? '/dashboard';
   const redirectTarget = next.startsWith('/') ? next : '/dashboard';
 
