@@ -86,4 +86,4 @@ TaskPilot server ◀──(Stripe webhook: event metadata, NO card data; signatu
 
 ## 6. Open items (tracked)
 
-- Publish a **Privacy Policy** and **Terms of Service** as live routes (`/privacy`, `/terms`) with footer links — required because TaskPilot holds personal data and takes payment.
+- _None._ The **Privacy Policy** (`/privacy`) and **Terms of Service** (`/terms`) are published as live routes with footer links, aligned to the data flows, subprocessors, retention, and SAQ A status recorded above. Legal text is to be reviewed by counsel before being relied upon (templates are not legal advice).
