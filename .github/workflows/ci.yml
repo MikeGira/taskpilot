@@ -35,6 +35,23 @@ jobs:
       # Failing only on CRITICAL keeps CI signal meaningful while deferring the upgrade.
       - run: npm audit --audit-level=critical
 
+  # ── 0b. Workflow validation ─────────────────────────────────────────────────
+  # Catches invalid workflow YAML (bad indentation, unknown trigger events, broken
+  # expressions) on the PR — before it reaches main as a silent 0-second startup failure.
+  workflow-lint:
+    name: Workflow Lint (actionlint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run actionlint
+        env:
+          ACTIONLINT_VERSION: '1.7.12'
+        run: |
+          curl -fsSL "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" -o actionlint.tar.gz
+          tar -xzf actionlint.tar.gz actionlint
+          # shellcheck disabled to scope this gate to workflow syntax/schema validation.
+          ./actionlint -color -shellcheck=
+
   # ── 1. Secret detection ─────────────────────────────────────────────────────
   secret-scan:
     name: Secret Scan (Gitleaks)

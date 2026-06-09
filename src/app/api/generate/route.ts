@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { withRetry } from '@/lib/utils';
-import { parseRequestBody, checkRateLimit, containsInjection, ONE_HOUR_MS } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, containsInjection, buildUserMessage, ONE_HOUR_MS } from '@/lib/api-utils';
 import { z } from 'zod';
 
 export const maxDuration = 300;
@@ -635,13 +635,6 @@ If clarification needed:
 {"needsClarification":true,"question":"One specific question","script":null,"filename":null,"language":null,"title":null,"explanation":null,"configNotes":null}`;
 }
 
-function buildUserMessage(taskDescription: string, clarificationAnswer?: string, previousQuestion?: string): string {
-  if (clarificationAnswer && previousQuestion) {
-    return `Original request: ${taskDescription}\n\nYou asked: ${previousQuestion}\nMy answer: ${clarificationAnswer}\n\nNow please generate the script.`;
-  }
-  return taskDescription;
-}
-
 export async function POST(request: Request) {
   const rlResult = checkRateLimit(request, 'generate', 10, ONE_HOUR_MS);
   if (!rlResult.ok) return rlResult.response;
@@ -665,7 +658,7 @@ export async function POST(request: Request) {
   }
 
   const systemPrompt = buildSystemPrompt(os, environment, cloudProviders, tool);
-  const userMessage = buildUserMessage(taskDescription, clarificationAnswer, previousQuestion);
+  const userMessage = buildUserMessage(taskDescription, 'Now please generate the script.', clarificationAnswer, previousQuestion);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);

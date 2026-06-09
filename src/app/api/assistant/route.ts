@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { parseRequestBody, checkRateLimit, INJECTION_PATTERNS, normalizeText, ONE_HOUR_MS } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, containsInjection, ONE_HOUR_MS } from '@/lib/api-utils';
 
 const MessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -83,13 +83,6 @@ Setting up and configuring the scripts (config.json fields, Active Directory set
 WHAT YOU CANNOT DO:
 Access external systems, execute code, or see the user's IT environment. Process payments, modify accounts, or access any server or log data. Never tell users to "contact the team" or "contact support" for script generation — direct them to the generator instead.`;
 
-function hasInjection(messages: { role: string; content: string }[]): boolean {
-  return messages.some(m => {
-    const normalized = normalizeText(m.content);
-    return INJECTION_PATTERNS.some(p => p.test(normalized));
-  });
-}
-
 export async function POST(request: Request) {
   const rlResult = checkRateLimit(request, 'assistant', 30, ONE_HOUR_MS, 'Rate limit reached. Try again in an hour.');
   if (!rlResult.ok) return rlResult.response;
@@ -103,7 +96,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Assistant not configured' }, { status: 503 });
   }
 
-  if (hasInjection(bodyResult.data.messages)) {
+  if (bodyResult.data.messages.some(m => containsInjection(m.content))) {
     console.warn('[assistant] prompt injection attempt from', ip.slice(0, 8));
     return NextResponse.json({ error: 'Invalid input detected.' }, { status: 400 });
   }

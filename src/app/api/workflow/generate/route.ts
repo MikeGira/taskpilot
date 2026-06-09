@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { withRetry } from '@/lib/utils';
 import { z } from 'zod';
-import { containsInjection, ONE_HOUR_MS, checkRateLimit, parseRequestBody } from '@/lib/api-utils';
+import { containsInjection, buildUserMessage, ONE_HOUR_MS, checkRateLimit, parseRequestBody } from '@/lib/api-utils';
 
 export const maxDuration = 300;
 
@@ -185,17 +185,6 @@ If clarification needed:
 {"needsClarification":true,"question":"One specific question","workflow":null,"workflowName":null,"nodeCount":null,"description":null,"credentials":null,"importInstructions":null}`;
 }
 
-function buildUserMessage(
-  taskDescription: string,
-  clarificationAnswer?: string,
-  previousQuestion?: string,
-): string {
-  if (clarificationAnswer && previousQuestion) {
-    return `Original request: ${taskDescription}\n\nYou asked: ${previousQuestion}\nMy answer: ${clarificationAnswer}\n\nNow please generate the n8n workflow.`;
-  }
-  return taskDescription;
-}
-
 export async function POST(request: Request) {
   const rlResult = checkRateLimit(request, 'workflow', 10, ONE_HOUR_MS);
   if (!rlResult.ok) return rlResult.response;
@@ -219,7 +208,7 @@ export async function POST(request: Request) {
   }
 
   const systemPrompt = buildSystemPrompt(triggerType, integrations, complexity);
-  const userMessage = buildUserMessage(taskDescription, clarificationAnswer, previousQuestion);
+  const userMessage = buildUserMessage(taskDescription, 'Now please generate the n8n workflow.', clarificationAnswer, previousQuestion);
 
   try {
     const anthropicResponse = await withRetry(() =>

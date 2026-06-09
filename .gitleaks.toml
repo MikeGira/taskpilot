@@ -1,17 +1,25 @@
 [extend]
 useDefault = true
 
+# Allowlist 1 — example and documentation files hold placeholder values, not real secrets.
+# NOTE: gitleaks `paths` entries are regexes, NOT globs. `*.example` is an invalid regex
+# (missing argument to `*`) and panics on gitleaks ≥ 8.30; use an anchored regex instead.
 [[allowlists]]
 description = "Ignore placeholder values in example and documentation files"
 paths = [
-  ".env.example",
-  "*.example",
-  "setup-guide.md",
-  "README.md",
-  "CLAUDE.md",
+  '''\.env\.example$''',
+  '''.*\.example$''',
+  '''setup-guide\.md$''',
+  '''README\.md$''',
+  '''CLAUDE\.md$''',
 ]
 
+# Allowlist 2 — CI build steps inject fake JWTs that literally end in ".placeholder".
+# gitleaks captures only the high-entropy token as the "secret" (excluding the
+# ".placeholder" suffix), so a regexTarget="secret" rule never sees the word.
+# Target the full match so the placeholder stub is recognised; a real leak — which
+# would not contain "placeholder" on its match — is still caught.
 [[allowlists]]
-description = "Ignore placeholder secrets used as CI/CD env var examples — these are not real credentials"
-regexes = ["(?i)placeholder"]
-regexTarget = "secret"
+description = "Ignore placeholder env values used as CI build-step stubs — not real credentials"
+regexTarget = "match"
+regexes = ['''(?i)placeholder''']

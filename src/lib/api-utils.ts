@@ -67,3 +67,15 @@ export function normalizeText(text: string): string {
 export function containsInjection(text: string): boolean {
   return INJECTION_PATTERNS.some(p => p.test(normalizeText(text)));
 }
+
+export function buildUserMessage(
+  taskDescription: string,
+  generateInstruction: string,
+  clarificationAnswer?: string,
+  previousQuestion?: string,
+): string {
+  if (clarificationAnswer && previousQuestion) {
+    return `Original request: ${taskDescription}\n\nYou asked: ${previousQuestion}\nMy answer: ${clarificationAnswer}\n\n${generateInstruction}`;
+  }
+  return taskDescription;
+}
