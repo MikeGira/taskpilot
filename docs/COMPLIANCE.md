@@ -48,6 +48,8 @@ TaskPilot qualifies for **PCI DSS v4.0.1 SAQ A** (the lightest validation):
 - **No raw card / CVV / expiry input field appears on any TaskPilot-owned page.** Any future feature proposing direct card handling is rejected and routed through Stripe (SDLC gate).
 - Payment-page integrity / script-attack protection is inherited from Stripe's PCI attestation. v4.0.1 SAQ A removed merchant requirements 6.4.3 and 11.6.1 (effective 2025-03-31) for hosted/iframe flows.
 
+**Validation evidence (Stripe Dashboard → Settings → Compliance and documents → My PCI compliance, verified 2026-06-09):** Stripe assessed this account as **PCI Level 4**, recommended documentation **SAQ A**, status **"No action needed — not required to submit PCI compliance information."** For a Level 4 merchant on a fully Stripe-hosted integration, Stripe manages the attestation and requires no merchant SAQ A submission; the dashboard determination is the standing evidence. Re-confirm annually or whenever the integration changes.
+
 **Cardholder data flow:**
 ```
 User browser ──(card entered directly into Stripe-hosted Checkout)──▶ Stripe
@@ -85,4 +87,3 @@ TaskPilot server ◀──(Stripe webhook: event metadata, NO card data; signatu
 ## 6. Open items (tracked)
 
 - Publish a **Privacy Policy** and **Terms of Service** as live routes (`/privacy`, `/terms`) with footer links — required because TaskPilot holds personal data and takes payment.
-- Attach the **Stripe PCI Attestation of Compliance** copy/link as SAQ A evidence.
