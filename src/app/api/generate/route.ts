@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { withRetry } from '@/lib/utils';
-import { parseRequestBody, checkRateLimit, containsInjection, buildUserMessage, ONE_HOUR_MS } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, containsInjection, buildUserMessage, callAnthropic, ONE_HOUR_MS } from '@/lib/api-utils';
 import { z } from 'zod';
 
 export const maxDuration = 300;
@@ -660,66 +659,40 @@ export async function POST(request: Request) {
   const systemPrompt = buildSystemPrompt(os, environment, cloudProviders, tool);
   const userMessage = buildUserMessage(taskDescription, 'Now please generate the script.', clarificationAnswer, previousQuestion);
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 60000);
+  const ai = await callAnthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY!,
+    model: 'claude-sonnet-4-6',
+    maxTokens: 16384,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userMessage }],
+    logPrefix: '[generate]',
+  });
 
-  try {
-    const anthropicResponse = await withRetry(() =>
-      fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY!,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 16384,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: userMessage }],
-        }),
-      })
-    );
-
-    if (!anthropicResponse.ok) {
-      const errData = await anthropicResponse.json().catch(() => ({}));
-      console.error('[generate] Anthropic error:', anthropicResponse.status, errData);
-      return NextResponse.json({ error: 'Script generation failed. Please try again.' }, { status: 502 });
-    }
-
-    const data = await anthropicResponse.json();
-    const text: string = data.content?.[0]?.text ?? '';
-
-    let result: GenerateResult;
-    try { result = extractJson(text); } catch {
-      console.error('[generate] Failed to parse Claude response:', text.slice(0, 300));
-      return NextResponse.json({ error: 'Unexpected response format. Please try again.' }, { status: 502 });
-    }
-
-    // Post-generation output filter — warn if script contains patterns that suggest hardcoded secrets.
-    // Belt-and-suspenders: system prompt already instructs Claude to use env vars, but this catches
-    // edge cases where a placeholder looks like a real credential.
-    if (result.script) {
-      const CREDENTIAL_PATTERNS = [
-        /(?:password|passwd|pwd)\s*=\s*["'][^"'$\s]{4,}/i,
-        /(?:secret|api[_-]?key|access[_-]?key|private[_-]?key|auth[_-]?token)\s*=\s*["'][^"'$\s]{4,}/i,
-        /(?:mysql|postgresql?|mongodb|redis|amqp):\/\/[^:\s]+:[^@\s]{4,}@/i,
-      ];
-      if (CREDENTIAL_PATTERNS.some(p => p.test(result.script!))) {
-        result.explanation = (result.explanation ?? '') + '\n\nReview note: This script may contain placeholder credentials. Replace any hardcoded values with environment variables or a secrets manager before deploying.';
-      }
-    }
-
-    return NextResponse.json(result);
-  } catch (err) {
-    if ((err as Error).name === 'AbortError') {
-      console.error('[generate] request timed out');
-      return NextResponse.json({ error: 'Generation timed out. Please try again.' }, { status: 504 });
-    }
-    console.error('[generate] Fetch error:', err);
-    return NextResponse.json({ error: 'Network error reaching AI service. Please try again.' }, { status: 502 });
-  } finally {
-    clearTimeout(timeout);
+  if (!ai.ok) {
+    if (ai.reason === 'timeout') return NextResponse.json({ error: 'Generation timed out. Please try again.' }, { status: 504 });
+    if (ai.reason === 'network') return NextResponse.json({ error: 'Network error reaching AI service. Please try again.' }, { status: 502 });
+    return NextResponse.json({ error: 'Script generation failed. Please try again.' }, { status: 502 });
   }
+
+  let result: GenerateResult;
+  try { result = extractJson(ai.text); } catch {
+    console.error('[generate] Failed to parse Claude response:', ai.text.slice(0, 300));
+    return NextResponse.json({ error: 'Unexpected response format. Please try again.' }, { status: 502 });
+  }
+
+  // Post-generation output filter — warn if script contains patterns that suggest hardcoded secrets.
+  // Belt-and-suspenders: system prompt already instructs Claude to use env vars, but this catches
+  // edge cases where a placeholder looks like a real credential.
+  if (result.script) {
+    const CREDENTIAL_PATTERNS = [
+      /(?:password|passwd|pwd)\s*=\s*["'][^"'$\s]{4,}/i,
+      /(?:secret|api[_-]?key|access[_-]?key|private[_-]?key|auth[_-]?token)\s*=\s*["'][^"'$\s]{4,}/i,
+      /(?:mysql|postgresql?|mongodb|redis|amqp):\/\/[^:\s]+:[^@\s]{4,}@/i,
+    ];
+    if (CREDENTIAL_PATTERNS.some(p => p.test(result.script!))) {
+      result.explanation = (result.explanation ?? '') + '\n\nReview note: This script may contain placeholder credentials. Replace any hardcoded values with environment variables or a secrets manager before deploying.';
+    }
+  }
+
+  return NextResponse.json(result);
 }

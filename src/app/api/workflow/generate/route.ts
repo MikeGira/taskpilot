@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { withRetry } from '@/lib/utils';
 import { z } from 'zod';
-import { containsInjection, buildUserMessage, ONE_HOUR_MS, checkRateLimit, parseRequestBody } from '@/lib/api-utils';
+import { containsInjection, buildUserMessage, callAnthropic, ONE_HOUR_MS, checkRateLimit, parseRequestBody } from '@/lib/api-utils';
 
 export const maxDuration = 300;
 
@@ -210,44 +209,28 @@ export async function POST(request: Request) {
   const systemPrompt = buildSystemPrompt(triggerType, integrations, complexity);
   const userMessage = buildUserMessage(taskDescription, 'Now please generate the n8n workflow.', clarificationAnswer, previousQuestion);
 
-  try {
-    const anthropicResponse = await withRetry(() =>
-      fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY!,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 16384,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: userMessage }],
-        }),
-      })
-    );
+  const ai = await callAnthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY!,
+    model: 'claude-sonnet-4-6',
+    maxTokens: 16384,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userMessage }],
+    logPrefix: '[workflow/generate]',
+  });
 
-    if (!anthropicResponse.ok) {
-      const errData = await anthropicResponse.json().catch(() => ({}));
-      console.error('[workflow/generate] Anthropic error:', anthropicResponse.status, errData);
-      return NextResponse.json({ error: 'Workflow generation failed. Please try again.' }, { status: 502 });
-    }
-
-    const data = await anthropicResponse.json();
-    const text: string = data.content?.[0]?.text ?? '';
-
-    let result: WorkflowResult;
-    try {
-      result = extractWorkflowJson(text);
-    } catch {
-      console.error('[workflow/generate] Failed to parse Claude response:', text.slice(0, 300));
-      return NextResponse.json({ error: 'Unexpected response format. Please try again.' }, { status: 502 });
-    }
-
-    return NextResponse.json(result);
-  } catch (err) {
-    console.error('[workflow/generate] Fetch error:', err);
-    return NextResponse.json({ error: 'Network error reaching AI service. Please try again.' }, { status: 502 });
+  if (!ai.ok) {
+    if (ai.reason === 'timeout') return NextResponse.json({ error: 'Generation timed out. Please try again.' }, { status: 504 });
+    if (ai.reason === 'network') return NextResponse.json({ error: 'Network error reaching AI service. Please try again.' }, { status: 502 });
+    return NextResponse.json({ error: 'Workflow generation failed. Please try again.' }, { status: 502 });
   }
+
+  let result: WorkflowResult;
+  try {
+    result = extractWorkflowJson(ai.text);
+  } catch {
+    console.error('[workflow/generate] Failed to parse Claude response:', ai.text.slice(0, 300));
+    return NextResponse.json({ error: 'Unexpected response format. Please try again.' }, { status: 502 });
+  }
+
+  return NextResponse.json(result);
 }
