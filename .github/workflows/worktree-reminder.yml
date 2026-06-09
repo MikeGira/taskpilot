@@ -1,97 +1,56 @@
 name: Git Worktree Setup Reminder
 
-# Fires when a second collaborator is added, or when a stable/release branch is created.
-# Both are signals that the solo linear workflow is evolving and worktrees become useful.
+# Fires when a stable/release/long-lived branch is created — a signal that the
+# solo linear workflow is evolving and Git worktrees become useful.
+# NOTE: there is no GitHub Actions trigger for "collaborator added" (the `member`
+# webhook is not a valid workflow trigger), so that path was removed.
 on:
-  member:
-    types: [added]
   create:
 
 permissions:
   issues: write
 
 jobs:
-  # ── Trigger 1: new collaborator added ──────────────────────────────────────
-  collaborator-added:
-    name: Suggest worktree setup (new collaborator)
-    if: github.event_name == 'member'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Open reminder issue
-        run: |
-          gh issue create \
-            --title "Consider setting up Git Worktrees — new collaborator added" \
-            --label "enhancement" \
-            --body "$(cat <<'EOF'
-A second collaborator was just added to the repo. This is the right time to evaluate Git Worktrees.
-
-## Why
-With multiple developers, you will likely have parallel branches competing for the working directory. Worktrees let each developer (or each branch) live in its own folder without stashing or switching.
-
-## How to set up
-\`\`\`bash
-# Create a worktree for a feature branch
-git worktree add ../taskpilot-feature -b feature/your-feature
-
-# List active worktrees
-git worktree list
-
-# Remove when done
-git worktree remove ../taskpilot-feature
-\`\`\`
-
-## When it pays off
-- Reviewing a PR without losing your in-progress work
-- Running two versions simultaneously (localhost:3000 = main, localhost:3001 = feature)
-- Hotfixes: patch main while mid-way through a feature
-
-Open Claude Code and say: **"Set up Git Worktrees for this project"** to implement it.
-EOF
-)"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # ── Trigger 2: stable or release branch created ────────────────────────────
   stable-branch-created:
     name: Suggest worktree setup (stable/release branch)
     if: |
       github.event_name == 'create' &&
       github.ref_type == 'branch' &&
       (
-        github.ref == 'stable' ||
-        startsWith(github.ref, 'release/') ||
-        startsWith(github.ref, 'v') ||
-        github.ref == 'nextjs-15' ||
-        startsWith(github.ref, 'nextjs')
+        github.ref_name == 'stable' ||
+        startsWith(github.ref_name, 'release/') ||
+        startsWith(github.ref_name, 'v') ||
+        github.ref_name == 'nextjs-15' ||
+        startsWith(github.ref_name, 'nextjs')
       )
     runs-on: ubuntu-latest
     steps:
       - name: Open reminder issue
-        run: |
-          gh issue create \
-            --title "Consider Git Worktrees — long-lived branch '${{ github.ref }}' created" \
-            --label "enhancement" \
-            --body "$(cat <<'EOF'
-Branch \`${{ github.ref }}\` was just created. If you plan to maintain this alongside \`main\`, Git Worktrees will make your workflow significantly smoother.
-
-## Why
-Without worktrees, switching between \`main\` and \`${{ github.ref }}\` requires stashing or committing half-done work. With a worktree, both branches live in separate folders — you \`cd\` between them instantly.
-
-## How to set up
-\`\`\`bash
-# Check out this branch into a sibling folder without touching your current working directory
-git worktree add ../taskpilot-${{ github.ref }} ${{ github.ref }}
-
-# Now you can work in both simultaneously:
-# ../taskpilot/          ← main
-# ../taskpilot-${{ github.ref }}/  ← ${{ github.ref }}
-
-# Remove when the branch is merged
-git worktree remove ../taskpilot-${{ github.ref }}
-\`\`\`
-
-Open Claude Code and say: **"Set up Git Worktrees for this project"** to implement it.
-EOF
-)"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REF: ${{ github.ref_name }}
+          BODY: |
+            Branch `${{ github.ref_name }}` was just created. If you plan to maintain this alongside `main`, Git Worktrees will make your workflow significantly smoother.
+
+            ## Why
+            Without worktrees, switching between `main` and `${{ github.ref_name }}` requires stashing or committing half-done work. With a worktree, both branches live in separate folders — you `cd` between them instantly.
+
+            ## How to set up
+            ```bash
+            # Check out this branch into a sibling folder without touching your current working directory
+            git worktree add ../taskpilot-${{ github.ref_name }} ${{ github.ref_name }}
+
+            # Now you can work in both simultaneously:
+            # ../taskpilot/   ← main
+            # ../taskpilot-branch/   ← the new branch
+
+            # Remove when the branch is merged
+            git worktree remove ../taskpilot-${{ github.ref_name }}
+            ```
+
+            Open Claude Code and say: **"Set up Git Worktrees for this project"** to implement it.
+        run: |
+          gh issue create \
+            --title "Consider Git Worktrees — long-lived branch '$REF' created" \
+            --label "enhancement" \
+            --body "$BODY"

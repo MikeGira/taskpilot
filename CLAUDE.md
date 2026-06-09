@@ -187,3 +187,30 @@ Dynamic Island spring is handled by `CardSpringProvider` in layout.tsx — it li
 - [x] Upload kit ZIP: bucket `products`, path `products/taskpilot-kit.zip`
 - [x] Set Supabase Site URL + redirect URLs to production domain
 - [x] Configure Resend SMTP in Supabase for branded auth emails
+
+## CI & Workflow Gotchas (learned 2026-06-08)
+
+Diagnose with the real tools, never by eyeballing YAML. `actionlint` and `gitleaks`
+binaries are the source of truth — a wrong eyeball guess (e.g. blaming an `on:` event
+when the real fault is YAML indentation) wastes a cycle.
+
+- **`run: |` block scalars** — every line of a multi-line shell string (heredoc bodies,
+  multi-line `git commit -m "..."`) must stay indented at/under the block scalar. A line
+  at column 0 terminates the YAML block; the parser then reads prose as a key and the
+  whole workflow fails to compile → **0-second startup failure**, friendly `name:`
+  shows as the raw file path, and it **never runs** (not even on `schedule`). Prefer the
+  injection-safe `env: BODY: |` pattern + `--body "$BODY"` over `$(cat <<'EOF' ...)`.
+- **Trigger events are a short allowlist.** `member` and `repository` are valid *webhook*
+  events but are **not** valid workflow `on:` triggers. There is no Actions trigger for
+  "collaborator added." Check the canonical "events that trigger workflows" page, not the
+  webhooks page.
+- **gitleaks `paths` are regexes, not globs.** `*.example` is an invalid regex and panics
+  gitleaks ≥ 8.30 (older versions tolerated it). Use `.*\.example$`.
+- **gitleaks placeholder false positives** — the `generic-api-key` rule captures only the
+  high-entropy token as the "secret", excluding a `.placeholder` suffix, so a
+  `regexTarget = "secret"` allowlist misses it. Use `regexTarget = "match"` so the word
+  "placeholder" on the line is seen; real secrets (no "placeholder") are still caught.
+- **Prevention now in CI**: the `workflow-lint` job in `ci.yml` runs `actionlint` on every
+  PR, so invalid workflow YAML is blocked before it can reach main as a startup failure.
+- **Stripe webhook**: ack every verified event with 200 (prevents Stripe retries); only
+  *act* on handled types and `console.log` unhandled ones — never silently drop them.

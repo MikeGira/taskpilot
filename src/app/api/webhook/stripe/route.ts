@@ -29,8 +29,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
-  if (event.type === 'checkout.session.completed') {
-    await handleCheckoutComplete(event.data.object as Stripe.Checkout.Session);
+  // Ack every verified event with 200 so Stripe does not retry, but only act on the
+  // events we handle. Unhandled types are logged for observability rather than silently dropped.
+  switch (event.type) {
+    case 'checkout.session.completed':
+      await handleCheckoutComplete(event.data.object as Stripe.Checkout.Session);
+      break;
+    default:
+      console.log('[webhook] Unhandled event type:', event.type);
   }
 
   return NextResponse.json({ received: true });
