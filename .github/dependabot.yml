@@ -9,3 +9,16 @@ updates:
       security:
         patterns: ["*"]
         update-types: ["patch", "minor"]
+
+  # Keep SHA-pinned GitHub Actions current (pinning without updates rots; Dependabot
+  # bumps the SHA + version comment together with changelogs). Supports the ICT
+  # supply-chain control (ISO A.5.21) flagged by CodeQL actions/unpinned-tag.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore(ci)
+    groups:
+      actions:
+        patterns: ["*"]
