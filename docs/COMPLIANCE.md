@@ -30,7 +30,7 @@ All third parties that process TaskPilot data. (ISO A.5.19 · SOC 2 CC9.2 · GDP
 | Vendor | Service | Data processed | Data location | Attestation |
 |---|---|---|---|---|
 | Vercel | Hosting / CDN / serverless | Request traffic, logs | Global edge (primary US) | SOC 2 Type II |
-| Supabase | Postgres / Auth / Storage | User PII, purchase records, feedback | *Project region — verify in dashboard* | SOC 2 Type II |
+| Supabase | Postgres / Auth / Storage | User PII, purchase records, feedback | us-west-2 (AWS, Oregon, USA) | SOC 2 Type II |
 | Stripe | Payments (hosted Checkout) | Cardholder data (Stripe-side only) | Global | PCI DSS Level 1, SOC 2 |
 | Resend | Transactional email | Recipient email, message content | US | SOC 2 |
 | Anthropic | AI inference (script generation + chat) | Prompt content (no secrets/PII by design) | US | SOC 2 Type II |
@@ -84,6 +84,5 @@ TaskPilot server ◀──(Stripe webhook: event metadata, NO card data; signatu
 
 ## 6. Open items (tracked)
 
-- Confirm and record the **Supabase project region** in the subprocessor table above (data-residency evidence).
 - Publish a **Privacy Policy** and **Terms of Service** as live routes (`/privacy`, `/terms`) with footer links — required because TaskPilot holds personal data and takes payment.
 - Attach the **Stripe PCI Attestation of Compliance** copy/link as SAQ A evidence.
