@@ -1,0 +1,10 @@
+# Reviewed false positives. Each line is a gitleaks finding fingerprint
+# (commit:file:rule:line) that has been human-verified as NOT a real secret.
+#
+# Build-step placeholder, not a credential: a bare JWT header
+# `{"alg":"HS256","typ":"JWT"}` with no payload and no signature, set as the
+# NEXT_PUBLIC_SUPABASE_ANON_KEY env var for `npm run build` in the initial-commit
+# ci.yml. The generic-api-key rule captures the header token but stops at the `.`
+# before "placeholder", so the .gitleaks.toml allowlist cannot see it. Reviewed
+# 2026-06-15 — not a secret; surfaced only on the weekly full-history schedule scan.
+301518019034951f449a1a53ff58f3b2ca469b38:.github/workflows/ci.yml:generic-api-key:63

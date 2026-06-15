@@ -206,10 +206,24 @@ when the real fault is YAML indentation) wastes a cycle.
   webhooks page.
 - **gitleaks `paths` are regexes, not globs.** `*.example` is an invalid regex and panics
   gitleaks ≥ 8.30 (older versions tolerated it). Use `.*\.example$`.
-- **gitleaks placeholder false positives** — the `generic-api-key` rule captures only the
-  high-entropy token as the "secret", excluding a `.placeholder` suffix, so a
-  `regexTarget = "secret"` allowlist misses it. Use `regexTarget = "match"` so the word
-  "placeholder" on the line is seen; real secrets (no "placeholder") are still caught.
+- **gitleaks scan scope differs by event** — `gitleaks-action` scans only the **incremental
+  diff** on `push`/`pull_request`, but the **full history** (`git log -p --full-history --all`)
+  on `schedule`/`workflow_dispatch`. So a false positive in an *old, unchanged* line passes every
+  PR yet fails the weekly Monday run. Diagnose a "CI suddenly red on schedule" by the event type
+  in the job log, not the latest commit. (`workflow_dispatch` is on `ci.yml` for on-demand
+  full-history scans.)
+- **gitleaks placeholder false positives** — the `generic-api-key` rule captures the token only
+  up to the first `.` (charset excludes `.`), so for a JWT-shaped stub like
+  `eyJhbG….placeholder` the captured match is `eyJhbGc…` and the word "placeholder" (after the
+  `.`) is **never seen** — so `regexTarget = "match"` + `(?i)placeholder` does **not** suppress it
+  (it only works when "placeholder" is *inside* the token, e.g. `pk_test_placeholder`). For a
+  reviewed historical finding, allowlist the exact **fingerprint** in `.gitleaksignore`
+  (`commit:file:rule:line`) — surgical and immutable — rather than widening a `.gitleaks.toml`
+  allowlist or rewriting history. Keep build-step env placeholders low-entropy and non-JWT-shaped.
+- **Local pre-commit secret gate** — `.git/hooks/` is not version-controlled; on a fresh clone
+  reinstall the gitleaks pre-commit hook (`gitleaks protect --staged`) so secrets are blocked
+  before they reach history (rotation can't undo a value already committed). Needs the `gitleaks`
+  binary on PATH (`~/bin` or `choco install gitleaks`).
 - **Prevention now in CI**: the `workflow-lint` job in `ci.yml` runs `actionlint` on every
   PR, so invalid workflow YAML is blocked before it can reach main as a startup failure.
 - **Stripe webhook**: ack every verified event with 200 (prevents Stripe retries); only
