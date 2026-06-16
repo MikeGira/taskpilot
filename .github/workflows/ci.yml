@@ -7,6 +7,7 @@ on:
     branches: [main]
   schedule:
     - cron: '0 9 * * 1'  # Weekly Monday 9am UTC — dependency audit
+  workflow_dispatch:       # On-demand run; gitleaks does a full-history scan on this event
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -107,7 +108,7 @@ jobs:
         env:
           NEXT_PUBLIC_SITE_URL: https://taskpilot.vercel.app
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: anon-key-placeholder-not-a-secret
           NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_placeholder
           ANTHROPIC_API_KEY: sk-ant-placeholder
 
