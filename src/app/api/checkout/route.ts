@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const bodyResult = parseRequestBody(raw, CheckoutSchema, 2048, 'Invalid product slug');
   if (!bodyResult.ok) return bodyResult.response;
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!process.env.STRIPE_PRICE_ID) {

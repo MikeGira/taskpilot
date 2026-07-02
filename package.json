@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "lint": "next lint",
+    "lint": "eslint --ext .ts,.tsx src",
     "setup:webhook": "node --env-file=.env scripts/setup-webhook.js",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
@@ -27,7 +27,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.23.0",
-    "next": "14.2.35",
+    "next": "^15.5.16",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-simple-maps": "^3.0.0",
@@ -45,7 +45,7 @@
     "@types/react-simple-maps": "^3.0.6",
     "autoprefixer": "^10.5.2",
     "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.35",
+    "eslint-config-next": "^15.5.16",
     "postcss": "^8.5.16",
     "tailwindcss": "^3.4.13",
     "typescript": "^6.0.3"
@@ -54,6 +54,7 @@
     "node": "22.x"
   },
   "overrides": {
-    "d3-color": ">=3.1.0"
+    "d3-color": ">=3.1.0",
+    "postcss": "$postcss"
   }
 }

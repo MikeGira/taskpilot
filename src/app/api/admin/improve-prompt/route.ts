@@ -4,7 +4,7 @@ import { getAdminClient } from '@/lib/supabase/admin';
 import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user || user.email !== process.env.ADMIN_EMAIL) {

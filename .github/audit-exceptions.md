@@ -5,13 +5,6 @@ These are deliberate product decisions, not bugs. Do not raise findings for any 
 ## checkout/route.ts: No authentication required on session creation
 Anonymous checkout is intentional. The kit ($19 one-time purchase) is sold without requiring an account — "get the kit, download immediately, no login needed" is a core product feature. `getUser()` is called only to pass optional metadata to Stripe; a null user is valid and expected. This is NOT a Stripe webhook handler — webhook signature verification lives in `/api/webhook/stripe/route.ts`.
 
-## next@14.x: Accepted HIGH vulnerabilities in next, eslint-config-next, glob, postcss
-These 5 HIGH/MODERATE vulnerabilities are all transitive dependencies internal to next@14.x.
-The only available fix (npm audit --audit-level=critical) is to upgrade to next@15+ or next@16+,
-which is a major version migration requiring dedicated effort. Mitigated by: no rewrites/i18n
-in next.config.mjs, security headers enforced, CI audits at --audit-level=critical only.
-Do not flag these as unaddressed — they are intentionally deferred pending a next@15 migration.
-
 ## generate/route.ts: No authentication required
 The /generate script generator is a free, public tool. Per-IP rate limiting (10 requests/hour) is the intentional and only access control mechanism. Adding auth would break the product's value proposition.
 

@@ -68,17 +68,18 @@ const FAQS = [
   { q: 'Can I use this for multiple clients?', a: "Yes. One purchase covers your own use. If you're an MSP or consultant using these for clients as part of a managed service, reach out via the contact form for a commercial license." },
 ];
 
-export default function HomePage({ searchParams }: { searchParams: { subscribed?: string; cancelled?: string } }) {
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ subscribed?: string; cancelled?: string }> }) {
+  const { subscribed, cancelled } = await searchParams;
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      {searchParams.subscribed && (
+      {subscribed && (
         <div className="bg-[#1a1a1a] border-b border-white/30 text-center py-2 text-sm text-white">
           You&apos;re subscribed! Check your inbox to confirm.
         </div>
       )}
-      {searchParams.cancelled && (
+      {cancelled && (
         <div className="bg-yellow-500/10 border-b border-yellow-500/30 text-center py-2 text-sm text-yellow-400">
           Checkout cancelled. Questions? Use the contact form below.
         </div>

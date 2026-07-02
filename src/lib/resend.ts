@@ -16,8 +16,8 @@ export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'hello@taskpilot.dev'
 export const FROM_NAME = 'TaskPilot';
 export const FROM = `${FROM_NAME} <${FROM_EMAIL}>`;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function logEmail(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   db: SupabaseClient<any>,
   recipient: string,
   subject: string,

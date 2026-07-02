@@ -1,18 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Terminal, CheckCircle2, Loader2, Eye, EyeOff } from 'lucide-react';
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams: { redirectTo?: string; error?: string };
-}) {
+function LoginForm() {
   const [mode, setMode]           = useState<'password' | 'magic'>('password');
   const [email, setEmail]         = useState('');
   const [password, setPassword]   = useState('');
@@ -20,9 +16,10 @@ export default function LoginPage({
   const [status, setStatus]       = useState<'idle' | 'loading' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg]   = useState('');
 
-  const supabase    = createClient();
-  const router      = useRouter();
-  const redirectTo  = searchParams.redirectTo ?? '/dashboard';
+  const supabase     = createClient();
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo   = searchParams.get('redirectTo') ?? '/dashboard';
 
   function switchMode(next: 'password' | 'magic') {
     setMode(next);
@@ -94,7 +91,7 @@ export default function LoginPage({
         </div>
 
         {/* Auth failed error */}
-        {searchParams.error === 'auth_failed' && (
+        {searchParams.get('error') === 'auth_failed' && (
           <div className="mb-4 rounded-lg border border-white/12 bg-white/5 px-4 py-3 text-sm text-white">
             Authentication failed. Please try again.
           </div>
@@ -196,5 +193,13 @@ export default function LoginPage({
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -30,11 +30,7 @@ jobs:
           node-version: '22'
           cache: 'npm'
       - run: npm ci
-      # next@14.2.35 has HIGH CVEs in next, eslint-config-next, glob, and postcss
-      # (all transitive). No 14.x patch available; only fix is next@15+ (deferred).
-      # Mitigated by: no rewrites/i18n config, security headers in next.config.mjs.
-      # Failing only on CRITICAL keeps CI signal meaningful while deferring the upgrade.
-      - run: npm audit --audit-level=critical
+      - run: npm audit --audit-level=high
 
   # ── 0b. Workflow validation ─────────────────────────────────────────────────
   # Catches invalid workflow YAML (bad indentation, unknown trigger events, broken
