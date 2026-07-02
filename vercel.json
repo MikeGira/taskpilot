@@ -1,5 +1,6 @@
 {
   "functions": {
     "src/app/api/webhook/stripe/route.ts": { "maxDuration": 30 }
-  }
+  },
+  "ignoreCommand": "bash -c 'case \"$VERCEL_GIT_COMMIT_REF\" in dependabot/*) exit 0;; *) exit 1;; esac'"
 }
