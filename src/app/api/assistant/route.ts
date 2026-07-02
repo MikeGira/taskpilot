@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { parseRequestBody, checkRateLimit, containsInjection, ONE_HOUR_MS } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, containsInjection, callAnthropic, ONE_HOUR_MS } from '@/lib/api-utils';
 
 const MessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -101,42 +101,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid input detected.' }, { status: 400 });
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
+  const ai = await callAnthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+    model: 'claude-haiku-4-5-20251001',
+    maxTokens: 800,
+    system: SYSTEM,
+    messages: bodyResult.data.messages,
+    timeoutMs: 30000,
+    logPrefix: '[assistant]',
+  });
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      signal: controller.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 800,
-        system: SYSTEM,
-        messages: bodyResult.data.messages,
-      }),
-    });
-
-    if (!res.ok) {
-      console.error('[assistant] Anthropic error:', res.status);
-      return NextResponse.json({ error: 'AI service error. Please try again.' }, { status: 502 });
-    }
-
-    const data = await res.json();
-    const content: string = data.content?.[0]?.text ?? '';
-    return NextResponse.json({ content });
-  } catch (err) {
-    if ((err as Error).name === 'AbortError') {
-      console.error('[assistant] request timed out');
-      return NextResponse.json({ error: 'Request timed out. Please try again.' }, { status: 504 });
-    }
-    console.error('[assistant] fetch error:', err);
-    return NextResponse.json({ error: 'Network error. Please try again.' }, { status: 502 });
-  } finally {
-    clearTimeout(timeout);
+  if (!ai.ok) {
+    if (ai.reason === 'timeout') return NextResponse.json({ error: 'Request timed out. Please try again.' }, { status: 504 });
+    if (ai.reason === 'network') return NextResponse.json({ error: 'Network error. Please try again.' }, { status: 502 });
+    return NextResponse.json({ error: 'AI service error. Please try again.' }, { status: 502 });
   }
+
+  return NextResponse.json({ content: ai.text });
 }
