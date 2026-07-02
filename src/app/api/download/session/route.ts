@@ -3,6 +3,10 @@ import { getStripe } from '@/lib/stripe';
 import { getAdminClient } from '@/lib/supabase/admin';
 import { getResend, FROM, logEmail } from '@/lib/resend';
 import { renderPurchaseConfirmationEmail } from '@/emails/purchase-confirmation';
+import { dbWithRetry } from '@/lib/utils';
+
+const DB_DOWN_MESSAGE =
+  'We hit a temporary problem preparing your download. Your purchase is confirmed and safe — please try this link again in a few minutes, or reply to your confirmation email for help.';
 
 export const runtime = 'nodejs';
 
@@ -41,14 +45,24 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
   }
 
-  const { data: product, error: productErr } = await db
-    .from('products')
-    .select('id, storage_path')
-    .eq('slug', productSlug)
-    .maybeSingle();
+  let product: { id: string; storage_path: string } | null;
+  try {
+    const { data, error: productErr } = await dbWithRetry(() =>
+      db.from('products').select('id, storage_path').eq('slug', productSlug).maybeSingle()
+    );
+    if (productErr) {
+      console.error('[download/session] product lookup error:', productErr.message, '| slug:', productSlug);
+      return NextResponse.json({ error: DB_DOWN_MESSAGE }, { status: 503 });
+    }
+    product = data;
+  } catch (err) {
+    // Transient network failure that survived retries (e.g. paused Supabase project)
+    console.error('[download/session] database unreachable:', err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: DB_DOWN_MESSAGE }, { status: 503 });
+  }
 
-  if (productErr || !product?.storage_path) {
-    console.error('[download/session] product lookup:', productErr?.message, '| slug:', productSlug);
+  if (!product?.storage_path) {
+    console.error('[download/session] no product row for slug:', productSlug);
     return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
 
@@ -57,11 +71,9 @@ export async function GET(request: Request) {
   //     send the confirmation email now as a fallback (webhook may not have fired).
   if (customerEmail && product.id) {
     try {
-      const { data: existing } = await db
-        .from('purchases')
-        .select('id')
-        .eq('stripe_session_id', sessionId)
-        .maybeSingle();
+      const { data: existing } = await dbWithRetry(() =>
+        db.from('purchases').select('id').eq('stripe_session_id', sessionId).maybeSingle()
+      );
 
       await db.from('purchases').upsert({
         email: customerEmail,
@@ -106,13 +118,20 @@ export async function GET(request: Request) {
   ].filter((p, i, a) => p && a.indexOf(p) === i);
 
   let signedUrl = '';
-  for (const p of pathsToTry) {
-    const { data, error } = await db.storage.from('products').createSignedUrl(p, 3600);
-    if (!error && data?.signedUrl) {
-      signedUrl = data.signedUrl;
-      break;
+  try {
+    for (const p of pathsToTry) {
+      const { data, error } = await dbWithRetry(() =>
+        db.storage.from('products').createSignedUrl(p, 3600)
+      );
+      if (!error && data?.signedUrl) {
+        signedUrl = data.signedUrl;
+        break;
+      }
+      console.log('[download/session] path not found:', p, '|', error?.message);
     }
-    console.log('[download/session] path not found:', p, '|', error?.message);
+  } catch (err) {
+    console.error('[download/session] storage unreachable:', err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: DB_DOWN_MESSAGE }, { status: 503 });
   }
 
   if (!signedUrl) {

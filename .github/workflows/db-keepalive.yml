@@ -1,0 +1,50 @@
+name: Database keep-alive + health check
+
+# Two jobs in one daily ping of /api/health:
+# 1. The query it triggers counts as Supabase project activity, preventing the
+#    free-tier auto-pause (~7 idle days) that took the DB offline on 2026-07-02.
+# 2. If the DB is unreachable anyway, open a deduplicated issue immediately so
+#    the outage is caught by monitoring rather than by a paying customer.
+on:
+  schedule:
+    - cron: '0 12 * * *' # daily, including weekends — pause risk has no weekday bias
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  ping:
+    name: Ping /api/health
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check database health
+        id: health
+        run: |
+          code=$(curl -s -o /tmp/health.json -w '%{http_code}' --max-time 30 https://taskpilot-umber.vercel.app/api/health || echo 000)
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          cat /tmp/health.json 2>/dev/null || true
+          if [ "$code" = "200" ]; then
+            echo "Database reachable."
+          else
+            echo "Database health check failed with HTTP $code"
+          fi
+
+      - name: Open issue if database is down
+        if: steps.health.outputs.code != '200'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CODE: ${{ steps.health.outputs.code }}
+        run: |
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search '[health] Database unreachable in:title' --json number -q '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "Still failing: /api/health returned HTTP $CODE on $(date -u +%F)."
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "[health] Database unreachable" \
+              --body "Daily health ping got HTTP $CODE from /api/health on $(date -u +%F). Most likely cause: the Supabase project is paused (free tier pauses after ~7 idle days; DNS stops resolving). Restore it at supabase.com/dashboard, then close this issue. Purchases during the outage are recoverable: Stripe retries webhooks up to 3 days, and the download link backfills from the Stripe session."
+          fi
+
+      - name: Fail the run when down
+        if: steps.health.outputs.code != '200'
+        run: exit 1
