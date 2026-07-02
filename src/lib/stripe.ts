@@ -7,9 +7,9 @@ export function getStripe(): Stripe {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error('STRIPE_SECRET_KEY is not configured');
   }
-  _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: '2026-05-27.dahlia',
-  });
+  // No apiVersion pin: stripe-node uses the API version its types are built
+  // against; pinning a literal here breaks the build on every SDK bump.
+  _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   return _stripe;
 }
 
