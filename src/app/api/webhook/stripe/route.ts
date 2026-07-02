@@ -73,7 +73,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       product_id: product.id,
       product_slug: productSlug,
       stripe_session_id: session.id,
-      stripe_customer_id: session.customer as string | null,
+      stripe_customer_id: typeof session.customer === 'string' ? session.customer : null,
       amount_cents: session.amount_total ?? 0,
       currency: session.currency ?? 'usd',
       status: 'completed',

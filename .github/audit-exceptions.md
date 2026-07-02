@@ -11,6 +11,9 @@ The /generate script generator is a free, public tool. Per-IP rate limiting (10 
 ## assistant/route.ts: Regex-based injection detection is best-effort by design
 The `normalizeText` + pattern-matching approach is documented as a best-effort filter. The upstream LLM (claude-haiku) has its own system-prompt constraints as the primary defense. The regex layer catches obvious attempts. Multi-message context analysis is out of scope for this tier.
 
+## AI routes: per-route `ai.ok` error-response branches are intentional
+generate, workflow/generate, and assistant each map `callAnthropic()` failures (timeout/network/upstream) to their own user-facing error messages ("Generation timed out" vs "Request timed out" etc.). The three-line mapping is intentionally duplicated so each route controls its own copy — extracting a helper would need a three-message config object per call site and save nothing. Do not flag this as duplication.
+
 ## All routes: checkRateLimit + parseRequestBody pattern
 The two-call pattern (`checkRateLimit` → `parseRequestBody`) in each route is the shared abstraction already in place via `src/lib/api-utils.ts`. Each route intentionally controls its own rate-limit key, window, and error message — further wrapping would lose that configurability for no practical gain.
 
