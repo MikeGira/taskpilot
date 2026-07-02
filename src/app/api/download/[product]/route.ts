@@ -4,6 +4,10 @@ import { getAdminClient } from '@/lib/supabase/admin';
 import { getStripe } from '@/lib/stripe';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import { ONE_HOUR_MS } from '@/lib/api-utils';
+import { dbWithRetry } from '@/lib/utils';
+
+const DB_DOWN_MESSAGE =
+  'We hit a temporary problem preparing your download. Your purchase is safe — please try again in a few minutes.';
 
 export async function GET(
   request: Request,
@@ -30,13 +34,21 @@ export async function GET(
   if (user.id)    conditions.push(`user_id.eq.${user.id}`);
   if (user.email) conditions.push(`email.eq.${user.email}`);
 
-  const { data: purchase } = await db
-    .from('purchases')
-    .select('id, products(storage_path)')
-    .eq('product_slug', productSlug)
-    .eq('status', 'completed')
-    .or(conditions.join(','))
-    .maybeSingle();
+  let purchase;
+  try {
+    ({ data: purchase } = await dbWithRetry(() =>
+      db
+        .from('purchases')
+        .select('id, products(storage_path)')
+        .eq('product_slug', productSlug)
+        .eq('status', 'completed')
+        .or(conditions.join(','))
+        .maybeSingle()
+    ));
+  } catch (err) {
+    console.error('[download] database unreachable:', err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: DB_DOWN_MESSAGE }, { status: 503 });
+  }
 
   // ── 2. If no DB record, verify via Stripe and backfill ─────────────────────
   //    This handles: webhook never fired, session backfill failed, email mismatch
@@ -81,11 +93,9 @@ export async function GET(
       }
 
       // Get the product row to backfill
-      const { data: productRow } = await db
-        .from('products')
-        .select('id, storage_path')
-        .eq('slug', productSlug)
-        .maybeSingle();
+      const { data: productRow } = await dbWithRetry(() =>
+        db.from('products').select('id, storage_path').eq('slug', productSlug).maybeSingle()
+      );
 
       if (productRow) {
         storagePath = productRow.storage_path;
@@ -120,12 +130,19 @@ export async function GET(
     `products/${storagePath.split('/').pop() ?? ''}`,
   ].filter((p, i, a) => p && a.indexOf(p) === i);
 
-  for (const p of pathsToTry) {
-    const { data, error } = await db.storage.from('products').createSignedUrl(p, 3600);
-    if (!error && data?.signedUrl) {
-      return NextResponse.json({ url: data.signedUrl });
+  try {
+    for (const p of pathsToTry) {
+      const { data, error } = await dbWithRetry(() =>
+        db.storage.from('products').createSignedUrl(p, 3600)
+      );
+      if (!error && data?.signedUrl) {
+        return NextResponse.json({ url: data.signedUrl });
+      }
+      console.log('[download] path not found:', p, '|', error?.message);
     }
-    console.log('[download] path not found:', p, '|', error?.message);
+  } catch (err) {
+    console.error('[download] storage unreachable:', err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: DB_DOWN_MESSAGE }, { status: 503 });
   }
 
   return NextResponse.json({ error: 'Failed to generate download URL' }, { status: 500 });

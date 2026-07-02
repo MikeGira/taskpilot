@@ -4,6 +4,7 @@ import { getStripe } from '@/lib/stripe';
 import { getAdminClient } from '@/lib/supabase/admin';
 import { getResend, FROM, logEmail } from '@/lib/resend';
 import { renderPurchaseConfirmationEmail } from '@/emails/purchase-confirmation';
+import { dbWithRetry } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -29,11 +30,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
-  // Ack every verified event with 200 so Stripe does not retry, but only act on the
-  // events we handle. Unhandled types are logged for observability rather than silently dropped.
+  // Ack verified events with 200 so Stripe does not retry — EXCEPT when our own
+  // infrastructure failed (DB down/unreachable): then return 500 so Stripe keeps
+  // retrying for up to 3 days instead of the purchase event being lost forever.
+  // Unhandled types are logged for observability rather than silently dropped.
   switch (event.type) {
     case 'checkout.session.completed':
-      await handleCheckoutComplete(event.data.object as Stripe.Checkout.Session);
+      try {
+        await handleCheckoutComplete(event.data.object as Stripe.Checkout.Session);
+      } catch (err) {
+        console.error('[webhook] handler failed, returning 500 so Stripe retries:', err instanceof Error ? err.message : err);
+        return NextResponse.json({ error: 'Handler failure, please retry' }, { status: 500 });
+      }
       break;
     default:
       console.log('[webhook] Unhandled event type:', event.type);
@@ -53,20 +61,21 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     return;
   }
 
-  // Look up product
-  const { data: product } = await db
-    .from('products')
-    .select('id')
-    .eq('slug', productSlug)
-    .maybeSingle();
-
+  // Look up product. A DB error (including network failure after retries) throws so
+  // the caller returns 500 and Stripe retries; only a genuinely absent row is a no-op.
+  const { data: product, error: productErr } = await dbWithRetry(() =>
+    db.from('products').select('id').eq('slug', productSlug).maybeSingle()
+  );
+  if (productErr) {
+    throw new Error(`product lookup failed: ${productErr.message}`);
+  }
   if (!product) {
     console.error('[webhook] Product not found for slug:', productSlug);
     return;
   }
 
-  // Upsert purchase — idempotent on stripe_session_id
-  const { error: purchaseError } = await db.from('purchases').upsert(
+  // Upsert purchase — idempotent on stripe_session_id, so Stripe retries are safe
+  const { error: purchaseError } = await dbWithRetry(() => db.from('purchases').upsert(
     {
       user_id: userId || null,
       email: customerEmail,
@@ -79,11 +88,10 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       status: 'completed',
     },
     { onConflict: 'stripe_session_id' }
-  );
+  ));
 
   if (purchaseError) {
-    console.error('[webhook] Purchase upsert error:', purchaseError.message);
-    return;
+    throw new Error(`purchase upsert failed: ${purchaseError.message}`);
   }
 
   // Send confirmation email with direct download link

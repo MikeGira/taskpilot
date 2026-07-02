@@ -184,3 +184,27 @@ export async function withRetry<T>(
   }
   throw lastErr;
 }
+
+const TRANSIENT_NETWORK_ERROR = /fetch failed|ECONNRESET|ETIMEDOUT|ENOTFOUND|EAI_AGAIN|socket hang up/i;
+
+export function isTransientDbError(message?: string | null): boolean {
+  return !!message && TRANSIENT_NETWORK_ERROR.test(message);
+}
+
+// supabase-js returns network failures in `error` instead of throwing, so plain
+// withRetry never sees them. Re-throw transient ones so they retry; a persistent
+// outage (e.g. paused project / dead DNS) surfaces as a thrown TypeError that
+// callers map to 503 — never to a business-level "not found".
+export async function dbWithRetry<T extends { error: { message?: string } | null }>(
+  fn: () => PromiseLike<T>,
+  retries = 2,
+  backoffMs = 300,
+): Promise<T> {
+  return withRetry(async () => {
+    const res = await fn();
+    if (res.error && isTransientDbError(res.error.message)) {
+      throw new TypeError(res.error.message);
+    }
+    return res;
+  }, retries, backoffMs);
+}
