@@ -11,12 +11,13 @@ export const metadata: Metadata = {
   description: 'Generate custom IT automation scripts for your exact OS and environment. Windows, Linux, macOS, on-premises, cloud, or hybrid.',
 };
 
-export default function GeneratePage({
+export default async function GeneratePage({
   searchParams,
 }: {
-  searchParams: { task?: string };
+  searchParams: Promise<{ task?: string }>;
 }) {
-  const initialTask = searchParams.task ? decodeURIComponent(searchParams.task) : '';
+  const { task } = await searchParams;
+  const initialTask = task ? decodeURIComponent(task) : '';
 
   return (
     <div className="min-h-screen flex flex-col bg-black">

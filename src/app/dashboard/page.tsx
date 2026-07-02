@@ -22,7 +22,7 @@ async function getSignedUrl(db: ReturnType<typeof getAdminClient>, storagePath: 
 }
 
 export default async function DashboardPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   const userEmail = user?.email ?? '';

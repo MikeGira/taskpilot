@@ -7,7 +7,7 @@ import { ONE_HOUR_MS } from '@/lib/api-utils';
 
 export async function GET(
   request: Request,
-  { params }: { params: { product: string } }
+  { params }: { params: Promise<{ product: string }> }
 ) {
   const ip = getClientIp(request);
   const { allowed } = rateLimit(`download:${ip}`, 10, ONE_HOUR_MS);
@@ -15,14 +15,14 @@ export async function GET(
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user || !user.email) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
-  const productSlug = params.product;
+  const { product: productSlug } = await params;
   const db = getAdminClient();
 
   // ── 1. Look up purchase record in DB ────────────────────────────────────────

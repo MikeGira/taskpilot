@@ -8,7 +8,7 @@ script. Admin analytics + AI-powered prompt improvement at `/dashboard/analytics
 ## Stack
 | Layer | Technology | Notes |
 |-------|-----------|-------|
-| Framework | Next.js 14 App Router, TypeScript | Strict mode, @/* path alias |
+| Framework | Next.js 15 App Router, TypeScript | Strict mode, @/* path alias |
 | UI | Tailwind CSS + shadcn/ui | True-black + Supabase green (`#3ECF8E`) theme |
 | Auth | Supabase Auth (magic link + password) | @supabase/ssr package |
 | Database | Supabase PostgreSQL | RLS on all tables |

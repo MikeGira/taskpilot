@@ -13,12 +13,13 @@ const KIT_HIGHLIGHTS = [
   'Step-by-step setup guide',
 ];
 
-export default function CheckoutSuccessPage({
+export default async function CheckoutSuccessPage({
   searchParams,
 }: {
-  searchParams: { session_id?: string };
+  searchParams: Promise<{ session_id?: string }>;
 }) {
-  const sessionId = searchParams.session_id ?? '';
+  const { session_id } = await searchParams;
+  const sessionId = session_id ?? '';
 
   return (
     <div className="min-h-screen flex flex-col bg-black">

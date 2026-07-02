@@ -5,7 +5,7 @@ import { createCheckoutSession } from '@/lib/stripe';
 export const metadata = { title: 'Checkout' };
 
 export default async function CheckoutPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!process.env.STRIPE_PRICE_ID) {

@@ -19,7 +19,7 @@ interface FeedbackRow {
 interface Bucket { pos: number; neg: number }
 
 export default async function AnalyticsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user || user.email !== process.env.ADMIN_EMAIL) {

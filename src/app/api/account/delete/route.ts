@@ -5,7 +5,7 @@ import { getResend, FROM, logEmail } from '@/lib/resend';
 import { renderGdprDeletionEmail } from '@/emails/gdpr-deletion';
 
 export async function DELETE() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
