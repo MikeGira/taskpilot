@@ -90,6 +90,89 @@ export type AnthropicResult =
 // Single source of truth for Anthropic calls: bundles abort/timeout + retry so every
 // caller gets consistent behaviour (and so no route can forget the timeout). The
 // AbortController guarantees a hung upstream cannot block the function indefinitely.
+export type AnthropicStreamResult =
+  | { ok: true; stream: ReadableStream<Uint8Array> }
+  | { ok: false; reason: 'upstream' | 'timeout' | 'network'; status?: number };
+
+// Streaming variant of callAnthropic: returns a plain-text ReadableStream of the
+// model's output (Anthropic SSE is decoded server-side so clients just read text).
+// The timeout covers the entire stream, so a hung upstream aborts mid-stream too.
+export async function callAnthropicStream(params: {
+  apiKey: string;
+  model: string;
+  maxTokens: number;
+  system: string;
+  messages: { role: string; content: string }[];
+  timeoutMs?: number;
+  logPrefix: string;
+}): Promise<AnthropicStreamResult> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), params.timeoutMs ?? 60000);
+  try {
+    const res = await withRetry(() =>
+      fetch(ANTHROPIC_API_URL, {
+        method: 'POST',
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': params.apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: params.model,
+          max_tokens: params.maxTokens,
+          system: params.system,
+          messages: params.messages,
+          stream: true,
+        }),
+      })
+    );
+    if (!res.ok || !res.body) {
+      clearTimeout(timeout);
+      const errData = await res.json().catch(() => ({}));
+      console.error(`${params.logPrefix} Anthropic error:`, res.status, errData);
+      return { ok: false, reason: 'upstream', status: res.status };
+    }
+
+    const decoder = new TextDecoder();
+    const encoder = new TextEncoder();
+    // SSE lines can split across network chunks — buffer until a full line arrives.
+    let buffer = '';
+    const stream = res.body.pipeThrough(
+      new TransformStream<Uint8Array, Uint8Array>({
+        transform(chunk, out) {
+          buffer += decoder.decode(chunk, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            try {
+              const event = JSON.parse(line.slice(6));
+              if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta' && event.delta.text) {
+                out.enqueue(encoder.encode(event.delta.text));
+              }
+            } catch {
+              // Ignore unparseable SSE payloads (pings, partial frames)
+            }
+          }
+        },
+        flush() {
+          clearTimeout(timeout);
+        },
+      })
+    );
+    return { ok: true, stream };
+  } catch (err) {
+    clearTimeout(timeout);
+    if ((err as Error).name === 'AbortError') {
+      console.error(`${params.logPrefix} request timed out`);
+      return { ok: false, reason: 'timeout' };
+    }
+    console.error(`${params.logPrefix} Fetch error:`, err);
+    return { ok: false, reason: 'network' };
+  }
+}
+
 export async function callAnthropic(params: {
   apiKey: string;
   model: string;

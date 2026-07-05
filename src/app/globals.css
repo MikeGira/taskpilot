@@ -196,12 +196,6 @@
   75%, 100% { transform: scale(2); opacity: 0; }
 }
 
-@keyframes pilot-orbit {
-  0%   { box-shadow: 0 0 0 0 rgba(99,102,241,0.4), 0 0 0 0 rgba(99,102,241,0.15); }
-  50%  { box-shadow: 0 0 0 8px rgba(99,102,241,0.0), 0 0 20px 4px rgba(99,102,241,0.2); }
-  100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.0), 0 0 0 0 rgba(99,102,241,0.0); }
-}
-
 @keyframes glow-drift-indigo {
   0%, 100% { opacity: 0.12; transform: translateX(0) translateY(0) scale(1); }
   33%       { opacity: 0.2; transform: translateX(30px) translateY(-20px) scale(1.1); }
@@ -233,7 +227,7 @@
   66%       { transform: translateX(4%) translateY(-2%) scale(0.94);  opacity: 0.08; }
 }
 
-/* ── Pilot AI button: Dynamic Island spring + indigo glow pulse ─────────── */
+/* ── Dynamic Island spring keyframe (used by .card-spring-active) ────────── */
 @keyframes pilot-spring {
   0%   { transform: scale(1); }
   7%   { transform: scale(1.26, 0.79); }
@@ -245,56 +239,6 @@
   85%  { transform: scale(1.01, 0.99); }
   100% { transform: scale(1); }
 }
-.pilot-spring {
-  animation: pilot-spring 0.68s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards !important;
-}
-
-@keyframes pilot-panel-spring {
-  0%   { transform: translateY(22px) scaleX(0.90) scaleY(0.82); opacity: 0; }
-  36%  { transform: translateY(-7px) scaleX(1.03) scaleY(1.055); opacity: 1; }
-  56%  { transform: translateY(4px) scaleX(0.994) scaleY(0.987); opacity: 1; }
-  73%  { transform: translateY(-2px) scaleX(1.004) scaleY(1.007); opacity: 1; }
-  88%  { transform: translateY(1px) scaleX(0.999) scaleY(0.999); opacity: 1; }
-  100% { transform: translateY(0) scale(1); opacity: 1; }
-}
-.pilot-panel-spring {
-  animation: pilot-panel-spring 0.62s cubic-bezier(0.34, 1.22, 0.64, 1) !important;
-  transition: none !important;
-}
-
-@keyframes pilot-glow-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 0 0   rgba(99,102,241,0.55),
-      0 0 18px  rgba(99,102,241,0.32),
-      0 0 45px  rgba(99,102,241,0.14),
-      0 8px 28px rgba(0,0,0,0.45);
-  }
-  50% {
-    box-shadow:
-      0 0 0 11px rgba(99,102,241,0),
-      0 0 30px  rgba(99,102,241,0.45),
-      0 0 65px  rgba(99,102,241,0.20),
-      0 8px 28px rgba(0,0,0,0.45);
-  }
-}
-.pilot-btn-glow { animation: pilot-glow-pulse 2.8s ease-in-out infinite; }
-
-/* ── Pilot button dark-forge hover theme (matches Phoenix AI on Bio) ─── */
-.pilot-btn {
-  transition: background 0.28s ease, color 0.22s ease, border-color 0.28s ease;
-}
-.pilot-btn:hover {
-  background: radial-gradient(circle at 35% 28%, rgba(18,14,45,.97), rgba(5,3,15,.99)) !important;
-  color: #ffffff !important;
-  border: 1.5px solid rgba(99,102,241,0.72) !important;
-  box-shadow:
-    0 0 0 3px  rgba(99,102,241,0.65),
-    0 0 24px   rgba(99,102,241,0.70),
-    0 0 58px   rgba(99,102,241,0.25),
-    0 8px 30px rgba(0,0,0,0.55) !important;
-}
-
 .aurora-blob {
   position: absolute;
   border-radius: 50%;
