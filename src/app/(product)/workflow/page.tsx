@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Navbar } from '@/components/layout/navbar';
-import { Footer } from '@/components/layout/footer';
 import { WorkflowGenerator } from '@/components/workflow/workflow-generator';
 import { Zap, Download, Shield, Layers, ArrowLeft } from 'lucide-react';
 
@@ -19,12 +17,8 @@ const FEATURES = [
 
 export default function WorkflowPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-black">
-      <Navbar />
-
-      <main className="flex-1">
-
-        {/* ── Hero (with dots) ─────────────────────────────────────────────── */}
+    <>
+      {/* ── Hero (with dots) ─────────────────────────────────────────────── */}
         <section className="relative overflow-hidden pt-8 pb-12 px-4">
           <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
             <div className="aurora-blob aurora-violet" />
@@ -126,9 +120,6 @@ export default function WorkflowPage() {
           </div>
         </section>
 
-      </main>
-
-      <Footer />
-    </div>
+    </>
   );
 }

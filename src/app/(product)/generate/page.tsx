@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Navbar } from '@/components/layout/navbar';
-import { Footer } from '@/components/layout/footer';
 import { GeneratorWizard } from '@/components/generator/generator-wizard';
 import { Wand2, Zap, ArrowLeft } from 'lucide-react';
 import { WizardBackButton } from '@/components/generator/wizard-back-button';
@@ -20,11 +18,8 @@ export default async function GeneratePage({
   const initialTask = task ? decodeURIComponent(task) : '';
 
   return (
-    <div className="min-h-screen flex flex-col bg-black">
-      <Navbar />
-
-      <main className="flex-1">
-        {/* Header */}
+    <>
+      {/* Header */}
         <section className="relative overflow-hidden border-b border-white/12">
           <div className="absolute inset-0 bg-grid-pattern pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-radial from-white/3 via-transparent to-transparent pointer-events-none" />
@@ -72,15 +67,12 @@ export default async function GeneratePage({
           </div>
         </section>
 
-        {/* Wizard */}
-        <section className="py-12 px-4 sm:px-6">
-          {/* Appears only when the header back button has scrolled out of view */}
-          <WizardBackButton />
-          <GeneratorWizard initialTask={initialTask} />
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+      {/* Wizard */}
+      <section className="py-12 px-4 sm:px-6">
+        {/* Appears only when the header back button has scrolled out of view */}
+        <WizardBackButton />
+        <GeneratorWizard initialTask={initialTask} />
+      </section>
+    </>
   );
 }
