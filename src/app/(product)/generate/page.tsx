@@ -1,8 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { GeneratorWizard } from '@/components/generator/generator-wizard';
-import { Wand2, Zap, ArrowLeft } from 'lucide-react';
-import { WizardBackButton } from '@/components/generator/wizard-back-button';
 
 export const metadata: Metadata = {
   title: 'Script Generator',
@@ -18,61 +15,16 @@ export default async function GeneratePage({
   const initialTask = task ? decodeURIComponent(task) : '';
 
   return (
-    <>
-      {/* Header */}
-        <section className="relative overflow-hidden border-b border-white/12">
-          <div className="absolute inset-0 bg-grid-pattern pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-radial from-white/3 via-transparent to-transparent pointer-events-none" />
-
-          <div className="relative mx-auto max-w-3xl px-4 sm:px-6">
-            {/* Back link — top-left of header. id is watched by WizardBackButton below. */}
-            <div className="pt-6 pb-0">
-              <Link
-                id="header-back-btn"
-                href="/"
-                className="inline-flex items-center gap-1.5 text-sm text-[#9CA3AF] hover:text-white transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to home
-              </Link>
-            </div>
-
-            {/* Centered hero */}
-            <div className="py-10 text-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-1.5 text-xs font-medium text-white mb-6 animate-float-up">
-                <Wand2 className="h-3.5 w-3.5 animate-spin-slow" />
-                AI-Powered Script Generator
-              </div>
-
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-4 animate-fade-in">
-                Generate a script that{' '}
-                <span className="text-white/70">actually works</span>{' '}
-                in your environment
-              </h1>
-
-              <p className="text-[#A0A0A0] max-w-xl mx-auto leading-relaxed animate-slide-up">
-                Tell us your OS and infrastructure. Describe what you want to automate.
-                Get a production-ready script with error handling, logging, and a config section. Ready in under 10 seconds.
-              </p>
-
-              <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-xs text-[#A0A0A0]">
-                {['Windows · Linux · macOS', 'On-Prem · Hybrid · Cloud · Multi-Cloud', '10 free scripts per hour', 'No sign-up required'].map((t) => (
-                  <span key={t} className="flex items-center gap-1.5">
-                    <Zap className="h-3 w-3 text-white/40" />
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-      {/* Wizard */}
-      <section className="py-12 px-4 sm:px-6">
-        {/* Appears only when the header back button has scrolled out of view */}
-        <WizardBackButton />
+    <div className="mx-auto w-full max-w-2xl px-4 sm:px-6">
+      <div className="pb-8 pt-12">
+        <h1 className="text-xl font-semibold tracking-tight text-white">Generate a script</h1>
+        <p className="mt-1 text-sm text-[#A1A1AA]">
+          Pick your target, describe the task. Production-ready output with error handling and logging.
+        </p>
+      </div>
+      <div className="pb-24">
         <GeneratorWizard initialTask={initialTask} />
-      </section>
-    </>
+      </div>
+    </div>
   );
 }

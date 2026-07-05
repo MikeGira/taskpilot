@@ -1,3 +1,16 @@
+// Next.js dev mode (react-refresh) requires eval; production bundles do not.
+// 'unsafe-eval' is therefore added to script-src ONLY in development —
+// the production CSP is unchanged.
+const scriptSrc = [
+  "'self'",
+  "'unsafe-inline'",
+  process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : null,
+  'https://js.stripe.com',
+  'https://va.vercel-scripts.com',
+]
+  .filter(Boolean)
+  .join(' ');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async headers() {
@@ -21,7 +34,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://js.stripe.com https://va.vercel-scripts.com",
+              `script-src ${scriptSrc}`,
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "connect-src 'self' https://*.supabase.co https://api.stripe.com https://vitals.vercel-insights.com",

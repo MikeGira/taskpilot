@@ -4,38 +4,39 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import { CodeBlock } from '@/components/ui/code-block';
+import { TaskComposer } from '@/components/generator/task-composer';
 import {
   Monitor, Terminal, Apple, Layers, Server, GitMerge, Cloud,
-  ArrowRight, ArrowLeft, Wand2, Copy, Download, CheckCircle2,
-  RefreshCw, Loader2, AlertCircle, Check, ChevronRight, ThumbsUp, ThumbsDown,
-  Code, Box, GitBranch, Settings, Shield, Key, Brain, Database, Activity, Package, Workflow, Network, Zap,
+  ArrowRight, ArrowLeft, Download, CheckCircle2,
+  RefreshCw, Loader2, AlertCircle, Check, Info, ThumbsUp, ThumbsDown,
+  Code, Box, GitBranch, Settings, Shield, Key, Brain, Database, Activity, Package, Workflow, Network,
 } from 'lucide-react';
-import { cn, copyToClipboard, downloadTextFile, buildDownloadContent, buildScriptGuide } from '@/lib/utils';
+import { cn, downloadTextFile, buildDownloadContent, buildScriptGuide } from '@/lib/utils';
 import type { GenerateResult } from '@/app/api/generate/route';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
 type Step = 'os' | 'environment' | 'tool' | 'task' | 'generating' | 'clarify' | 'result';
 
-interface OS { id: string; label: string; desc: string; icon: React.ElementType; color: string; accent: string; }
-interface Env { id: string; label: string; desc: string; icon: React.ElementType; color: string; accent: string; }
-interface Tool { id: string; label: string; desc: string; icon: React.ElementType; color: string; accent: string; category: string; }
-interface Cloud { id: string; label: string; short: string; }
+interface Option { id: string; label: string; desc: string; icon: React.ElementType; }
+interface ToolOption extends Option { category: string; }
+interface CloudProvider { id: string; label: string; short: string; }
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
-const OS_OPTIONS: OS[] = [
-  { id: 'windows',        label: 'Windows',        desc: 'Server 2016–2022 · Windows 10/11 · PowerShell', icon: Monitor,  color: 'border-blue-500/60   bg-blue-500/20   hover:border-blue-400     hover:bg-blue-500/30',   accent: 'text-blue-300'   },
-  { id: 'linux',          label: 'Linux',          desc: 'Ubuntu · RHEL/CentOS · Debian · Amazon Linux',  icon: Terminal, color: 'border-yellow-500/60 bg-yellow-500/20 hover:border-yellow-400   hover:bg-yellow-500/30', accent: 'text-yellow-300' },
-  { id: 'macos',          label: 'macOS',          desc: 'macOS 12+ · Admin or MDM managed',              icon: Apple,    color: 'border-zinc-400/60   bg-zinc-400/15   hover:border-zinc-300     hover:bg-zinc-400/25',   accent: 'text-zinc-200'   },
-  { id: 'cross-platform', label: 'Cross-Platform', desc: 'Works on Windows, Linux & macOS · Python',      icon: Layers,   color: 'border-violet-500/60 bg-violet-500/20 hover:border-violet-400   hover:bg-violet-500/30', accent: 'text-violet-300' },
+const OS_OPTIONS: Option[] = [
+  { id: 'windows',        label: 'Windows',        desc: 'Server 2016–2022 · Windows 10/11 · PowerShell', icon: Monitor  },
+  { id: 'linux',          label: 'Linux',          desc: 'Ubuntu · RHEL/CentOS · Debian · Amazon Linux',  icon: Terminal },
+  { id: 'macos',          label: 'macOS',          desc: 'macOS 12+ · Admin or MDM managed',              icon: Apple    },
+  { id: 'cross-platform', label: 'Cross-Platform', desc: 'Works on Windows, Linux & macOS · Python',      icon: Layers   },
 ];
 
-const ENV_OPTIONS: Env[] = [
-  { id: 'on-premises', label: 'On-Premises', desc: 'Active Directory · Local servers · No cloud', icon: Server,   color: 'border-indigo-500/60  bg-indigo-500/20  hover:border-indigo-400   hover:bg-indigo-500/30',  accent: 'text-indigo-300'  },
-  { id: 'hybrid',      label: 'Hybrid',      desc: 'On-prem + cloud · Best of both worlds',       icon: GitMerge, color: 'border-cyan-500/60    bg-cyan-500/20    hover:border-cyan-400     hover:bg-cyan-500/30',    accent: 'text-cyan-300'    },
-  { id: 'cloud',       label: 'Cloud',       desc: 'AWS · Azure · GCP · Fully managed',           icon: Cloud,    color: 'border-emerald-500/60 bg-emerald-500/20 hover:border-emerald-400  hover:bg-emerald-500/30', accent: 'text-emerald-300' },
-  { id: 'multi-cloud', label: 'Multi-Cloud', desc: 'Multiple providers · Complex infrastructure', icon: Layers,   color: 'border-amber-500/60   bg-amber-500/20   hover:border-amber-400    hover:bg-amber-500/30',   accent: 'text-amber-300'   },
+const ENV_OPTIONS: Option[] = [
+  { id: 'on-premises', label: 'On-Premises', desc: 'Active Directory · Local servers · No cloud', icon: Server   },
+  { id: 'hybrid',      label: 'Hybrid',      desc: 'On-prem + cloud · Best of both worlds',       icon: GitMerge },
+  { id: 'cloud',       label: 'Cloud',       desc: 'AWS · Azure · GCP · Fully managed',           icon: Cloud    },
+  { id: 'multi-cloud', label: 'Multi-Cloud', desc: 'Multiple providers · Complex infrastructure', icon: Layers   },
 ];
 
 const TOOL_CATEGORY_ORDER = [
@@ -51,47 +52,47 @@ const TOOL_CATEGORY_ORDER = [
   'Network Automation',
 ] as const;
 
-const TOOL_OPTIONS: Tool[] = [
+const TOOL_OPTIONS: ToolOption[] = [
   // Scripting
-  { category: 'Scripting',                  id: 'powershell',         label: 'PowerShell',         desc: 'Windows automation, Active Directory, Exchange',               icon: Terminal,  color: 'border-blue-500/60    bg-blue-500/20    hover:border-blue-400    hover:bg-blue-500/30',    accent: 'text-blue-300'    },
-  { category: 'Scripting',                  id: 'bash',               label: 'Bash / Shell',        desc: 'Linux/Unix system admin, cron jobs, pipelines',                icon: Terminal,  color: 'border-green-500/60   bg-green-500/20   hover:border-green-400   hover:bg-green-500/30',   accent: 'text-green-300'   },
-  { category: 'Scripting',                  id: 'python',             label: 'Python',              desc: 'Cross-platform automation, APIs, data processing',             icon: Code,      color: 'border-yellow-500/60  bg-yellow-500/20  hover:border-yellow-400  hover:bg-yellow-500/30',  accent: 'text-yellow-300'  },
+  { category: 'Scripting',                  id: 'powershell',         label: 'PowerShell',          desc: 'Windows automation, Active Directory, Exchange',                icon: Terminal  },
+  { category: 'Scripting',                  id: 'bash',               label: 'Bash / Shell',        desc: 'Linux/Unix system admin, cron jobs, pipelines',                 icon: Terminal  },
+  { category: 'Scripting',                  id: 'python',             label: 'Python',              desc: 'Cross-platform automation, APIs, data processing',              icon: Code      },
   // Infrastructure as Code
-  { category: 'Infrastructure as Code',     id: 'terraform',          label: 'Terraform',           desc: 'IaC: provision VMs, networks, cloud resources',                icon: Server,    color: 'border-violet-500/60  bg-violet-500/20  hover:border-violet-400  hover:bg-violet-500/30',  accent: 'text-violet-300'  },
-  { category: 'Infrastructure as Code',     id: 'pulumi',             label: 'Pulumi',              desc: 'TypeScript/Python IaC, modern Terraform alternative',           icon: Code,      color: 'border-fuchsia-500/60 bg-fuchsia-500/20 hover:border-fuchsia-400 hover:bg-fuchsia-500/30', accent: 'text-fuchsia-300' },
-  { category: 'Infrastructure as Code',     id: 'aws-cdk',            label: 'AWS CDK',             desc: 'AWS Cloud Development Kit in TypeScript/Python',                icon: Cloud,     color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
-  { category: 'Infrastructure as Code',     id: 'azure-bicep',        label: 'Azure Bicep',         desc: 'Azure-native IaC DSL, modern replacement for ARM JSON',         icon: Cloud,     color: 'border-sky-500/60     bg-sky-500/20     hover:border-sky-400     hover:bg-sky-500/30',     accent: 'text-sky-300'     },
-  { category: 'Infrastructure as Code',     id: 'arm-templates',      label: 'ARM Templates',       desc: 'Azure Resource Manager JSON, enterprise legacy and marketplace', icon: Code,      color: 'border-slate-400/60   bg-slate-400/15   hover:border-slate-300   hover:bg-slate-400/25',  accent: 'text-slate-300'   },
-  { category: 'Infrastructure as Code',     id: 'packer',             label: 'Packer',              desc: 'Build hardened VM and container images across providers',        icon: Package,   color: 'border-teal-500/60    bg-teal-500/20    hover:border-teal-400    hover:bg-teal-500/30',    accent: 'text-teal-300'    },
+  { category: 'Infrastructure as Code',     id: 'terraform',          label: 'Terraform',           desc: 'IaC: provision VMs, networks, cloud resources',                 icon: Server    },
+  { category: 'Infrastructure as Code',     id: 'pulumi',             label: 'Pulumi',              desc: 'TypeScript/Python IaC, modern Terraform alternative',           icon: Code      },
+  { category: 'Infrastructure as Code',     id: 'aws-cdk',            label: 'AWS CDK',             desc: 'AWS Cloud Development Kit in TypeScript/Python',                icon: Cloud     },
+  { category: 'Infrastructure as Code',     id: 'azure-bicep',        label: 'Azure Bicep',         desc: 'Azure-native IaC DSL, modern replacement for ARM JSON',         icon: Cloud     },
+  { category: 'Infrastructure as Code',     id: 'arm-templates',      label: 'ARM Templates',       desc: 'Azure Resource Manager JSON, enterprise legacy and marketplace', icon: Code      },
+  { category: 'Infrastructure as Code',     id: 'packer',             label: 'Packer',              desc: 'Build hardened VM and container images across providers',        icon: Package   },
   // Configuration Management
-  { category: 'Configuration Management',   id: 'ansible',            label: 'Ansible',             desc: 'YAML playbooks, agentless SSH config management',              icon: Settings,  color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
-  { category: 'Configuration Management',   id: 'puppet',             label: 'Puppet',              desc: 'Manifests and Hiera, agent-based config management',           icon: Settings,  color: 'border-amber-500/60   bg-amber-500/20   hover:border-amber-400   hover:bg-amber-500/30',   accent: 'text-amber-300'   },
+  { category: 'Configuration Management',   id: 'ansible',            label: 'Ansible',             desc: 'YAML playbooks, agentless SSH config management',               icon: Settings  },
+  { category: 'Configuration Management',   id: 'puppet',             label: 'Puppet',              desc: 'Manifests and Hiera, agent-based config management',            icon: Settings  },
   // CI/CD & GitOps
-  { category: 'CI/CD & GitOps',             id: 'github-actions',     label: 'GitHub Actions',      desc: 'CI/CD pipelines with security scanning built in',              icon: GitBranch, color: 'border-white/30       bg-white/8        hover:border-white/50    hover:bg-white/12',       accent: 'text-white'       },
-  { category: 'CI/CD & GitOps',             id: 'gitlab-ci',          label: 'GitLab CI',           desc: 'CI/CD pipelines with SAST/DAST, .gitlab-ci.yml',               icon: GitBranch, color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
-  { category: 'CI/CD & GitOps',             id: 'jenkins',            label: 'Jenkins',             desc: 'Declarative Jenkinsfile pipeline, Groovy DSL',                  icon: Workflow,  color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
-  { category: 'CI/CD & GitOps',             id: 'azure-devops',       label: 'Azure DevOps',        desc: 'Azure Pipelines YAML, multi-stage with approval gates',         icon: Workflow,  color: 'border-blue-500/60    bg-blue-500/20    hover:border-blue-400    hover:bg-blue-500/30',    accent: 'text-blue-300'    },
-  { category: 'CI/CD & GitOps',             id: 'argocd',             label: 'ArgoCD',              desc: 'GitOps continuous delivery, App-of-Apps pattern',              icon: GitBranch, color: 'border-emerald-500/60 bg-emerald-500/20 hover:border-emerald-400 hover:bg-emerald-500/30', accent: 'text-emerald-300' },
+  { category: 'CI/CD & GitOps',             id: 'github-actions',     label: 'GitHub Actions',      desc: 'CI/CD pipelines with security scanning built in',               icon: GitBranch },
+  { category: 'CI/CD & GitOps',             id: 'gitlab-ci',          label: 'GitLab CI',           desc: 'CI/CD pipelines with SAST/DAST, .gitlab-ci.yml',                icon: GitBranch },
+  { category: 'CI/CD & GitOps',             id: 'jenkins',            label: 'Jenkins',             desc: 'Declarative Jenkinsfile pipeline, Groovy DSL',                   icon: Workflow  },
+  { category: 'CI/CD & GitOps',             id: 'azure-devops',       label: 'Azure DevOps',        desc: 'Azure Pipelines YAML, multi-stage with approval gates',          icon: Workflow  },
+  { category: 'CI/CD & GitOps',             id: 'argocd',             label: 'ArgoCD',              desc: 'GitOps continuous delivery, App-of-Apps pattern',               icon: GitBranch },
   // Containers & Orchestration
-  { category: 'Containers & Orchestration', id: 'docker',             label: 'Docker',              desc: 'Dockerfile: multi-stage, non-root, health checks',             icon: Box,       color: 'border-cyan-500/60    bg-cyan-500/20    hover:border-cyan-400    hover:bg-cyan-500/30',    accent: 'text-cyan-300'    },
-  { category: 'Containers & Orchestration', id: 'kubernetes',         label: 'Kubernetes / Helm',   desc: 'Manifests and Helm charts with security context and policies',  icon: Layers,    color: 'border-indigo-500/60  bg-indigo-500/20  hover:border-indigo-400  hover:bg-indigo-500/30',  accent: 'text-indigo-300'  },
+  { category: 'Containers & Orchestration', id: 'docker',             label: 'Docker',              desc: 'Dockerfile: multi-stage, non-root, health checks',              icon: Box       },
+  { category: 'Containers & Orchestration', id: 'kubernetes',         label: 'Kubernetes / Helm',   desc: 'Manifests and Helm charts with security context and policies',   icon: Layers    },
   // Security & Compliance
-  { category: 'Security & Compliance',      id: 'cis-hardening',      label: 'CIS Hardening',       desc: 'CIS Benchmark scripts to harden Linux or Windows servers',      icon: Shield,    color: 'border-rose-500/60    bg-rose-500/20    hover:border-rose-400    hover:bg-rose-500/30',    accent: 'text-rose-300'    },
-  { category: 'Security & Compliance',      id: 'vault',              label: 'HashiCorp Vault',     desc: 'Secrets management: policies, dynamic creds, PKI',             icon: Key,       color: 'border-yellow-500/60  bg-yellow-500/20  hover:border-yellow-400  hover:bg-yellow-500/30',  accent: 'text-yellow-300'  },
-  { category: 'Security & Compliance',      id: 'security-scanning',  label: 'Security Scanning',   desc: 'Trivy, Semgrep, Gitleaks, Checkov: multi-layer SAST and SCA',  icon: Shield,    color: 'border-red-500/60     bg-red-500/20     hover:border-red-400     hover:bg-red-500/30',     accent: 'text-red-300'     },
+  { category: 'Security & Compliance',      id: 'cis-hardening',      label: 'CIS Hardening',       desc: 'CIS Benchmark scripts to harden Linux or Windows servers',       icon: Shield    },
+  { category: 'Security & Compliance',      id: 'vault',              label: 'HashiCorp Vault',     desc: 'Secrets management: policies, dynamic creds, PKI',              icon: Key       },
+  { category: 'Security & Compliance',      id: 'security-scanning',  label: 'Security Scanning',   desc: 'Trivy, Semgrep, Gitleaks, Checkov: multi-layer SAST and SCA',   icon: Shield    },
   // AI / ML & Data
-  { category: 'AI / ML & Data',             id: 'mlops',              label: 'AI/ML Ops',           desc: 'MLflow, model serving, drift monitoring, inference API',        icon: Brain,     color: 'border-violet-500/60  bg-violet-500/20  hover:border-violet-400  hover:bg-violet-500/30',  accent: 'text-violet-300'  },
-  { category: 'AI / ML & Data',             id: 'langchain',          label: 'LangChain / RAG',     desc: 'LLM pipelines, RAG, vector stores, prompt engineering',         icon: Brain,     color: 'border-fuchsia-500/60 bg-fuchsia-500/20 hover:border-fuchsia-400 hover:bg-fuchsia-500/30', accent: 'text-fuchsia-300' },
+  { category: 'AI / ML & Data',             id: 'mlops',              label: 'AI/ML Ops',           desc: 'MLflow, model serving, drift monitoring, inference API',         icon: Brain     },
+  { category: 'AI / ML & Data',             id: 'langchain',          label: 'LangChain / RAG',     desc: 'LLM pipelines, RAG, vector stores, prompt engineering',          icon: Brain     },
   // Monitoring & Observability
-  { category: 'Monitoring & Observability', id: 'prometheus-grafana',  label: 'Prometheus + Grafana', desc: 'Metrics, alerting rules, dashboards as code',                 icon: Activity,  color: 'border-orange-500/60  bg-orange-500/20  hover:border-orange-400  hover:bg-orange-500/30',  accent: 'text-orange-300'  },
-  { category: 'Monitoring & Observability', id: 'elk-stack',           label: 'ELK Stack',           desc: 'Elasticsearch, Logstash, Kibana: log pipelines and ILM',      icon: Activity,  color: 'border-teal-500/60    bg-teal-500/20    hover:border-teal-400    hover:bg-teal-500/30',    accent: 'text-teal-300'    },
+  { category: 'Monitoring & Observability', id: 'prometheus-grafana', label: 'Prometheus + Grafana', desc: 'Metrics, alerting rules, dashboards as code',                  icon: Activity  },
+  { category: 'Monitoring & Observability', id: 'elk-stack',          label: 'ELK Stack',           desc: 'Elasticsearch, Logstash, Kibana: log pipelines and ILM',       icon: Activity  },
   // Database & Storage
-  { category: 'Database & Storage',         id: 'database-admin',      label: 'Database Admin',      desc: 'PostgreSQL / MySQL: backup, replication, user management',    icon: Database,  color: 'border-blue-500/60    bg-blue-500/20    hover:border-blue-400    hover:bg-blue-500/30',    accent: 'text-blue-300'    },
+  { category: 'Database & Storage',         id: 'database-admin',     label: 'Database Admin',      desc: 'PostgreSQL / MySQL: backup, replication, user management',     icon: Database  },
   // Network Automation
-  { category: 'Network Automation',         id: 'network-automation',  label: 'Network Automation',  desc: 'netmiko, NAPALM, Nornir: multi-vendor network config',        icon: Network,   color: 'border-green-500/60   bg-green-500/20   hover:border-green-400   hover:bg-green-500/30',   accent: 'text-green-300'   },
+  { category: 'Network Automation',         id: 'network-automation', label: 'Network Automation',  desc: 'netmiko, NAPALM, Nornir: multi-vendor network config',         icon: Network   },
 ];
 
-const CLOUD_PROVIDERS: Cloud[] = [
+const CLOUD_PROVIDERS: CloudProvider[] = [
   { id: 'AWS', label: 'Amazon Web Services', short: 'AWS' },
   { id: 'Azure', label: 'Microsoft Azure', short: 'Azure' },
   { id: 'GCP', label: 'Google Cloud', short: 'GCP' },
@@ -118,128 +119,58 @@ const TASK_EXAMPLES = [
   'Sync files between two servers on a nightly schedule',
 ];
 
-const LOADING_MESSAGES = [
-  'Analyzing your environment…',
-  'Selecting the right scripting approach…',
-  'Writing error handlers and logging…',
-  'Adding safety checks…',
-  'Finalizing your script…',
-];
-
-const LANG_LABELS: Record<string, string> = {
-  powershell: 'PowerShell',
-  bash: 'Bash',
-  python: 'Python',
-  zsh: 'Zsh',
-  terraform: 'Terraform HCL',
-  yaml: 'YAML',
-  puppet: 'Puppet',
-  dockerfile: 'Dockerfile',
-  groovy: 'Groovy (Jenkinsfile)',
-  typescript: 'TypeScript',
-  bicep: 'Azure Bicep',
-  json: 'ARM Template (JSON)',
-};
+const EXAMPLES_PREVIEW_COUNT = 6;
+const SLOW_GEN_SECONDS = 15;
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function StepIndicator({ current, total }: { current: number; total: number }) {
   return (
-    <div className="flex items-center gap-2 mb-8">
-      {Array.from({ length: total }).map((_, i) => (
+    <div className="mb-8">
+      <p className="mb-2 text-xs text-[#6B7280]">
+        Step {current + 1} of {total}
+      </p>
+      <div className="h-px w-full bg-white/8">
         <div
-          key={i}
-          className={cn(
-            'h-1.5 rounded-full transition-all duration-300',
-            i < current ? 'bg-white flex-1' : i === current ? 'bg-white/55 flex-[2]' : 'bg-white/25 flex-1'
-          )}
+          className="h-px bg-[#3ECF8E] transition-[width] duration-200 ease-out"
+          style={{ width: `${((current + 1) / total) * 100}%` }}
         />
-      ))}
+      </div>
     </div>
   );
 }
 
-function SelectionCard<T extends { id: string; label: string; desc: string; icon: React.ElementType; color: string; accent: string }>({
+function BackLink({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="mb-5 flex items-center gap-1.5 text-[13px] font-medium text-[#A1A1AA] transition-colors duration-150 hover:text-white"
+    >
+      <ArrowLeft className="h-3.5 w-3.5" /> Back
+    </button>
+  );
+}
+
+function SelectionCard({
   option, selected, onClick,
-}: { option: T; selected: boolean; onClick: () => void }) {
+}: { option: Option; selected: boolean; onClick: () => void }) {
   const Icon = option.icon;
   return (
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={selected}
       className={cn(
-        'card-lift relative w-full text-left rounded-xl border p-5 transition-colors duration-200 group',
-        option.color,
-        selected && 'ring-2 ring-white/30 ring-offset-2 ring-offset-[#000000]'
+        'card-lift relative w-full rounded-xl border bg-[#0D0D0D] p-4 text-left',
+        selected ? 'border-[rgba(62,207,142,0.4)]' : 'border-white/8'
       )}
     >
-      {selected && (
-        <div className="absolute top-3 right-3 h-5 w-5 rounded-full bg-white flex items-center justify-center">
-          <Check className="h-3 w-3 text-black" />
-        </div>
-      )}
-      <Icon className={cn('h-6 w-6 mb-3', option.accent)} />
-      <div className="font-semibold text-[#F9FAFB] mb-1">{option.label}</div>
-      <div className="text-xs text-[#9CA3AF] leading-relaxed">{option.desc}</div>
+      {selected && <Check className="absolute right-3 top-3 h-3.5 w-3.5 text-[#3ECF8E]" />}
+      <Icon className="mb-3 h-4 w-4 text-[#6B7280]" />
+      <div className="mb-1 text-sm font-medium text-[#F9FAFB]">{option.label}</div>
+      <div className="text-xs leading-relaxed text-[#A1A1AA]">{option.desc}</div>
     </button>
-  );
-}
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  async function handleCopy() {
-    await copyToClipboard(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
-  }
-  return (
-    <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 min-w-[80px]">
-      {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
-      {copied ? 'Copied!' : 'Copy'}
-    </Button>
-  );
-}
-
-
-function ScriptBlock({ script, filename, language, locked = false }: {
-  script: string; filename: string | null; language: string | null; locked?: boolean;
-}) {
-  const langLabel = language ? (LANG_LABELS[language] ?? language) : 'Script';
-  const displayScript = locked ? script.split('\n').slice(0, 18).join('\n') : script;
-  return (
-    <div className="rounded-xl border border-white/25 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2.5 bg-[#111111] border-b border-white/20">
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1.5">
-            <div className="h-3 w-3 rounded-full bg-white/12" />
-            <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
-            <div className="h-3 w-3 rounded-full bg-white/12" />
-          </div>
-          <span className="text-xs text-[#C9CACB] ml-2 font-mono">{filename ?? 'script'}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-[#9CA3AF] border border-white/22 px-2 py-0.5 rounded">{langLabel}</span>
-          {!locked && <CopyButton text={script} />}
-        </div>
-      </div>
-      <div className="relative">
-        <pre className={cn(
-          'p-5 text-sm text-[#E2E8F0] font-mono leading-relaxed scrollbar-hidden',
-          locked ? 'overflow-hidden max-h-[200px] select-none' : 'overflow-x-auto max-h-[480px] overflow-y-auto'
-        )}>
-          <code>{displayScript}</code>
-        </pre>
-        {locked && (
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/70 to-transparent flex flex-col items-center justify-end pb-5 gap-1.5">
-            <p className="text-sm font-semibold text-[#F9FAFB]">Pro script: upgrade to unlock</p>
-            <p className="text-xs text-[#9CA3AF]">Copy, download and save to history with Pro</p>
-            <Button asChild size="sm" className="mt-1">
-              <a href="/checkout">Upgrade to Pro, $12/mo</a>
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
   );
 }
 
@@ -247,7 +178,7 @@ function ScriptBlock({ script, filename, language, locked = false }: {
 
 export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) {
   // When arriving from a kit card, the task is pre-filled — start on OS step still
-  // so user can pick their OS/env, but task textarea will be pre-populated
+  // so user can pick their OS/env, but task composer will be pre-populated
   const [step, setStep] = useState<Step>('os');
   const [os, setOs] = useState('');
   const [env, setEnv] = useState('');
@@ -257,31 +188,24 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
   const [clarifyAnswer, setClarifyAnswer] = useState('');
   const [result, setResult] = useState<GenerateResult | null>(null);
   const [error, setError] = useState('');
-  const [loadingMsg, setLoadingMsg] = useState(0);
+  const [showAllExamples, setShowAllExamples] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
   const [slowGen, setSlowGen] = useState(false);
-  const loadingRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const slowGenRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const [feedbackRating, setFeedbackRating] = useState<1 | -1 | null>(null);
   const [feedbackComment, setFeedbackComment] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
 
   useEffect(() => {
-    if (step === 'generating') {
-      setLoadingMsg(0);
-      setSlowGen(false);
-      loadingRef.current = setInterval(() => {
-        setLoadingMsg((m) => (m + 1) % LOADING_MESSAGES.length);
-      }, 1800);
-      slowGenRef.current = setTimeout(() => setSlowGen(true), 12_000);
-    } else {
-      if (loadingRef.current) clearInterval(loadingRef.current);
-      if (slowGenRef.current) clearTimeout(slowGenRef.current);
-      setSlowGen(false);
-    }
+    if (step !== 'generating') return;
+    setElapsed(0);
+    setSlowGen(false);
+    const tick = setInterval(() => setElapsed((s) => s + 1), 1000);
+    const slow = setTimeout(() => setSlowGen(true), SLOW_GEN_SECONDS * 1000);
     return () => {
-      if (loadingRef.current) clearInterval(loadingRef.current);
-      if (slowGenRef.current) clearTimeout(slowGenRef.current);
+      clearInterval(tick);
+      clearTimeout(slow);
     };
   }, [step]);
 
@@ -292,6 +216,8 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
   }
 
   async function generate(clarificationAnswer?: string, previousQuestion?: string) {
+    const controller = new AbortController();
+    abortRef.current = controller;
     setStep('generating');
     setError('');
     try {
@@ -307,6 +233,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           clarificationAnswer,
           previousQuestion,
         }),
+        signal: controller.signal,
       });
       const data: GenerateResult & { error?: string } = await res.json();
 
@@ -323,10 +250,16 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
         setResult(data);
         setStep('result');
       }
-    } catch {
-      setError('Network error. Please try again.');
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return;
+      setError('Network error. Check your connection and try again.');
       setStep('task');
     }
+  }
+
+  function stopGeneration() {
+    abortRef.current?.abort();
+    setStep('task');
   }
 
   async function submitFeedback(rating: 1 | -1) {
@@ -363,6 +296,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
     setClarifyAnswer('');
     setResult(null);
     setError('');
+    setShowAllExamples(false);
     setFeedbackRating(null);
     setFeedbackComment('');
     setFeedbackSubmitted(false);
@@ -370,6 +304,8 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
   }
 
   const needsCloud = env === 'cloud' || env === 'hybrid' || env === 'multi-cloud';
+  const toolLabel = TOOL_OPTIONS.find((t) => t.id === tool)?.label;
+  const visibleExamples = showAllExamples ? TASK_EXAMPLES : TASK_EXAMPLES.slice(0, EXAMPLES_PREVIEW_COUNT);
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -380,9 +316,9 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {step === 'os' && (
         <div className="animate-slide-up">
           <StepIndicator current={0} total={4} />
-          <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">What OS are you targeting?</h2>
-          <p className="text-sm text-[#9CA3AF] mb-6">This determines the scripting language and available tools.</p>
-          <div className="grid sm:grid-cols-2 gap-3">
+          <h2 className="mb-1 text-xl font-semibold tracking-tight text-[#F9FAFB]">What OS are you targeting?</h2>
+          <p className="mb-6 text-sm text-[#A1A1AA]">This determines the scripting language and available tools.</p>
+          <div className="grid gap-3 sm:grid-cols-2">
             {OS_OPTIONS.map((o) => (
               <SelectionCard
                 key={o.id}
@@ -399,12 +335,10 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {step === 'environment' && (
         <div className="animate-slide-up">
           <StepIndicator current={1} total={4} />
-          <button onClick={() => setStep('os')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/20 rounded-full px-3 py-1.5 mb-5 transition-colors">
-            <ArrowLeft className="h-3.5 w-3.5" /> Back
-          </button>
-          <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">What&apos;s your environment?</h2>
-          <p className="text-sm text-[#9CA3AF] mb-6">This determines which tools and APIs the script uses.</p>
-          <div className="grid sm:grid-cols-2 gap-3 mb-5">
+          <BackLink onClick={() => setStep('os')} />
+          <h2 className="mb-1 text-xl font-semibold tracking-tight text-[#F9FAFB]">What&apos;s your environment?</h2>
+          <p className="mb-6 text-sm text-[#A1A1AA]">This determines which tools and APIs the script uses.</p>
+          <div className="mb-5 grid gap-3 sm:grid-cols-2">
             {ENV_OPTIONS.map((e) => (
               <SelectionCard
                 key={e.id}
@@ -417,9 +351,9 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
 
           {/* Cloud provider sub-selection */}
           {needsCloud && (
-            <div className="rounded-xl border border-white/22 bg-white/6 p-4 mb-5">
-              <p className="text-sm font-medium text-[#C9CACB] mb-3">
-                Which cloud provider(s)? <span className="text-[#9CA3AF]">(select all that apply)</span>
+            <div className="mb-5 rounded-xl border border-white/8 p-4">
+              <p className="mb-3 text-sm font-medium text-[#F9FAFB]">
+                Which cloud provider(s)? <span className="text-[#6B7280]">Select all that apply.</span>
               </p>
               <div className="flex flex-wrap gap-2">
                 {CLOUD_PROVIDERS.map((c) => (
@@ -427,13 +361,13 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
                     key={c.id}
                     onClick={() => toggleCloud(c.id)}
                     className={cn(
-                      'px-3 py-1.5 rounded-lg text-sm font-medium border transition-all duration-150',
+                      'rounded-lg border px-3 py-1.5 text-[13px] font-medium transition-colors duration-150',
                       cloudProviders.includes(c.id)
-                        ? 'border-white/28 bg-white/10 text-white'
-                        : 'border-white/22 bg-white/7 text-[#C9CACB] hover:border-white/35 hover:bg-white/12'
+                        ? 'border-[rgba(62,207,142,0.4)] text-[#3ECF8E]'
+                        : 'border-white/8 text-[#A1A1AA] hover:border-white/25 hover:text-white'
                     )}
                   >
-                    {cloudProviders.includes(c.id) && <Check className="h-3.5 w-3.5 mr-1 inline" />}
+                    {cloudProviders.includes(c.id) && <Check className="mr-1 inline h-3.5 w-3.5" />}
                     {c.short}
                   </button>
                 ))}
@@ -456,17 +390,15 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {step === 'tool' && (
         <div className="animate-slide-up">
           <StepIndicator current={2} total={4} />
-          <button onClick={() => setStep('environment')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/20 rounded-full px-3 py-1.5 mb-5 transition-colors">
-            <ArrowLeft className="h-3.5 w-3.5" /> Back
-          </button>
-          <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">What tool or language?</h2>
-          <p className="text-sm text-[#9CA3AF] mb-6">This determines the script format, file type, and enterprise best practices applied.</p>
+          <BackLink onClick={() => setStep('environment')} />
+          <h2 className="mb-1 text-xl font-semibold tracking-tight text-[#F9FAFB]">What tool or language?</h2>
+          <p className="mb-6 text-sm text-[#A1A1AA]">This determines the script format, file type, and enterprise best practices applied.</p>
           {TOOL_CATEGORY_ORDER.map((category) => {
             const tools = TOOL_OPTIONS.filter((t) => t.category === category);
             return (
               <div key={category} className="mb-6">
-                <p className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">{category}</p>
-                <div className="grid sm:grid-cols-2 gap-3">
+                <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[#6B7280]">{category}</p>
+                <div className="grid gap-3 sm:grid-cols-2">
                   {tools.map((t) => (
                     <SelectionCard
                       key={t.id}
@@ -486,85 +418,81 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {step === 'task' && (
         <div className="animate-slide-up">
           <StepIndicator current={3} total={4} />
-          <button onClick={() => setStep('tool')} className="flex items-center gap-1.5 text-sm font-medium text-white bg-white/8 hover:bg-white/14 border border-white/20 rounded-full px-3 py-1.5 mb-5 transition-colors">
-            <ArrowLeft className="h-3.5 w-3.5" /> Back
-          </button>
-          <h2 className="text-xl font-bold text-[#F9FAFB] mb-1">What do you want to automate?</h2>
-          <p className="text-sm text-[#9CA3AF] mb-6">
-            Describe the task in plain English. Be specific: the more detail you give, the better the script.
+          <BackLink onClick={() => setStep('tool')} />
+          <h2 className="mb-1 text-xl font-semibold tracking-tight text-[#F9FAFB]">What do you want to automate?</h2>
+          <p className="mb-6 text-sm text-[#A1A1AA]">
+            Describe the task in plain English. More detail produces a better script.
           </p>
 
           <div className="mb-4">
-            <Textarea
+            <TaskComposer
               value={task}
-              onChange={(e) => setTask(e.target.value)}
-              placeholder="e.g. I want to automatically disable user accounts that haven't logged in for 90 days and send an email to IT with the list of disabled accounts."
-              rows={5}
+              onChange={setTask}
+              onSubmit={() => { if (task.trim().length >= 10) generate(); }}
+              disabled={task.trim().length < 10}
               maxLength={2000}
-              className="resize-none text-base sm:text-sm"
-              style={{ fontSize: 'max(16px, 1rem)' }}
+              placeholder="e.g. Disable user accounts that haven't logged in for 90 days and email IT the list of disabled accounts."
+              submitLabel="Generate"
+              error={error || undefined}
               autoFocus
             />
-            <div className="flex items-center justify-between mt-1.5">
-              {error && (
-                <p className="text-xs text-white flex items-center gap-1">
-                  <AlertCircle className="h-3 w-3" />{error}
-                </p>
-              )}
-              <span className="text-xs text-[#9CA3AF] ml-auto">{task.length}/2000</span>
-            </div>
             {task.length > 800 && (
-              <p className="text-xs text-yellow-500/70 mt-1.5 flex items-start gap-1.5">
-                <Zap className="h-3.5 w-3.5 shrink-0 text-yellow-500/70" />
+              <p className="mt-2 flex items-start gap-1.5 text-xs text-[#A1A1AA]">
+                <Info className="h-3.5 w-3.5 shrink-0" />
                 Focused tasks generate the most complete scripts. For complex multi-system requests, describe the core goal. The script will include TODO markers for advanced features.
               </p>
             )}
           </div>
 
-          <div className="mb-6">
-            <p className="text-xs text-[#9CA3AF] mb-2 font-medium">Need inspiration?</p>
+          <div>
+            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Examples</p>
             <div className="flex flex-wrap gap-2">
-              {TASK_EXAMPLES.map((ex) => (
+              {visibleExamples.map((ex) => (
                 <button
                   key={ex}
                   onClick={() => setTask(ex)}
-                  className="text-xs px-2.5 py-1 rounded-md border border-white/8 bg-white/4 text-[#9CA3AF] hover:text-[#F9FAFB] hover:border-white/15 transition-colors text-left"
+                  className="rounded-lg border border-white/8 px-2.5 py-1 text-left text-xs text-[#A1A1AA] transition-colors duration-150 hover:border-white/25 hover:text-[#F9FAFB]"
                 >
                   {ex}
                 </button>
               ))}
+              {!showAllExamples && (
+                <button
+                  onClick={() => setShowAllExamples(true)}
+                  className="rounded-lg px-2.5 py-1 text-xs text-[#6B7280] transition-colors duration-150 hover:text-white"
+                >
+                  More
+                </button>
+              )}
             </div>
           </div>
-
-          <Button
-            onClick={() => generate()}
-            disabled={task.trim().length < 10}
-            size="lg"
-            className="w-full"
-          >
-            <Wand2 className="h-4 w-4" />
-            Generate Script
-          </Button>
         </div>
       )}
 
       {/* Step: Generating (loading) */}
       {step === 'generating' && (
-        <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-          <div className="relative mb-8">
-            <div className="h-20 w-20 rounded-full border-2 border-white/28 flex items-center justify-center">
-              <div className="h-14 w-14 rounded-full border-2 border-t-red-400 border-white/12 animate-spin" />
-            </div>
-            <Wand2 className="absolute inset-0 m-auto h-6 w-6 text-white" />
+        <div className="animate-fade-in py-8">
+          <div className="mb-6 rounded-xl border border-white/8 bg-[#0D0D0D] p-4">
+            <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Task</p>
+            <p className="text-sm leading-relaxed text-[#A1A1AA]">{task}</p>
           </div>
-          <h2 className="text-lg font-semibold text-[#F9FAFB] mb-2">Generating your script…</h2>
-          <p className="text-sm text-[#9CA3AF] transition-all duration-500 min-h-[20px]">
-            {LOADING_MESSAGES[loadingMsg]}
-          </p>
-          {slowGen && (
-            <p className="text-xs text-[#6B7280] mt-3 animate-fade-in">
-              Complex scripts can take up to 30 seconds. Still working…
+          <div className="flex items-center justify-between" aria-live="polite">
+            <p className="stream-caret text-sm text-[#F9FAFB]">
+              {toolLabel ? `Writing your ${toolLabel} script` : 'Writing your script'}
             </p>
+            <div className="flex items-center gap-4">
+              <span className="text-xs tabular-nums text-[#6B7280]">{elapsed}s</span>
+              <button
+                type="button"
+                onClick={stopGeneration}
+                className="text-[13px] font-medium text-[#A1A1AA] transition-colors duration-150 hover:text-white"
+              >
+                Stop
+              </button>
+            </div>
+          </div>
+          {slowGen && (
+            <p className="mt-3 text-xs text-[#6B7280]">Complex scripts can take up to 30 seconds.</p>
           )}
         </div>
       )}
@@ -573,22 +501,15 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {step === 'clarify' && result?.question && (
         <div className="animate-slide-up">
           <StepIndicator current={3} total={4} />
-          <div className="rounded-xl border border-white/28 bg-white/9 p-5 mb-6">
-            <div className="flex items-start gap-3">
-              <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
-                <Wand2 className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-zinc-300 mb-1">One quick question</p>
-                <p className="text-sm text-[#F9FAFB] leading-relaxed">{result.question}</p>
-              </div>
-            </div>
+          <div className="mb-6 rounded-xl border border-white/8 bg-[#0D0D0D] p-4">
+            <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-[#6B7280]">One question before generating</p>
+            <p className="text-sm leading-relaxed text-[#F9FAFB]">{result.question}</p>
           </div>
           <div className="space-y-4">
             <Input
               value={clarifyAnswer}
               onChange={(e) => setClarifyAnswer(e.target.value)}
-              placeholder="Your answer…"
+              placeholder="Your answer"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && clarifyAnswer.trim()) {
@@ -602,7 +523,7 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
               size="lg"
               className="w-full"
             >
-              Answer & Generate Script <ChevronRight className="h-4 w-4" />
+              Answer and generate
             </Button>
           </div>
         </div>
@@ -612,45 +533,68 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
       {step === 'result' && result && (
         <div className="animate-slide-up space-y-5">
           {/* Header */}
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                {result.script
-                  ? <CheckCircle2 className="h-5 w-5 text-white shrink-0" />
-                  : <AlertCircle className="h-5 w-5 text-[#9CA3AF] shrink-0" />}
-                <h2 className="font-bold text-[#F9FAFB]">
-                  {result.script ? (result.title ?? 'Your script is ready') : 'Generation incomplete'}
-                </h2>
-              </div>
-              {result.script && result.explanation && (
-                <p className="text-sm text-[#9CA3AF] leading-relaxed pl-7">{result.explanation}</p>
-              )}
-              {!result.script && (
-                <p className="text-sm text-[#9CA3AF] leading-relaxed pl-7 mt-1">
-                  The AI could not produce a complete script. Add more detail: specify the OS, exact tools or systems involved, and what each step should do.
-                </p>
-              )}
+          <div>
+            <div className="mb-1 flex items-center gap-2">
+              {result.script
+                ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[#3ECF8E]" />
+                : <AlertCircle className="h-4 w-4 shrink-0 text-[#A1A1AA]" />}
+              <h2 className="text-xl font-semibold tracking-tight text-[#F9FAFB]">
+                {result.script ? (result.title ?? 'Your script is ready') : 'Generation incomplete'}
+              </h2>
             </div>
-            <Button variant="ghost" size="sm" onClick={reset} className="shrink-0 gap-1.5">
-              <RefreshCw className="h-3.5 w-3.5" /> {result.script ? 'New' : 'Try again'}
-            </Button>
+            {result.script && result.explanation && (
+              <p className="pl-6 text-sm leading-relaxed text-[#A1A1AA]">{result.explanation}</p>
+            )}
+            {!result.script && (
+              <p className="mt-1 pl-6 text-sm leading-relaxed text-[#A1A1AA]">
+                The generator could not produce a complete script. Add more detail: specify the OS, exact tools or systems involved, and what each step should do.
+              </p>
+            )}
           </div>
 
           {/* Script */}
           {result.script && (
-            <ScriptBlock script={result.script} filename={result.filename} language={result.language} />
+            <CodeBlock code={result.script} filename={result.filename} language={result.language} />
+          )}
+
+          {/* Actions */}
+          {result.script ? (
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button
+                onClick={() => {
+                  const filename = result.filename ?? 'script.txt';
+                  downloadTextFile(buildDownloadContent(result), filename);
+                  const guideName = filename.replace(/\.[^.]+$/, '') + '-guide.md';
+                  setTimeout(() => downloadTextFile(buildScriptGuide(result), guideName), 150);
+                }}
+                variant="outline"
+                className="gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Download script + guide
+              </Button>
+              <Button onClick={reset} variant="ghost" className="gap-2">
+                <RefreshCw className="h-4 w-4" />
+                New script
+              </Button>
+            </div>
+          ) : (
+            <Button onClick={reset} variant="outline" className="gap-2">
+              <RefreshCw className="h-4 w-4" />
+              Try again
+            </Button>
           )}
 
           {/* Config notes */}
           {result.configNotes && result.configNotes.length > 0 && (
-            <div className="rounded-xl border border-yellow-500/15 bg-yellow-500/6 p-4">
-              <p className="text-xs font-semibold text-yellow-400 mb-2.5 uppercase tracking-wider">
-                Before you run this script
+            <div className="rounded-xl border border-white/8 bg-white/[0.03] p-4">
+              <p className="mb-2.5 text-xs font-medium uppercase tracking-wider text-[#A1A1AA]">
+                Before you run
               </p>
               <ul className="space-y-1.5">
                 {result.configNotes.map((note, i) => (
-                  <li key={i} className="text-xs text-[#D1D5DB] flex items-start gap-2">
-                    <span className="text-yellow-500/70 mt-0.5 shrink-0">→</span>
+                  <li key={i} className="flex items-start gap-2 text-xs leading-relaxed text-[#A1A1AA]">
+                    <span className="mt-0.5 shrink-0 text-[#6B7280]">•</span>
                     {note}
                   </li>
                 ))}
@@ -659,106 +603,75 @@ export function GeneratorWizard({ initialTask = '' }: { initialTask?: string }) 
           )}
 
           {/* Feedback */}
-          {feedbackSubmitted ? (
-            <div className="rounded-xl border border-white/28 bg-white/9 px-4 py-3 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-white shrink-0" />
-              <p className="text-sm text-[#D1D5DB]">Thanks, your feedback helps improve the AI.</p>
-            </div>
-          ) : (
-            <div className="rounded-xl border border-white/8 bg-white/2 p-4">
-              <p className="text-xs font-medium text-[#9CA3AF] mb-3">Did this script work for you?</p>
-              {feedbackRating === null && (
+          {result.script && (
+            feedbackSubmitted ? (
+              <p className="text-xs text-[#A1A1AA]">Thanks. This improves future scripts.</p>
+            ) : feedbackRating === -1 ? (
+              <div className="space-y-3">
+                <Textarea
+                  value={feedbackComment}
+                  onChange={(e) => setFeedbackComment(e.target.value)}
+                  placeholder="What went wrong? Optional, helps improve the generator."
+                  rows={2}
+                  maxLength={500}
+                  className="resize-none text-sm"
+                  autoFocus
+                />
                 <div className="flex gap-2">
                   <Button
-                    variant="outline"
                     size="sm"
-                    onClick={() => submitFeedback(1)}
+                    onClick={() => submitFeedback(-1)}
                     disabled={feedbackSubmitting}
-                    className="gap-1.5 flex-1"
+                    className="gap-1.5"
                   >
-                    <ThumbsUp className="h-3.5 w-3.5" />
-                    Worked great
+                    {feedbackSubmitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                    Submit feedback
                   </Button>
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
-                    onClick={() => setFeedbackRating(-1)}
+                    onClick={() => setFeedbackRating(null)}
                     disabled={feedbackSubmitting}
-                    className="gap-1.5 flex-1"
                   >
-                    <ThumbsDown className="h-3.5 w-3.5" />
-                    Needs work
+                    Cancel
                   </Button>
                 </div>
-              )}
-              {feedbackRating === -1 && (
-                <div className="space-y-3">
-                  <Textarea
-                    value={feedbackComment}
-                    onChange={(e) => setFeedbackComment(e.target.value)}
-                    placeholder="What went wrong? (optional, helps improve the AI)"
-                    rows={2}
-                    maxLength={500}
-                    className="resize-none text-sm"
-                    autoFocus
-                  />
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => submitFeedback(-1)}
-                      disabled={feedbackSubmitting}
-                      className="gap-1.5"
-                    >
-                      {feedbackSubmitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                      Submit Feedback
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setFeedbackRating(null)}
-                      disabled={feedbackSubmitting}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <p className="text-xs text-[#A1A1AA]">Did this script work?</p>
+                <button
+                  type="button"
+                  aria-label="Yes, it worked"
+                  onClick={() => submitFeedback(1)}
+                  disabled={feedbackSubmitting}
+                  className="rounded-lg border border-white/8 p-1.5 text-[#A1A1AA] transition-colors duration-150 hover:border-white/25 hover:text-white"
+                >
+                  <ThumbsUp className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="No, it needs work"
+                  onClick={() => setFeedbackRating(-1)}
+                  disabled={feedbackSubmitting}
+                  className="rounded-lg border border-white/8 p-1.5 text-[#A1A1AA] transition-colors duration-150 hover:border-white/25 hover:text-white"
+                >
+                  <ThumbsDown className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )
           )}
 
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button
-              onClick={() => {
-                if (!result.script) return;
-                const filename = result.filename ?? 'script.txt';
-                downloadTextFile(buildDownloadContent(result), filename);
-                const guideName = filename.replace(/\.[^.]+$/, '') + '-guide.md';
-                setTimeout(() => downloadTextFile(buildScriptGuide(result), guideName), 150);
-              }}
-              disabled={!result.script}
-              variant="outline"
-              className="flex-1 gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Download (script + guide)
-            </Button>
-            <Button onClick={reset} variant="ghost" className="flex-1 gap-2">
-              <RefreshCw className="h-4 w-4" />
-              Generate another
-            </Button>
-          </div>
-
           {/* Upsell */}
-          <div className="rounded-xl border border-white/28 bg-white/9 p-4 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold text-[#F9FAFB] mb-0.5">Want 9 production-ready scripts?</p>
-              <p className="text-xs text-[#9CA3AF]">The Starter Kit includes 9 pre-built, pre-tested scripts for the most common IT tasks. Just $19.</p>
-            </div>
-            <Button asChild size="sm" className="shrink-0">
-              <a href="/checkout">Get the Kit →</a>
-            </Button>
-          </div>
+          {result.script && (
+            <p className="text-[13px] text-[#A1A1AA]">
+              Prefer pre-built scripts?{' '}
+              <a href="/checkout" className="font-medium text-[#3ECF8E] transition-colors duration-150 hover:text-[#5FDCA5]">
+                The Starter Kit has 9 for $19
+              </a>
+              .
+            </p>
+          )}
         </div>
       )}
     </div>
