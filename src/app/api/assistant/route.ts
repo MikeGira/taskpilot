@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { parseRequestBody, checkRateLimit, containsInjection, callAnthropic, ONE_HOUR_MS } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, containsInjection, callAnthropicStream, ONE_HOUR_MS } from '@/lib/api-utils';
 
 const MessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -101,7 +101,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid input detected.' }, { status: 400 });
   }
 
-  const ai = await callAnthropic({
+  const ai = await callAnthropicStream({
     apiKey: process.env.ANTHROPIC_API_KEY,
     model: 'claude-haiku-4-5-20251001',
     maxTokens: 800,
@@ -117,5 +117,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'AI service error. Please try again.' }, { status: 502 });
   }
 
-  return NextResponse.json({ content: ai.text });
+  // Plain-text chunk stream (SSE already decoded server-side); errors before
+  // streaming starts return JSON above — the client branches on Content-Type.
+  return new Response(ai.stream, {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'no-store',
+    },
+  });
 }
