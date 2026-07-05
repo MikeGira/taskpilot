@@ -70,6 +70,18 @@
   .scrollbar-hidden { scrollbar-width: none; -ms-overflow-style: none; }
   .scrollbar-hidden::-webkit-scrollbar { display: none; }
 
+  /* Thin blinking caret appended to in-progress status text or streaming output */
+  .stream-caret::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 3px;
+    vertical-align: text-bottom;
+    background: #3ECF8E;
+    animation: cursor-blink 1s steps(2, start) infinite;
+  }
+
   /* Dot grid — secondary sections */
   .bg-grid-pattern-subtle {
     background-image: radial-gradient(circle, rgba(255,255,255,0.22) 1.5px, transparent 1.5px);
@@ -555,4 +567,17 @@
 
 .glow-newsletter-section {
   background: radial-gradient(ellipse at top, rgba(34,211,238,0.08) 0%, transparent 70%);
+}
+
+/* ── Reduced motion: collapse all animation/transition durations ─────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
