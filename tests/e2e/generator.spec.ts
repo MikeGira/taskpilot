@@ -29,12 +29,16 @@ test('generator wizard produces a script end-to-end', async ({ page }) => {
   await page.getByText('On-Premises', { exact: true }).click();
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
 
-  // Step 3: Fill in task description, then Generate Script
+  // Step 3: Pick PowerShell (card click advances to the task step)
+  await expect(page.getByText('What tool or language?')).toBeVisible();
+  await page.getByText('PowerShell', { exact: true }).click();
+
+  // Step 4: Fill in task description, then Generate
   await expect(page.getByText('What do you want to automate?')).toBeVisible();
   await page.locator('textarea').fill(
     'List all running Windows services and their current status, then save the output to a log file with a timestamp in the filename'
   );
-  await page.getByRole('button', { name: /Generate Script/i }).click();
+  await page.getByRole('button', { name: 'Generate', exact: true }).click();
 
   // Wait for result — AI call can take up to 60s
   await expect(page.getByRole('button', { name: /Download/i })).toBeVisible({ timeout: 90_000 });
