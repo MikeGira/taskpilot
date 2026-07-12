@@ -81,14 +81,23 @@ If there are gaps, describe them clearly and concisely. Do not include minor sty
   return data.content?.[0]?.text ?? '';
 }
 
-async function hasOpenAuditIssue() {
+async function getOpenAuditIssues() {
   const res = await fetch(
     `https://api.github.com/repos/${REPO}/issues?labels=ai-audit&state=open`,
     { headers: { Authorization: `Bearer ${GH_TOKEN}`, Accept: 'application/vnd.github+json' } }
   );
-  if (!res.ok) return false;
+  if (!res.ok) return [];
   const issues = await res.json();
-  return Array.isArray(issues) && issues.length > 0;
+  return Array.isArray(issues) ? issues : [];
+}
+
+async function closeIssue(number) {
+  await fetch(`https://api.github.com/repos/${REPO}/issues/${number}`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${GH_TOKEN}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ state: 'closed', state_reason: 'completed' }),
+  });
+  console.log(`Closed resolved audit issue #${number}`);
 }
 
 async function createIssue(findings) {
@@ -146,13 +155,21 @@ async function main() {
   const result = await callClaude(systemPrompt, welcome, features);
   console.log('Claude audit result:', result.slice(0, 200));
 
-  if (result.trim().startsWith('PASS')) {
+  const openIssues = await getOpenAuditIssues();
+
+  // Strip markdown formatting (**PASS**, *PASS*, etc.) and check last non-empty line.
+  // Guards against Claude wrapping PASS in bold or writing it after retractions.
+  const stripped = result.replace(/[*_`~]/g, '').trim();
+  const lastLine = stripped.split('\n').map(l => l.trim()).filter(Boolean).at(-1) ?? '';
+  const isPASS = stripped === 'PASS' || lastLine === 'PASS';
+  if (isPASS) {
     console.log('Audit passed — no issues to report.');
+    for (const issue of openIssues) await closeIssue(issue.number);
     return;
   }
 
-  if (await hasOpenAuditIssue()) {
-    console.log('An open ai-audit issue already exists — skipping duplicate.');
+  if (openIssues.length > 0) {
+    console.log(`An open ai-audit issue already exists (#${openIssues[0].number}) — skipping duplicate.`);
     return;
   }
 
