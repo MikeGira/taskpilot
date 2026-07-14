@@ -1,0 +1,35 @@
+name: Site Health
+
+# Scheduled production probes from GitHub runners. Claude cloud routines
+# cannot reach *.vercel.app (sandbox egress proxy 403s non-allowlisted
+# domains), so probing lives here; routines report on these run results.
+# Off-hour minute avoids GitHub's top-of-hour scheduler congestion.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '47 */6 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: '24'
+      - name: Probe production
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SITE: https://taskpilot-umber.vercel.app
+        run: node scripts/site-health.js
