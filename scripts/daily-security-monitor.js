@@ -174,9 +174,32 @@ async function ensureLabel(name, color, description) {
   // Ignore errors (label may already exist)
 }
 
-async function hasOpenMonitorIssue() {
+async function getOpenMonitorIssues() {
   const issues = await ghGet('/issues?state=open&labels=daily-monitor&per_page=5');
-  return Array.isArray(issues) && issues.length > 0;
+  return Array.isArray(issues) ? issues : [];
+}
+
+async function ghSend(endpoint, method, payload) {
+  const res = await fetch(`https://api.github.com/repos/${REPO}${endpoint}`, {
+    method,
+    headers: {
+      Authorization: `Bearer ${GH_TOKEN}`,
+      Accept: 'application/vnd.github+json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+  return res.ok;
+}
+
+async function closeMonitorIssues(issues) {
+  for (const issue of issues) {
+    await ghSend(`/issues/${issue.number}/comments`, 'POST', {
+      body: `All clear on today's run (${new Date().toISOString().slice(0, 10)}) — no npm/OSV vulnerabilities, no open quality issues, no recent CI failures. Closing automatically.`,
+    });
+    await ghSend(`/issues/${issue.number}`, 'PATCH', { state: 'closed', state_reason: 'completed' });
+    console.log(`All clear — closed stale monitor issue #${issue.number}`);
+  }
 }
 
 async function createIssue(analysis, summary) {
@@ -257,10 +280,9 @@ async function main() {
 
   console.log(`Daily security monitor starting — ${new Date().toISOString()}`);
 
-  if (await hasOpenMonitorIssue()) {
-    console.log('Open daily-monitor issue already exists — skipping duplicate.');
-    return;
-  }
+  // A stale open report must not block the all-clear run that would close it,
+  // so collect data first and only then decide whether to skip, close, or file.
+  const openMonitorIssues = await getOpenMonitorIssues();
 
   // Ensure label exists (idempotent)
   await ensureLabel('daily-monitor', '0075ca', 'Automated daily security and quality report');
@@ -289,6 +311,12 @@ async function main() {
 
   if (!hasAnything) {
     console.log('No findings detected — all clear. No issue created.');
+    await closeMonitorIssues(openMonitorIssues);
+    return;
+  }
+
+  if (openMonitorIssues.length > 0) {
+    console.log('Open daily-monitor issue already exists — skipping duplicate.');
     return;
   }
 

@@ -74,6 +74,7 @@ Identify ONLY real, actionable issues in these categories:
 
 Do NOT report: style preferences, missing docs, or theoretical issues with no practical exploit path.
 Do NOT report any issue that matches a known design decision listed above.
+IMPORTANT — the code below was pre-processed by the audit pipeline to reduce tokens: long string literals were replaced with \`/* ...long string omitted... */\` and large files have a \`/* ...middle section omitted for brevity... */\` gap. These markers do NOT exist in the real source — never flag them as corrupted code, malformed template strings, or incomplete syntax.
 
 FILES UNDER REVIEW:
 ${bundle}
