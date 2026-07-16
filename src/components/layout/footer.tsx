@@ -25,6 +25,14 @@ export function Footer() {
             <Link href="/#contact" className="hover:text-white transition-colors">
               Contact
             </Link>
+            <a
+              href="https://makinyx.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors"
+            >
+              Makinyx
+            </a>
           </nav>
 
           <p className="text-xs text-[#6B7280]">
