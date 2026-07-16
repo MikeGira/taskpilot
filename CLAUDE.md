@@ -1,9 +1,22 @@
 # TaskPilot — Project Memory
 
 ## What this is
-IT helpdesk automation SaaS. Sells a PowerShell automation starter kit ($19). Free AI script
-generator at `/generate` — users pick OS + environment, describe a task, get a production-ready
-script. Admin analytics + AI-powered prompt improvement at `/dashboard/analytics`.
+Two things under one roof, don't conflate them:
+1. **Paid product**: a PowerShell automation starter kit ($19, one-time) — 9 Windows/AD helpdesk
+   scripts (password resets, disk cleanup, onboarding/offboarding, security reporting, provisioning,
+   health monitoring).
+2. **Free tool**: `/generate` is a full DevOps/multi-cloud IaC script generator, not just PowerShell.
+   `VALID_TOOLS` in `src/app/api/generate/route.ts` spans: scripting (powershell/bash/python), IaC
+   (terraform/pulumi/aws-cdk/azure-bicep/arm-templates/packer), config management (ansible/puppet),
+   CI/CD & GitOps (github-actions/gitlab-ci/jenkins/azure-devops/argocd), containers
+   (docker/kubernetes), security (cis-hardening/vault/security-scanning), AI/ML (mlops/langchain),
+   monitoring (prometheus-grafana/elk-stack), database-admin, network-automation — across
+   on-premises/hybrid/cloud/multi-cloud environments (`GenerateSchema.environment`,
+   `cloudProviders`). **Verify against this file before describing `/generate`'s scope — a prior
+   session undersold it as "Windows/PowerShell only" based on this doc's old summary and gave Mike
+   wrong launch-planning advice as a result (caught 2026-07-16).**
+
+Admin analytics + AI-powered prompt improvement at `/dashboard/analytics`.
 
 ## Stack
 | Layer | Technology | Notes |
