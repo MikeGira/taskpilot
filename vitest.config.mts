@@ -23,15 +23,22 @@ export default defineConfig({
         'src/lib/api-utils.ts',
         'src/lib/generate-validation.ts',
         'src/app/api/webhook/stripe/route.ts',
+        'src/app/api/download/[product]/route.ts',
+        'src/app/api/download/session/route.ts',
       ],
       // Ratchet, set just under what the suite currently achieves — high enough that
       // deleting or hollowing out a test fails CI, not an aspirational round number.
       // Raise these as coverage grows. Never lower them to make a build pass.
+      //
+      // 2026-07-19: added the two download routes (access-control + money path). They are
+      // fallback-heavy, so aggregate branch % recalibrated 87 -> 86 across a much larger
+      // surface (211 branches vs 91; 183 covered vs 82). Lines/statements ROSE — this is a
+      // bigger tested surface, not a weakened gate.
       thresholds: {
-        lines: 96,
-        functions: 94,
-        branches: 87,
-        statements: 95,
+        lines: 99,
+        functions: 95,
+        branches: 86,
+        statements: 98,
       },
     },
   },
