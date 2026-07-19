@@ -83,7 +83,7 @@ Format each finding as:
 **[CATEGORY] \`filename\` — Issue title**
 One-sentence description + suggested fix.
 
-If no real issues found, respond with exactly: PASS`,
+If no real issues found, respond with exactly the word PASS and nothing else — no summary, no explanation, no list of what you checked.`,
       }],
     }),
   });
@@ -169,11 +169,16 @@ async function main() {
 
   const openIssues = await getOpenIssues();
 
-  // Strip markdown formatting (**PASS**, *PASS*, etc.) and check last non-empty line.
-  // Guards against Claude wrapping PASS in bold or writing it after retractions.
+  // PASS detection keys off the REQUIRED finding format, not the literal word "PASS".
+  // A real finding must be formatted `**[CATEGORY] ...**` with CATEGORY in
+  // {SIMPLIFICATION, SECURITY, DUPLICATION}. So "no category marker present" is the
+  // reliable no-findings signal. The model sometimes answers "PASS" and then keeps
+  // explaining ("PASS\n\nI reviewed all six handlers…"), which the old first/last-line
+  // check misread as findings and filed as a noise issue (#74). Absence of a marker is
+  // robust to that prose. (Belt-and-suspenders: an explicit bare "PASS" also counts.)
   const stripped = result.replace(/[*_`~]/g, '').trim();
-  const lastLine = stripped.split('\n').map(l => l.trim()).filter(Boolean).at(-1) ?? '';
-  const isPASS = stripped === 'PASS' || lastLine === 'PASS';
+  const hasFindingMarker = /\[\s*(SIMPLIFICATION|SECURITY|DUPLICATION)\s*\]/i.test(stripped);
+  const isPASS = stripped === 'PASS' || !hasFindingMarker;
   if (isPASS) {
     console.log('Quality audit passed — no issues found.');
     for (const issue of openIssues) await closeIssue(issue.number);
