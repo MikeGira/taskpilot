@@ -25,6 +25,19 @@ describe('scanCostBearingLiterals — AWS regions', () => {
     expect(scanCostBearingLiterals('region = "us-gov-west-1"')).toEqual([]);
   });
 
+  it('recognizes the full authoritative region set, incl. China and newer regions', () => {
+    // These 7 were missing from the initial hand-curated snapshot; the drift check caught them
+    // against AWS ip-ranges.json. Guards against them regressing back out.
+    for (const r of ['ap-east-2', 'ap-southeast-6', 'cn-north-1', 'cn-northwest-1', 'me-west-1', 'sa-west-1', 'us-south-1']) {
+      expect(scanCostBearingLiterals(`region = "${r}"`)).toEqual([]);
+    }
+  });
+
+  it('still flags a fabricated China region', () => {
+    const notes = scanCostBearingLiterals('region = "cn-south-9"');
+    expect(notes.some(n => n.includes('cn-south-9'))).toBe(true);
+  });
+
   it('lists multiple bad regions once each', () => {
     const notes = scanCostBearingLiterals('a="us-east-3" b="us-east-3" c="eu-west-9"');
     expect(notes).toHaveLength(1);
