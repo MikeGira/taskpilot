@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { parseRequestBody, checkRateLimit, checkFreeTextInputs, buildUserMessage, callAnthropic, ONE_HOUR_MS } from '@/lib/api-utils';
 import { z } from 'zod';
+import { validateGenerateResult } from '@/lib/generate-validation';
 
 export const maxDuration = 300;
 
@@ -48,7 +49,11 @@ export interface GenerateResult {
   configNotes: string[] | null;
 }
 
-function extractJson(raw: string): GenerateResult {
+// Returns `unknown` on purpose: this function's job is to find and parse the JSON, not
+// to vouch for its shape. Callers must run it through validateGenerateResult — the old
+// `as GenerateResult` cast asserted a shape at compile time and verified nothing at all
+// at runtime.
+function extractJson(raw: string): unknown {
   let text = raw.trim();
   const fenced = text.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
   if (fenced) text = fenced[1].trim();
@@ -56,10 +61,9 @@ function extractJson(raw: string): GenerateResult {
   const end = text.lastIndexOf('}');
   if (start === -1 || end === -1 || end <= start) throw new Error('No JSON object found');
   const candidate = text.slice(start, end + 1);
-  try { return JSON.parse(candidate) as GenerateResult; } catch { /* continue */ }
+  try { return JSON.parse(candidate); } catch { /* continue */ }
   try {
-    const fixed = fixLiteralNewlinesInJsonStrings(candidate);
-    return JSON.parse(fixed) as GenerateResult;
+    return JSON.parse(fixLiteralNewlinesInJsonStrings(candidate));
   } catch { /* continue */ }
   return extractFieldsByRegex(text);
 }
@@ -672,7 +676,14 @@ export async function POST(request: Request) {
   }
 
   let result: GenerateResult;
-  try { result = extractJson(ai.text); } catch {
+  try {
+    const validated = validateGenerateResult(extractJson(ai.text));
+    if (!validated) {
+      console.error('[generate] Response failed schema validation:', ai.text.slice(0, 300));
+      return NextResponse.json({ error: 'Unexpected response format. Please try again.' }, { status: 502 });
+    }
+    result = validated;
+  } catch {
     console.error('[generate] Failed to parse Claude response:', ai.text.slice(0, 300));
     return NextResponse.json({ error: 'Unexpected response format. Please try again.' }, { status: 502 });
   }
