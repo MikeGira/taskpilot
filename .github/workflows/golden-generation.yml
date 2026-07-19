@@ -1,0 +1,81 @@
+name: Golden Generation
+
+# Grounding L4 slice: generate a handful of scripts from the LIVE /api/generate prompt and run
+# each through its real language validator (shellcheck, py_compile, PSScriptAnalyzer, terraform
+# validate). Catches prompt regressions that start emitting broken code. Scheduled + on-demand
+# only — never per-PR — so there is no per-request API cost. Files a deduped, self-closing issue
+# on failure.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * 1'  # weekly, Monday 08:00 UTC
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  golden:
+    name: Live golden generation + validate
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: anon-key-placeholder-not-a-secret
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_placeholder
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+
+      - name: Install Terraform (pinned to the manifest core version)
+        env:
+          TERRAFORM_VERSION: '1.15.8'
+        run: |
+          curl -fsSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -o terraform.zip
+          unzip -o terraform.zip terraform
+          sudo mv terraform /usr/local/bin/terraform
+          terraform version
+
+      - name: Install PSScriptAnalyzer
+        run: pwsh -NoProfile -Command "Install-Module PSScriptAnalyzer -Force -Scope CurrentUser -Repository PSGallery"
+
+      - name: Verify validators are present
+        run: |
+          shellcheck --version | head -1
+          python3 --version
+
+      - name: Build
+        run: npm run build
+
+      - name: Start server
+        run: |
+          nohup npm run start > server.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS -o /dev/null "http://localhost:3000"; then
+              echo "Server up after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Server did not start in time"; cat server.log; exit 1
+
+      - name: Run golden generation
+        env:
+          GENERATE_URL: http://localhost:3000/api/generate
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: node scripts/golden-generation.js
+
+      - name: Upload server log on failure
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: golden-server-log
+          path: server.log
+          retention-days: 7

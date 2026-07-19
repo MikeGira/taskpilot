@@ -1,0 +1,36 @@
+[
+  {
+    "name": "bash-log-rotation",
+    "os": "linux",
+    "environment": "on-premises",
+    "taskDescription": "Rotate and compress log files older than 7 days in /var/log/myapp, keeping 30 days of archives, with logging and a dry-run flag.",
+    "tool": "bash",
+    "expectLanguage": "bash"
+  },
+  {
+    "name": "python-s3-backup",
+    "os": "linux",
+    "environment": "cloud",
+    "cloudProviders": ["AWS"],
+    "taskDescription": "Back up a local directory to an S3 bucket using boto3, with retries, structured logging, and a --dry-run flag. Read the bucket name and prefix from environment variables.",
+    "tool": "python",
+    "expectLanguage": "python"
+  },
+  {
+    "name": "powershell-disk-cleanup",
+    "os": "windows",
+    "environment": "on-premises",
+    "taskDescription": "Clean up temp files and the Windows temp directory on the local machine, report space reclaimed, support -WhatIf, and write a timestamped log file.",
+    "tool": "powershell",
+    "expectLanguage": "powershell"
+  },
+  {
+    "name": "terraform-s3-bucket",
+    "os": "linux",
+    "environment": "cloud",
+    "cloudProviders": ["AWS"],
+    "taskDescription": "Provision a private, versioned, server-side-encrypted S3 bucket with public access blocked, standard tags, and the region as a variable.",
+    "tool": "terraform",
+    "expectLanguage": "terraform"
+  }
+]
