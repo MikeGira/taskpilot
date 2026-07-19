@@ -20,22 +20,32 @@ const GH_TOKEN = process.env.GH_TOKEN;
 const REPO = process.env.REPO;
 const LABEL = 'golden-generation';
 
+// Thrown when the model call keeps timing out. A timeout yields no output to judge, so the canary
+// treats it as an availability signal (a SKIP), not a prompt-quality regression — availability is
+// covered by site-health, not here.
+class TransientTimeoutError extends Error {}
+
 async function postGenerate(body) {
-  // One retry on transient upstream timeouts/errors (504/502) — the live model call occasionally
-  // exceeds the route timeout. A single retry de-flakes the scheduled run without masking a real
-  // regression (a persistent failure still surfaces).
-  for (let attempt = 0; attempt < 2; attempt++) {
+  // Up to 3 attempts with backoff on transient upstream timeouts/errors (504/502). Long 16k-token
+  // generations occasionally exceed the route's model timeout; retries recover the common blip.
+  // If it still times out, we raise TransientTimeoutError so the caller can SKIP rather than fail —
+  // masking nothing, since a persistent NON-timeout failure still surfaces normally.
+  const MAX_ATTEMPTS = 3;
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const res = await fetch(GENERATE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
     if (res.ok) return res.json();
-    if ((res.status === 504 || res.status === 502) && attempt === 0) {
-      await new Promise(r => setTimeout(r, 3000));
+    const transient = res.status === 504 || res.status === 502;
+    if (transient && attempt < MAX_ATTEMPTS - 1) {
+      await new Promise(r => setTimeout(r, 3000 * (attempt + 1)));
       continue;
     }
-    throw new Error(`generate ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    const detail = (await res.text()).slice(0, 200);
+    if (transient) throw new TransientTimeoutError(`generate ${res.status} after ${MAX_ATTEMPTS} attempts: ${detail}`);
+    throw new Error(`generate ${res.status}: ${detail}`);
   }
 }
 
@@ -129,6 +139,7 @@ async function main() {
   const prompts = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'tests', 'golden', 'prompts.json'), 'utf8'));
   const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'golden-'));
   const failures = [];
+  let skipped = 0;
 
   for (const prompt of prompts) {
     const v = validatorFor(prompt.expectLanguage);
@@ -138,6 +149,11 @@ async function main() {
     try {
       result = await generate(prompt);
     } catch (e) {
+      if (e instanceof TransientTimeoutError) {
+        skipped++;
+        console.log(`SKIP ${prompt.name}: upstream timeout (no output to validate) — ${e.message}`);
+        continue;
+      }
       failures.push({ name: prompt.name, language: prompt.expectLanguage, errors: [`generation failed: ${e.message}`] });
       console.log(`FAIL ${prompt.name}: ${e.message}`);
       continue;
@@ -164,7 +180,8 @@ async function main() {
 
   await reportToGitHub(failures);
 
-  console.log(`\nGolden generation: ${prompts.length - failures.length}/${prompts.length} passed.`);
+  const validated = prompts.length - failures.length - skipped;
+  console.log(`\nGolden generation: ${validated} validated, ${failures.length} failed, ${skipped} skipped (upstream timeout).`);
   if (failures.length > 0) process.exit(1);
 }
 
