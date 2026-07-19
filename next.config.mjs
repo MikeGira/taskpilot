@@ -39,7 +39,11 @@ const nextConfig = {
               "default-src 'self'",
               `script-src ${scriptSrc}`,
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https:",
+              // Was `https:`, a scheme-wide wildcard permitting images from any HTTPS
+              // origin (ZAP 10055 wildcard directive). Nothing needs it: the only <img>
+              // in the app is a local asset, there is no next/image remotePatterns
+              // config, and no remote image URLs appear anywhere in src/.
+              "img-src 'self' data:",
               "connect-src 'self' https://*.supabase.co https://api.stripe.com https://vitals.vercel-insights.com",
               "frame-src https://js.stripe.com https://hooks.stripe.com",
               "font-src 'self'",
