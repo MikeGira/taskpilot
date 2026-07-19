@@ -10,7 +10,10 @@
     "lint": "eslint --ext .ts,.tsx src",
     "setup:webhook": "node --env-file=.env scripts/setup-webhook.js",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.18",
@@ -44,12 +47,14 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@types/react-simple-maps": "^3.0.6",
+    "@vitest/coverage-v8": "^4.1.10",
     "autoprefixer": "^10.5.2",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.5.16",
     "postcss": "^8.5.16",
     "tailwindcss": "^3.4.13",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
   },
   "engines": {
     "node": "22.x"

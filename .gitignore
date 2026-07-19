@@ -59,3 +59,4 @@ skills-lock.json
 
 # Claude Code — local machine config (MCP servers, personal settings)
 .claude/settings.local.json
+/coverage/
