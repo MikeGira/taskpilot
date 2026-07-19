@@ -1,0 +1,68 @@
+name: Rollback Drill Reminder
+
+# An untested rollback path is an assumption, not a capability. This opens a checklist
+# issue once a quarter so the drill in docs/runbooks/rollback.md actually gets run and
+# its decay (expired logins, changed dashboards, stale deployment lists) is found while
+# it is cheap to find.
+on:
+  schedule:
+    - cron: '0 13 1 1,4,7,10 *' # 13:00 UTC on the 1st of Jan/Apr/Jul/Oct
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  open-drill-issue:
+    name: Open quarterly drill checklist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Skip if a drill issue is already open
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OPEN=$(gh issue list --label rollback-drill --state open --json number --jq 'length')
+          echo "open_count=$OPEN" >> "$GITHUB_OUTPUT"
+          if [ "$OPEN" -gt 0 ]; then
+            echo "A rollback drill issue is already open — not filing another."
+          fi
+
+      - name: Ensure label exists
+        if: steps.check.outputs.open_count == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh label create rollback-drill --color 0E8A16 --description "Quarterly production rollback drill" --force
+
+      - name: File the drill issue
+        if: steps.check.outputs.open_count == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BODY: |
+            Quarterly production rollback drill. Full procedure:
+            https://github.com/MikeGira/taskpilot/blob/main/docs/runbooks/rollback.md
+
+            Run at low traffic. Takes about five minutes.
+
+            - [ ] Note the current production deployment URL and the time
+            - [ ] Instant Rollback one deployment (runbook §3a)
+            - [ ] Verify the site is healthy on the older build (runbook §3c)
+            - [ ] Undo the rollback (runbook §3d)
+            - [ ] **Push a trivial commit and confirm it auto-deploys** — proves auto-assignment of
+                  production domains was actually restored. This is the step most likely to be missed,
+                  and missing it means future merges silently never reach production.
+            - [ ] Record elapsed time here
+            - [ ] Note anything that had decayed since the last drill
+
+            If any step failed, fix the runbook in the same PR as the fix.
+        run: |
+          # %q (quarter) is a GNU coreutils extension; compute it explicitly instead.
+          YEAR=$(date -u '+%Y')
+          QUARTER=$(( ($(date -u '+%-m') - 1) / 3 + 1 ))
+          gh issue create \
+            --title "Rollback drill — ${YEAR} Q${QUARTER}" \
+            --label rollback-drill \
+            --body "$BODY"
