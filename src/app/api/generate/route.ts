@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { parseRequestBody, checkRateLimit, checkFreeTextInputs, buildUserMessage, callAnthropic, ONE_HOUR_MS } from '@/lib/api-utils';
 import { z } from 'zod';
 import { validateGenerateResult } from '@/lib/generate-validation';
+import { scanCostBearingLiterals } from '@/lib/iac-allowlists';
 
 export const maxDuration = 300;
 
@@ -699,6 +700,15 @@ export async function POST(request: Request) {
     ];
     if (CREDENTIAL_PATTERNS.some(p => p.test(result.script!))) {
       result.explanation = (result.explanation ?? '') + '\n\nReview note: This script may contain placeholder credentials. Replace any hardcoded values with environment variables or a secrets manager before deploying.';
+    }
+
+    // Grounding L1 (advisory): flag fabricated-looking cost-bearing literals — cloud regions,
+    // instance families, provider versions the model may have invented. Advisory only, never a
+    // block: a wrong region or instance type costs a failed apply, and false positives here would
+    // cost the user a whole generation.
+    const groundingNotes = scanCostBearingLiterals(result.script);
+    if (groundingNotes.length) {
+      result.explanation = (result.explanation ?? '') + '\n\nReview note (verify before deploying):\n' + groundingNotes.map(n => `- ${n}`).join('\n');
     }
   }
 
