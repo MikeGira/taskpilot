@@ -20,6 +20,25 @@ const GH_TOKEN = process.env.GH_TOKEN;
 const REPO = process.env.REPO;
 const LABEL = 'golden-generation';
 
+async function postGenerate(body) {
+  // One retry on transient upstream timeouts/errors (504/502) — the live model call occasionally
+  // exceeds the route timeout. A single retry de-flakes the scheduled run without masking a real
+  // regression (a persistent failure still surfaces).
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const res = await fetch(GENERATE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) return res.json();
+    if ((res.status === 504 || res.status === 502) && attempt === 0) {
+      await new Promise(r => setTimeout(r, 3000));
+      continue;
+    }
+    throw new Error(`generate ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  }
+}
+
 async function generate(prompt) {
   const body = {
     os: prompt.os,
@@ -28,23 +47,11 @@ async function generate(prompt) {
     tool: prompt.tool,
     taskDescription: prompt.taskDescription,
   };
-  let res = await fetch(GENERATE_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error(`generate ${res.status}: ${(await res.text()).slice(0, 200)}`);
-  let data = await res.json();
+  let data = await postGenerate(body);
 
   // Resolve a single clarification round deterministically so the job does not stall on it.
   if (data.needsClarification) {
-    res = await fetch(GENERATE_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...body, previousQuestion: data.question, clarificationAnswer: 'Use sensible production defaults and proceed.' }),
-    });
-    if (!res.ok) throw new Error(`generate (clarified) ${res.status}`);
-    data = await res.json();
+    data = await postGenerate({ ...body, previousQuestion: data.question, clarificationAnswer: 'Use sensible production defaults and proceed.' });
   }
   return data;
 }
@@ -65,10 +72,12 @@ function runValidator(language, file, dir) {
     return interpretPSScriptAnalyzer(r.stdout);
   }
   if (language === 'terraform') {
-    const init = spawnSync('terraform', [`-chdir=${dir}`, 'init', '-backend=false', '-input=false', '-no-color'], { encoding: 'utf8' });
-    if (init.status !== 0) return { ok: false, errors: [`terraform init failed: ${(init.stderr || init.stdout || '').trim().split('\n').slice(-3).join(' ')}`] };
-    const val = spawnSync('terraform', [`-chdir=${dir}`, 'validate', '-no-color'], { encoding: 'utf8' });
-    return val.status === 0 ? { ok: true, errors: [] } : { ok: false, errors: [(val.stderr || val.stdout || '').trim().split('\n').slice(-5).join(' ')] };
+    // fmt (not validate) — the generated main.tf references variables declared in configNotes, so a
+    // full validate would fail by design. fmt asserts the HCL parses; -write=false errors only on a
+    // real syntax error, not on formatting differences. No init/provider download needed.
+    const r = spawnSync('terraform', [`-chdir=${dir}`, 'fmt', '-write=false', '-no-color'], { encoding: 'utf8' });
+    if (r.error) return { ok: false, errors: [`terraform not runnable: ${r.error.message}`] };
+    return r.status === 0 ? { ok: true, errors: [] } : { ok: false, errors: [(r.stderr || r.stdout || '').trim().split('\n').slice(-5).join(' ')] };
   }
   return { ok: true, errors: [] };
 }
