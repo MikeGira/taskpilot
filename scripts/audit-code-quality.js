@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { isAuditPass } = require('./lib/audit-parse');
 
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const GH_TOKEN = process.env.GH_TOKEN;
@@ -169,17 +170,9 @@ async function main() {
 
   const openIssues = await getOpenIssues();
 
-  // PASS detection keys off the REQUIRED finding format, not the literal word "PASS".
-  // A real finding must be formatted `**[CATEGORY] ...**` with CATEGORY in
-  // {SIMPLIFICATION, SECURITY, DUPLICATION}. So "no category marker present" is the
-  // reliable no-findings signal. The model sometimes answers "PASS" and then keeps
-  // explaining ("PASS\n\nI reviewed all six handlers…"), which the old first/last-line
-  // check misread as findings and filed as a noise issue (#74). Absence of a marker is
-  // robust to that prose. (Belt-and-suspenders: an explicit bare "PASS" also counts.)
-  const stripped = result.replace(/[*_`~]/g, '').trim();
-  const hasFindingMarker = /\[\s*(SIMPLIFICATION|SECURITY|DUPLICATION)\s*\]/i.test(stripped);
-  const isPASS = stripped === 'PASS' || !hasFindingMarker;
-  if (isPASS) {
+  // Shared, unit-tested detector (scripts/lib/audit-parse.js). Robust to the model
+  // answering "PASS" and then adding prose — the failure that filed noise issue #74.
+  if (isAuditPass(result)) {
     console.log('Quality audit passed — no issues found.');
     for (const issue of openIssues) await closeIssue(issue.number);
     return;

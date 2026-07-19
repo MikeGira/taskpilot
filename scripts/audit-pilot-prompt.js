@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { isAuditPass } = require('./lib/audit-parse');
 
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const GH_TOKEN = process.env.GH_TOKEN;
@@ -157,12 +158,11 @@ async function main() {
 
   const openIssues = await getOpenAuditIssues();
 
-  // Strip markdown formatting (**PASS**, *PASS*, etc.) and check last non-empty line.
-  // Guards against Claude wrapping PASS in bold or writing it after retractions.
-  const stripped = result.replace(/[*_`~]/g, '').trim();
-  const lastLine = stripped.split('\n').map(l => l.trim()).filter(Boolean).at(-1) ?? '';
-  const isPASS = stripped === 'PASS' || lastLine === 'PASS';
-  if (isPASS) {
+  // Shared, unit-tested detector (scripts/lib/audit-parse.js). The old whole/last-line
+  // check would have filed a spurious issue for a "PASS\n\n<prose>" response (the #74
+  // failure mode) — this findings format is free prose, so a positional PASS check is
+  // the only reliable signal.
+  if (isAuditPass(result)) {
     console.log('Audit passed — no issues to report.');
     for (const issue of openIssues) await closeIssue(issue.number);
     return;
