@@ -1,0 +1,18 @@
+name: TaskPilot CodeQL config
+
+# Scope CodeQL's product-security queries to the deployed application source (src/).
+#
+# The scripts/ tree is CI/automation tooling — audit bots, the IaC allowlist drift check, the
+# golden-generation canary, schedulers — that runs ONLY inside GitHub Actions on trusted inputs
+# (our own repo files, our own API, the GITHUB_TOKEN). It never runs in production and never
+# processes untrusted end-user input on a path that reaches the product. CodeQL's file<->http
+# dataflow queries flag flows that are inherent to what those scripts must do — read a repo file
+# and POST to the GitHub API, or write our own API's output to a temp file to lint it — none of
+# which are vulnerabilities. tests/ is test code, likewise out of the product threat model.
+#
+# The rest of the tree is still covered by other gates: gitleaks (secrets), actionlint (workflow
+# YAML), and the Semgrep job in ai-audit.yml (SAST across the repo). This only narrows the JS/TS
+# CodeQL surface to where product-security findings are actionable.
+paths-ignore:
+  - scripts
+  - tests

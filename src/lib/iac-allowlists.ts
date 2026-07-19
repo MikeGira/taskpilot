@@ -152,6 +152,13 @@ function primaryConstraintMajor(constraint: string): number {
  * looked wrong. Deliberately conservative: it flags only values that are almost certainly
  * hallucinated (unknown region, unknown instance family, a provider major ahead of what exists),
  * so a clean generation stays clean.
+ *
+ * Output-safety contract: every returned string is a hardcoded template. The only interpolated
+ * values are tokens the fixed regexes above matched — regions/instance families/version
+ * constraints whose charsets exclude quotes and HTML. The caller appends these to `explanation`,
+ * a JSON string field (escaped by JSON.stringify) rendered as text by React (escaped), and the
+ * codebase has no HTML/JS execution sinks (enforced by tests/unit/no-xss-sinks.test.ts). So the
+ * result is safe to concatenate into the response — there is no injection path.
  */
 export function scanCostBearingLiterals(script: string): string[] {
   const notes: string[] = [];

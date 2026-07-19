@@ -25,3 +25,12 @@ Both routes call `containsInjection()` (imported from `src/lib/api-utils.ts`) on
 
 ## generate/route.ts: large file — POST handler is near the end
 The file is intentionally large because it contains all tool-specific prompt engineering inline. The POST handler starts near line 645. Do not flag structure visible only in the first 200 lines as representing the complete implementation.
+
+## webhook/stripe/route.ts: unhandled verified event types intentionally return 200
+Acknowledging every signature-verified event with `200` is the correct Stripe integration pattern: Stripe treats any non-2xx as a delivery failure and retries for up to 3 days, so returning `400`/`202` for event types we don't handle would create retry storms for events we deliberately ignore. Unhandled types are `console.log`ged for observability, never silently dropped. A `500` is returned ONLY when our own infrastructure failed (DB unreachable) so Stripe retries a genuinely-lost purchase event. Do not flag the `default: 200` branch as a "silent failure window" or suggest returning an error status for unknown types.
+
+## webhook/stripe/route.ts: error handling already separates transient vs. terminal
+`handleCheckoutComplete` distinguishes the two cases correctly and logs once: a DB/product-lookup error (including network failure after retries) THROWS, is caught by the single caller-level catch, logged once, and returns `500` so Stripe retries; a genuinely-absent product row is a no-op `return` (logged, no `500`) because retrying will not make the row appear. There is no double-logging and a missing product row does NOT return `500`. Do not flag this as redundant error handling.
+
+## generate/route.ts: scanCostBearingLiterals() returns only safe, templated strings
+The advisory review notes appended to `explanation` are hardcoded template strings interpolating only tokens matched by fixed regexes with restricted charsets (regions/instance families/version constraints — no quotes, no HTML). The value is returned in a JSON field (escaped by `JSON.stringify`) and rendered as text by React (escaped); there are no HTML/JS execution sinks in `src/` (enforced by `tests/unit/no-xss-sinks.test.ts`). This is not an injection vector. Do not flag appending its result to `explanation`.
