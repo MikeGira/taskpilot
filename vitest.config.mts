@@ -25,6 +25,7 @@ export default defineConfig({
         'src/app/api/webhook/stripe/route.ts',
         'src/app/api/download/[product]/route.ts',
         'src/app/api/download/session/route.ts',
+        'scripts/lib/audit-parse.js',
       ],
       // Ratchet, set just under what the suite currently achieves — high enough that
       // deleting or hollowing out a test fails CI, not an aspirational round number.
