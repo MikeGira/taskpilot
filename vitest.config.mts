@@ -28,6 +28,7 @@ export default defineConfig({
         'src/app/api/download/session/route.ts',
         'scripts/lib/audit-parse.js',
         'scripts/lib/iac-drift.js',
+        'scripts/lib/golden-validate.js',
       ],
       // Ratchet, set just under what the suite currently achieves — high enough that
       // deleting or hollowing out a test fails CI, not an aspirational round number.

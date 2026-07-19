@@ -100,7 +100,7 @@ not as an answer. Layers are per `~/.claude/grounding-discipline.md`, strongest 
 | **L2** — retrieval must precede generation | Pinned provider/module **versions** from the maintained manifest (`PROVIDER_VERSIONS`, same source as L1, quarterly drift-checked) are injected into the Terraform system prompt so the model is told current versions instead of fabricating them — the highest-entropy IaC error. Full doc grounding (curated per-tool reference snippets / RAG over live docs) is deferred. | **Partial (version pins)** — see below |
 | **L3** — schema validation / constrained output | Model output is parsed then validated against `GenerateResultSchema`; unknown fields dropped, unknown `language` degraded to null, over-long payloads rejected, unusable results turned into a 502 rather than forwarded. | **Implemented** |
 | **L4** — verification loop | Post-generation credential scan flags probable hardcoded secrets and appends a review note. Tool prompts require dry-run affordances (`-WhatIf`, `terraform plan`) in generated output. | **Partial** |
-| **L4** | No server-side parse/lint of generated code (PSScriptAnalyzer, shellcheck, `terraform validate`). | **Open** — see below |
+| **L4** | Server-side parse/lint of generated code runs as a **scheduled + on-demand golden-generation CI check** (`golden-generation.yml`): a handful of scripts are produced from the live prompt and validated with the real tools (`shellcheck`, `py_compile`, `PSScriptAnalyzer`, `terraform validate`); a regression files a deduped, self-closing issue. Per-**request** linting is deferred. | **Partial (golden CI)** — see below |
 | **L5** — calibrated refusal | `needsClarification` path lets the model ask instead of guessing when the request is underspecified. | **Implemented** |
 
 ### Open items and why
@@ -127,9 +127,16 @@ fact by L1. The expensive tail (fetching and pinning full provider *documentatio
 RAG over live docs) is **deferred**; trigger to build it is real recurring usage/revenue, since it
 is a standing fetch-and-upkeep commitment disproportionate to current scale.
 
-**L4 server-side linting.** `terraform validate`, `PSScriptAnalyzer` and `shellcheck` are separate
-runtimes; a Vercel serverless function is the wrong place for them. The realistic path is a
-queue plus a container, which is disproportionate to current usage.
+**L4 server-side linting — golden CI slice done, per-request linting deferred.** `terraform
+validate`, `PSScriptAnalyzer` and `shellcheck` are separate runtimes and a Vercel serverless
+function is the wrong place for them per request. The cheap, high-value slice is implemented as a
+**golden-generation** check (`golden-generation.yml`, scheduled weekly + on demand): it generates a
+handful of scripts from the *live* prompt and validates each with the real tool, so a prompt
+regression that starts emitting broken code is caught before users hit it — at zero per-request
+cost. The lenient assertion (fail only on hard errors, not style warnings) accommodates the
+generator's non-determinism. Full **per-request** linting via a queue plus container is **deferred**;
+trigger is paying users, since it is disproportionate to current usage. **TaskPilot never executes
+generated code**, so the user remains the execution boundary in the meantime.
 
 ### Standing posture
 

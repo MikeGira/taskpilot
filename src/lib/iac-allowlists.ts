@@ -107,7 +107,7 @@ export function buildVersionPinNote(tool: string | undefined): string {
   const core = PROVIDER_VERSIONS.terraform;
   const providerLines = Object.entries(PROVIDER_VERSIONS)
     .filter(([name]) => name !== 'terraform')
-    .map(([name, pin]) => `- ${pin.source}: use version = "${pin.recommended}" (latest major is ${pin.latestMajor})`)
+    .map(([, pin]) => `- ${pin.source}: use version = "${pin.recommended}" (latest major is ${pin.latestMajor})`)
     .join('\n');
   return `PINNED VERSIONS (as of ${LAST_VERIFIED} — use these; do NOT invent newer major versions):
 - Terraform core: required_version = "${core.recommended}"
