@@ -108,7 +108,7 @@ export default function PrivacyPage() {
             </ul>
             <p className="text-sm text-[#9CA3AF] mt-3 leading-relaxed">
               We respond within the legally required time (GDPR: 1 month). You may also lodge a
-              complaint with your supervisory authority — in Canada, the{' '}
+              complaint with your supervisory authority, in Canada the{' '}
               <a href="https://www.priv.gc.ca/" className="text-white">Office of the Privacy Commissioner of Canada</a>.
             </p>
           </section>

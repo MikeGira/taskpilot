@@ -310,7 +310,7 @@ export function StatsDisplay({ initialData }: { initialData: StatsResponse | nul
             <Card delay={400} className="col-span-full">
               <SectionLabel>Visitor Analytics</SectionLabel>
               <p className="text-xs text-[#9CA3AF]">
-                Tracking active — visitor data will appear once the first page view is recorded.
+                Tracking active. Visitor data will appear once the first page view is recorded.
               </p>
             </Card>
           )}

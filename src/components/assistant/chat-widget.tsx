@@ -39,7 +39,7 @@ function stripMarkdown(text: string): string {
     // Blockquotes
     .replace(/^>\s*/gm, '')
     // Em-dashes (long dash)
-    .replace(/\s*[—–]\s*/g, ', ')
+    .replace(/\s*[—–]\s*/g, ', ') // ai-tell-ok: this strips dashes from AI output
     // Collapse excess blank lines
     .replace(/\n{3,}/g, '\n\n')
     .trim();

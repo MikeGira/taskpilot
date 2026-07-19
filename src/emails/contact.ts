@@ -13,8 +13,8 @@ export function renderContactAdminEmail({
 }: ContactAdminProps): { html: string; subject: string } {
   const budgetLabels: Record<string, string> = {
     under_500: 'Under $500',
-    '500_2000': '$500–$2,000',
-    '2000_5000': '$2,000–$5,000',
+    '500_2000': '$500-$2,000',
+    '2000_5000': '$2,000-$5,000',
     '5000_plus': '$5,000+',
     not_sure: 'Not sure',
   };

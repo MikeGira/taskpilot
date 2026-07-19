@@ -26,7 +26,7 @@ interface CloudProvider { id: string; label: string; short: string; }
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 const OS_OPTIONS: Option[] = [
-  { id: 'windows',        label: 'Windows',        desc: 'Server 2016–2022 · Windows 10/11 · PowerShell', icon: Monitor  },
+  { id: 'windows',        label: 'Windows',        desc: 'Server 2016-2022 · Windows 10/11 · PowerShell', icon: Monitor  },
   { id: 'linux',          label: 'Linux',          desc: 'Ubuntu · RHEL/CentOS · Debian · Amazon Linux',  icon: Terminal },
   { id: 'macos',          label: 'macOS',          desc: 'macOS 12+ · Admin or MDM managed',              icon: Apple    },
   { id: 'cross-platform', label: 'Cross-Platform', desc: 'Works on Windows, Linux & macOS · Python',      icon: Layers   },

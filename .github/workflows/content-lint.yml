@@ -1,0 +1,34 @@
+name: Content Lint (AI tells)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/**'
+      - 'src/components/**'
+      - 'src/emails/**'
+      - 'scripts/check-ai-tells.js'
+      - '.github/workflows/content-lint.yml'
+  pull_request:
+    paths:
+      - 'src/app/**'
+      - 'src/components/**'
+      - 'src/emails/**'
+      - 'scripts/check-ai-tells.js'
+      - '.github/workflows/content-lint.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  ai-tells:
+    name: No em/en dashes or AI slop in user-facing text
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      # Uses the runner's preinstalled Node (built-in modules only, no deps to install).
+      - name: Run AI-tell content check
+        run: node scripts/check-ai-tells.js
