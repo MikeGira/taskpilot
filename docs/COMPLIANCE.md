@@ -84,6 +84,48 @@ TaskPilot server ◀──(Stripe webhook: event metadata, NO card data; signatu
 
 **GDPR deletion order:** the confirmation email is sent **first** (while `user.email` is available), then `auth.admin.deleteUser()` is called last (it invalidates the session).
 
-## 6. Open items (tracked)
+## 6. AI output grounding — layer mapping
+
+TaskPilot's `/generate` and `/workflow` endpoints produce infrastructure code that users may run
+against real systems that cost real money. Model output is therefore treated as untrusted input,
+not as an answer. Layers are per `~/.claude/grounding-discipline.md`, strongest first.
+
+**Audited 2026-07-19.** Status is what the code does today, not what the prompt asks for.
+
+| Layer | Control | Status |
+|---|---|---|
+| **L1** — take high-entropy values away from the model | Generated file **extension** is derived in code from the validated `language`, never from the model's chosen filename. Path components stripped, charset restricted, length capped (`src/lib/generate-validation.ts`). | **Implemented** |
+| **L1** | Request-side enums: `os`, `environment`, `tool` are zod enums (`VALID_TOOLS`), so the model cannot be steered to an unsupported target. | **Implemented** |
+| **L1** | Cost-bearing literals *inside* generated scripts — cloud regions, instance sizes, SKUs, provider/module versions — are still free-generated. | **Open** — see below |
+| **L2** — retrieval must precede generation | System prompt is static and authored, not grounded in fetched, pinned provider documentation. | **Open** — see below |
+| **L3** — schema validation / constrained output | Model output is parsed then validated against `GenerateResultSchema`; unknown fields dropped, unknown `language` degraded to null, over-long payloads rejected, unusable results turned into a 502 rather than forwarded. | **Implemented** |
+| **L4** — verification loop | Post-generation credential scan flags probable hardcoded secrets and appends a review note. Tool prompts require dry-run affordances (`-WhatIf`, `terraform plan`) in generated output. | **Partial** |
+| **L4** | No server-side parse/lint of generated code (PSScriptAnalyzer, shellcheck, `terraform validate`). | **Open** — see below |
+| **L5** — calibrated refusal | `needsClarification` path lets the model ask instead of guessing when the request is underspecified. | **Implemented** |
+
+### Open items and why
+
+**L1 cost-bearing literals.** A generated Terraform file can name an instance size or region that
+does not exist, or that is far more expensive than intended. Closing this properly needs
+per-provider allowlists that must be refreshed as providers change their catalogues — a
+maintenance commitment, not a one-off patch. Until then this is mitigated only by L4/L5 and by the
+review-before-run posture below.
+
+**L2 doc grounding.** Would require fetching and pinning provider documentation per tool and
+injecting it into the prompt. High value for version-accuracy, high build and upkeep cost.
+
+**L4 server-side linting.** `terraform validate`, `PSScriptAnalyzer` and `shellcheck` are separate
+runtimes; a Vercel serverless function is the wrong place for them. The realistic path is a
+queue plus a container, which is disproportionate to current usage.
+
+### Standing posture
+
+Until L1 and L2 are closed, TaskPilot's honest claim is that it produces a **reviewed-before-run
+starting point**, not verified-correct infrastructure code. The product must not imply the output
+is validated against live provider catalogues. **TaskPilot never executes generated code** — the
+user is always the execution boundary, which is what keeps a fabricated literal a review problem
+rather than an incident.
+
+## 7. Open items (tracked)
 
 - _None._ The **Privacy Policy** (`/privacy`) and **Terms of Service** (`/terms`) are published as live routes with footer links, aligned to the data flows, subprocessors, retention, and SAQ A status recorded above. Legal text is to be reviewed by counsel before being relied upon (templates are not legal advice).

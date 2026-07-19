@@ -21,6 +21,7 @@ export default defineConfig({
         'src/lib/rate-limit.ts',
         'src/lib/validations.ts',
         'src/lib/api-utils.ts',
+        'src/lib/generate-validation.ts',
         'src/app/api/webhook/stripe/route.ts',
       ],
       // Ratchet, set just under what the suite currently achieves — high enough that
