@@ -126,6 +126,21 @@ is validated against live provider catalogues. **TaskPilot never executes genera
 user is always the execution boundary, which is what keeps a fabricated literal a review problem
 rather than an incident.
 
-## 7. Open items (tracked)
+## 7. Accepted risks (with compensating controls)
+
+A control weakness is only acceptable when it is documented, dated, compensated, and has a
+revisit trigger. This section is the register. (SOC 2 CC3.2 / CC7.x · ISO A.5.7/A.8.8)
+
+### AR-1 — CSP `script-src 'unsafe-inline'` retained
+
+| Field | Value |
+|---|---|
+| Risk | The Content-Security-Policy allows `'unsafe-inline'` in `script-src`. In isolation this weakens defence against injected inline scripts (a class of XSS). |
+| Decision | **Accepted**, dated 2026-07-19. |
+| Rationale | The strict fix (per-request nonces) forces **every** page into dynamic rendering — Next.js disables static optimization, ISR, and CDN caching when a nonce is used. That is a permanent performance, SEO, and hosting-cost regression on the static marketing and legal pages, taken on to close a gap that currently has **no reachable execution sink** (see compensating controls). The cost is disproportionate to the residual risk at current scale. |
+| Compensating controls | (1) **No HTML/JS execution sinks** — verified zero `dangerouslySetInnerHTML`, `innerHTML`/`outerHTML` assignment, `insertAdjacentHTML`, `document.write`, `eval`, or `Function` constructor in `src/`. (2) **Enforced by CI** — `tests/unit/no-xss-sinks.test.ts` fails the build if any such sink is introduced. (3) React auto-escapes all interpolated values by default. (4) Generated scripts render via shiki `codeToTokens` as React elements, **not** raw HTML. (5) Server-side prompt-injection filter on free-text inputs. (6) CodeQL `security-and-quality` on every PR. (7) The other two CSP faults ZAP bundles under rule 10055 (no-fallback directives, scheme wildcards) **were fixed**, and `tests/unit/csp.test.ts` asserts they stay fixed. |
+| Revisit trigger | The sink guard failing (i.e. a feature genuinely needs an HTML/JS sink) **or** a compliance requirement mandating no `'unsafe-inline'`. Either event re-opens the nonce-vs-SRI decision. On revisit, prefer a `Content-Security-Policy-Report-Only` canary before enforcing. |
+
+## 8. Open items (tracked)
 
 - _None._ The **Privacy Policy** (`/privacy`) and **Terms of Service** (`/terms`) are published as live routes with footer links, aligned to the data flows, subprocessors, retention, and SAQ A status recorded above. Legal text is to be reviewed by counsel before being relied upon (templates are not legal advice).

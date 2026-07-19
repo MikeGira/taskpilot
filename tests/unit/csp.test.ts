@@ -42,10 +42,11 @@ describe('Content-Security-Policy invariants', () => {
     expect(csp).toContain("base-uri 'self'");
   });
 
-  // Documents the known gap so it is visible in the suite rather than only in a
-  // scanner ignore file. Flip this to `.not.toContain` when nonce-based CSP lands —
-  // the failure is the reminder that the ZAP ignore for 10055 can then be removed.
-  it('KNOWN GAP: script-src still allows unsafe-inline', async () => {
+  // Documents the accepted risk (docs/COMPLIANCE.md AR-1) so it is visible in the suite,
+  // not only in a scanner ignore file. Its compensating control is tests/unit/no-xss-sinks.
+  // Flip this to `.not.toContain` when nonce/SRI CSP lands — the failure is the reminder to
+  // also remove the ZAP 10055 ignore and retire AR-1.
+  it('ACCEPTED RISK (AR-1): script-src still allows unsafe-inline', async () => {
     const csp = await cspFor('/');
     expect(csp).toContain("'unsafe-inline'");
   });
