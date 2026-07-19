@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { parseRequestBody, checkRateLimit, checkFreeTextInputs, buildUserMessage, callAnthropic, ONE_HOUR_MS } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, checkFreeTextInputs, buildUserMessage, callAnthropicCollected, ONE_HOUR_MS } from '@/lib/api-utils';
 import { z } from 'zod';
 import { validateGenerateResult } from '@/lib/generate-validation';
 import { scanCostBearingLiterals, buildVersionPinNote } from '@/lib/iac-allowlists';
@@ -661,12 +661,17 @@ export async function POST(request: Request) {
   const systemPrompt = buildSystemPrompt(os, environment, cloudProviders, tool);
   const userMessage = buildUserMessage(taskDescription, 'Now please generate the script.', clarificationAnswer, previousQuestion);
 
-  const ai = await callAnthropic({
+  // Streamed + accumulated: a 16k-token generation can exceed a non-streaming timeout, and
+  // Anthropic warns against large max_tokens on a non-streaming request (idle connections drop).
+  // Streaming keeps the connection alive; the timeout tracks the route's maxDuration budget (300s)
+  // with headroom for the rest of the handler, so long scripts finish instead of failing at ~60s.
+  const ai = await callAnthropicCollected({
     apiKey: process.env.ANTHROPIC_API_KEY!,
     model: 'claude-sonnet-4-6',
     maxTokens: 16384,
     system: systemPrompt,
     messages: [{ role: 'user', content: userMessage }],
+    timeoutMs: 280_000,
     logPrefix: '[generate]',
   });
 
