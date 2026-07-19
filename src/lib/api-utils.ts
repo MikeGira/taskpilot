@@ -69,6 +69,24 @@ export function containsInjection(text: string): boolean {
   return INJECTION_PATTERNS.some(p => p.test(normalizeText(text)));
 }
 
+type FreeTextResult = { ok: true } | { ok: false; response: NextResponse };
+
+// Shared free-text guard for the generation routes: filters empty inputs, runs the
+// prompt-injection check, and returns a ready 400 response (with IP-truncated warn log)
+// on a hit. Keeps the injection response identical across /generate and /workflow.
+export function checkFreeTextInputs(
+  inputs: (string | undefined | null)[],
+  ip: string,
+  logPrefix: string,
+): FreeTextResult {
+  const texts = inputs.filter(Boolean) as string[];
+  if (texts.some(containsInjection)) {
+    console.warn(`${logPrefix} prompt injection attempt from`, ip.slice(0, 8));
+    return { ok: false, response: NextResponse.json({ error: 'Invalid input detected.' }, { status: 400 }) };
+  }
+  return { ok: true };
+}
+
 export function buildUserMessage(
   taskDescription: string,
   generateInstruction: string,

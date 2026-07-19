@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { containsInjection, buildUserMessage, callAnthropic, ONE_HOUR_MS, checkRateLimit, parseRequestBody } from '@/lib/api-utils';
+import { checkFreeTextInputs, buildUserMessage, callAnthropic, ONE_HOUR_MS, checkRateLimit, parseRequestBody } from '@/lib/api-utils';
 
 export const maxDuration = 300;
 
@@ -195,11 +195,8 @@ export async function POST(request: Request) {
 
   const { triggerType, integrations, complexity, taskDescription, clarificationAnswer, previousQuestion } = bodyResult.data;
 
-  const freeTextInputs = [taskDescription, clarificationAnswer, previousQuestion].filter(Boolean) as string[];
-  if (freeTextInputs.some(containsInjection)) {
-    console.warn('[workflow] prompt injection attempt from', ip.slice(0, 8));
-    return NextResponse.json({ error: 'Invalid input detected.' }, { status: 400 });
-  }
+  const injectionCheck = checkFreeTextInputs([taskDescription, clarificationAnswer, previousQuestion], ip, '[workflow]');
+  if (!injectionCheck.ok) return injectionCheck.response;
 
   if (!process.env.ANTHROPIC_API_KEY) {
     console.error('[workflow/generate] ANTHROPIC_API_KEY not configured');
