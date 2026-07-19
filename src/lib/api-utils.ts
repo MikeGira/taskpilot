@@ -50,14 +50,25 @@ export function checkRateLimit(
 
 export const ONE_HOUR_MS = 60 * 60 * 1000;
 
+// Qualifier chain, not a single optional qualifier. The earlier `(all\s+|previous\s+)?`
+// form matched exactly ONE qualifier, so stacking them walked straight past the filter:
+// "ignore all previous instructions" — the single most common injection string there is —
+// was NOT caught, while "ignore previous instructions" was. Same flaw applied to
+// `disregard`. `*` over the alternation is what closes it.
+// Deliberately excludes "rules" as an object noun: firewall/alert rules are ordinary
+// TaskPilot task vocabulary, and a false positive costs a legitimate user their
+// generation (this guard fails closed with a 400).
+const QUALIFIERS = String.raw`(?:(?:all|any|the|your|previous|above|prior|earlier|preceding)\s+)*`;
+const OVERRIDE_TARGET = String.raw`(?:instructions?|prompts?|directions?)`;
+
 export const INJECTION_PATTERNS = [
-  /ignore\s+(all\s+|previous\s+|above\s+|prior\s+)?instructions/i,
+  new RegExp(String.raw`ignore\s+${QUALIFIERS}${OVERRIDE_TARGET}`, 'i'),
+  new RegExp(String.raw`disregard\s+${QUALIFIERS}(?:${OVERRIDE_TARGET}|previous)`, 'i'),
+  new RegExp(String.raw`forget\s+(?:everything|all|${QUALIFIERS}${OVERRIDE_TARGET})`, 'i'),
   /\[SYSTEM\]/i,
   /you\s+are\s+now\s+/i,
   /<\|im_start\|>/i,
-  /forget\s+(everything|all|your\s+instructions)/i,
   /pretend\s+(you\s+are|to\s+be)/i,
-  /disregard\s+(your\s+|all\s+)?previous/i,
   /new\s+prompt:/i,
 ];
 
