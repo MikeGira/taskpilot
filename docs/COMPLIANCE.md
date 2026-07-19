@@ -96,7 +96,7 @@ not as an answer. Layers are per `~/.claude/grounding-discipline.md`, strongest 
 |---|---|---|
 | **L1** — take high-entropy values away from the model | Generated file **extension** is derived in code from the validated `language`, never from the model's chosen filename. Path components stripped, charset restricted, length capped (`src/lib/generate-validation.ts`). | **Implemented** |
 | **L1** | Request-side enums: `os`, `environment`, `tool` are zod enums (`VALID_TOOLS`), so the model cannot be steered to an unsupported target. | **Implemented** |
-| **L1** | Cost-bearing literals *inside* generated scripts — cloud regions, instance sizes, SKUs, provider/module versions — are still free-generated. | **Open** — see below |
+| **L1** | Cost-bearing literals *inside* generated scripts — cloud regions, EC2/GCP instance families, Terraform provider majors — are checked after generation against dated per-provider allowlists (`src/lib/iac-allowlists.ts`); fabricated-looking values get an **advisory review note** appended (never a block — a false block costs the user their generation). Allowlists are date-stamped (`LAST_VERIFIED`) and re-verified quarterly against live provider sources by `iac-allowlist-drift.yml` (Terraform Registry API, AWS `ip-ranges.json`), which opens a deduped, auto-closing tracking issue on drift. Flagging logic + drift logic are unit-tested and in the coverage gate. | **Implemented (advisory)** |
 | **L2** — retrieval must precede generation | System prompt is static and authored, not grounded in fetched, pinned provider documentation. | **Open** — see below |
 | **L3** — schema validation / constrained output | Model output is parsed then validated against `GenerateResultSchema`; unknown fields dropped, unknown `language` degraded to null, over-long payloads rejected, unusable results turned into a 502 rather than forwarded. | **Implemented** |
 | **L4** — verification loop | Post-generation credential scan flags probable hardcoded secrets and appends a review note. Tool prompts require dry-run affordances (`-WhatIf`, `terraform plan`) in generated output. | **Partial** |
@@ -105,11 +105,19 @@ not as an answer. Layers are per `~/.claude/grounding-discipline.md`, strongest 
 
 ### Open items and why
 
-**L1 cost-bearing literals.** A generated Terraform file can name an instance size or region that
-does not exist, or that is far more expensive than intended. Closing this properly needs
-per-provider allowlists that must be refreshed as providers change their catalogues — a
-maintenance commitment, not a one-off patch. Until then this is mitigated only by L4/L5 and by the
-review-before-run posture below.
+**L1 cost-bearing literals — implemented as an advisory control.** A generated Terraform file can
+name an instance size or region that does not exist, or a provider version that was never
+published. The generator now scans output against dated per-provider allowlists
+(`src/lib/iac-allowlists.ts`) and appends a review note for any AWS/GCP region, EC2/GCP instance
+family, or Terraform provider major that is not recognized. It is advisory, not a block: the
+catalogue is large and shifts, and a false block would cost a user their whole generation, so the
+control only ever *under-warns*. The maintenance commitment is handled explicitly — the list is
+date-stamped and re-verified quarterly against live provider sources (`iac-allowlist-drift.yml`:
+Terraform Registry API for provider majors, AWS `ip-ranges.json` for regions), which files a
+deduped, self-closing issue on drift. GCP/Azure regions and instance families are not live-checked
+(they need auth or lack a stable public catalogue) and are kept current by the dated snapshot plus
+manual review. This closes the L1 gap to the level that is proportionate and honest for a tool
+that never executes the code it emits.
 
 **L2 doc grounding.** Would require fetching and pinning provider documentation per tool and
 injecting it into the prompt. High value for version-accuracy, high build and upkeep cost.

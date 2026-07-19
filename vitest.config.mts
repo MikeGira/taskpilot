@@ -22,10 +22,12 @@ export default defineConfig({
         'src/lib/validations.ts',
         'src/lib/api-utils.ts',
         'src/lib/generate-validation.ts',
+        'src/lib/iac-allowlists.ts',
         'src/app/api/webhook/stripe/route.ts',
         'src/app/api/download/[product]/route.ts',
         'src/app/api/download/session/route.ts',
         'scripts/lib/audit-parse.js',
+        'scripts/lib/iac-drift.js',
       ],
       // Ratchet, set just under what the suite currently achieves — high enough that
       // deleting or hollowing out a test fails CI, not an aspirational round number.
@@ -35,10 +37,12 @@ export default defineConfig({
       // fallback-heavy, so aggregate branch % recalibrated 87 -> 86 across a much larger
       // surface (211 branches vs 91; 183 covered vs 82). Lines/statements ROSE — this is a
       // bigger tested surface, not a weakened gate.
+      // 2026-07-19 (later): added the grounding L1 allowlist scan + drift lib with dedicated
+      // suites; aggregate branch % climbed to 87.69, so the branch ratchet moves 86 -> 87.
       thresholds: {
         lines: 99,
         functions: 95,
-        branches: 86,
+        branches: 87,
         statements: 98,
       },
     },
