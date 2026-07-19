@@ -1,0 +1,22 @@
+# ZAP baseline rule policy — tab-separated: <ruleId>	<WARN|IGNORE|FAIL>	<comment>
+#
+# Anything NOT listed here keeps its default (WARN) and, because the workflow sets
+# fail_action: true, will fail the build. That is deliberate: a new alert should stop
+# a merge until it is either fixed or consciously triaged into this file with a reason.
+#
+# Rule IDs: https://www.zaproxy.org/docs/alerts/
+# Only add an IGNORE line with a justification. "It was noisy" is not a justification.
+#
+# Baseline triaged 2026-07-19 against the first scan (61 PASS / 9 WARN / 0 FAIL).
+# Two findings from that scan were FIXED rather than ignored and so are absent here:
+#   10037 X-Powered-By  -> poweredByHeader: false in next.config.mjs
+#   10055 CSP no-fallback -> added form-action and frame-ancestors to the CSP
+#
+10027	IGNORE	False positive. Fires on /_vercel/insights/script.js, a third-party analytics bundle, matching our own marketing copy ("...sets, disk cleanup, user onboarding..."). No comment, no disclosure, and not our file to change.
+10049	IGNORE	Informational caching observation, not a vulnerability. /api/* is deliberately Cache-Control: no-store (next.config.mjs) because those responses are user-specific.
+10094	IGNORE	False positive. Matches the literal base64 alphabet inside a Next.js chunk and URL-encoded task text in /generate query strings. Neither is encoded data being disclosed.
+10109	IGNORE	Purely informational — reports that the target is a client-rendered application. True, and not a finding.
+90004	IGNORE	Accepted risk. Cross-Origin-Embedder-Policy: require-corp would block Stripe's cross-origin frames and scripts, breaking checkout. REVISIT if the Stripe frame dependency is ever removed, or adopt credentialless once browser support is uniform.
+90005	IGNORE	Scanner artifact. Flags that ZAP's own outbound requests omit Sec-Fetch-Dest; it is a request header set by browsers, not something the server controls.
+90022	IGNORE	Environment-induced, not a product defect. /checkout returns 500 in CI because STRIPE_SECRET_KEY is deliberately absent from the DAST job; production has it configured. The 500 is Next.js's production error page, which does not include a stack trace. REVISIT if this ever fires on a route that does not require live Stripe credentials.
+10055	IGNORE	Accepted known weakness, NOT a false positive. This rule id covers three faults at once; the no-fallback and wildcard variants were FIXED (form-action + frame-ancestors added, img-src https: removed). What remains is script-src 'unsafe-inline', which genuinely weakens XSS defence. Removing it requires nonce-based CSP generated in middleware and threaded through Next's inline bootstrap scripts — a real change with real breakage risk, not a config tweak. Because ZAP cannot ignore one variant of an id, tests/unit/csp.test.ts asserts the other two properties deterministically so this ignore does not silently drop that coverage. REVISIT when nonce-based CSP lands; delete this line then.
