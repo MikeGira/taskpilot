@@ -1,0 +1,8 @@
+# ZAP baseline rule policy — tab-separated: <ruleId>	<WARN|IGNORE|FAIL>	<comment>
+#
+# Anything NOT listed here keeps its default (WARN) and, because the workflow sets
+# fail_action: true, will fail the build. That is deliberate: a new alert should stop
+# a merge until it is either fixed or consciously triaged into this file with a reason.
+#
+# Rule IDs: https://www.zaproxy.org/docs/alerts/
+# Only add an IGNORE line with a justification. "It was noisy" is not a justification.
