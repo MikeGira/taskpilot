@@ -9,6 +9,7 @@ import {
   buildUserMessage,
   callAnthropic,
   callAnthropicStream,
+  callAnthropicCollected,
 } from '@/lib/api-utils';
 
 const schema = z.object({ email: z.string().email(), n: z.number().optional() });
@@ -353,5 +354,90 @@ describe('callAnthropicStream', () => {
   it('reports a network failure after retries are exhausted', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('boom')));
     await expect(callAnthropicStream(params)).resolves.toMatchObject({ ok: false, reason: 'network' });
+  });
+});
+
+describe('callAnthropicCollected', () => {
+  const params = {
+    apiKey: 'sk-ant-test',
+    model: 'claude-test',
+    maxTokens: 100,
+    system: 'sys',
+    messages: [{ role: 'user', content: 'hi' }],
+    logPrefix: '[t]',
+  };
+
+  const sseResponse = (chunks: string[]) =>
+    new Response(
+      new ReadableStream<Uint8Array>({
+        start(c) {
+          const enc = new TextEncoder();
+          for (const chunk of chunks) c.enqueue(enc.encode(chunk));
+          c.close();
+        },
+      }),
+      { status: 200 }
+    );
+
+  const delta = (text: string) =>
+    `data: ${JSON.stringify({ type: 'content_block_delta', delta: { type: 'text_delta', text } })}\n`;
+
+  beforeEach(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+  afterEach(() => { vi.restoreAllMocks(); });
+
+  it('accumulates streamed deltas into the full text', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(sseResponse([delta('resu'), delta('lt')])));
+    await expect(callAnthropicCollected(params)).resolves.toEqual({ ok: true, text: 'result' });
+  });
+
+  it('returns empty text for a stream with no text deltas', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(sseResponse(['data: {"type":"message_start"}\n'])));
+    await expect(callAnthropicCollected(params)).resolves.toEqual({ ok: true, text: '' });
+  });
+
+  it('propagates an upstream failure from the stream open', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ error: 'overloaded' }), { status: 529 })
+    ));
+    await expect(callAnthropicCollected(params)).resolves.toEqual({ ok: false, reason: 'upstream', status: 529 });
+  });
+
+  it('reports a timeout when the request aborts before streaming', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(() => {
+      const err = new Error('aborted');
+      err.name = 'AbortError';
+      return Promise.reject(err);
+    }));
+    await expect(callAnthropicCollected({ ...params, timeoutMs: 5 })).resolves.toEqual({ ok: false, reason: 'timeout' });
+  });
+
+  it('never leaks the api key into the returned value', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(sseResponse([delta('ok')])));
+    const r = await callAnthropicCollected(params);
+    expect(JSON.stringify(r)).not.toContain('sk-ant-test');
+  });
+
+  const erroringResponse = (errName?: string) =>
+    new Response(
+      new ReadableStream<Uint8Array>({
+        start(c) {
+          c.enqueue(new TextEncoder().encode(delta('partial')));
+          c.error(Object.assign(new Error('stream broke'), errName ? { name: errName } : {}));
+        },
+      }),
+      { status: 200 }
+    );
+
+  it('reports network when the stream errors mid-generation', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(erroringResponse()));
+    await expect(callAnthropicCollected(params)).resolves.toMatchObject({ ok: false, reason: 'network' });
+  });
+
+  it('reports timeout when the stream aborts mid-generation', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(erroringResponse('AbortError')));
+    await expect(callAnthropicCollected(params)).resolves.toMatchObject({ ok: false, reason: 'timeout' });
   });
 });

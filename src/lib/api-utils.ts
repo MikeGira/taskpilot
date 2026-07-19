@@ -202,6 +202,51 @@ export async function callAnthropicStream(params: {
   }
 }
 
+// Streams from Anthropic (keeping the connection alive) but ACCUMULATES the full text
+// server-side and returns it in the same shape as callAnthropic — so a route can get a single
+// buffered result without the non-streaming pitfalls.
+//
+// Why this exists: Anthropic explicitly warns against a large `max_tokens` on a non-streaming
+// request ("Long requests" in the API error docs) — some networks drop the idle connection and the
+// call fails/times out. The script/workflow generators use max_tokens 16384, which can run well
+// past a non-streaming client timeout. Driving the request as a stream keeps bytes flowing
+// (and lets a much longer timeout track the platform's maxDuration budget) while callers that only
+// need the final text are unchanged. Ref: platform.claude.com API errors → Long requests;
+// vercel.com function duration (Fluid Compute allows up to 300s, incl. Hobby).
+export async function callAnthropicCollected(params: {
+  apiKey: string;
+  model: string;
+  maxTokens: number;
+  system: string;
+  messages: { role: string; content: string }[];
+  timeoutMs?: number;
+  logPrefix: string;
+}): Promise<AnthropicResult> {
+  const result = await callAnthropicStream(params);
+  if (!result.ok) return result;
+  try {
+    const reader = result.stream.getReader();
+    const decoder = new TextDecoder();
+    let text = '';
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      text += decoder.decode(value, { stream: true });
+    }
+    text += decoder.decode();
+    return { ok: true, text };
+  } catch (err) {
+    // The stream errors if the upstream aborts mid-generation (the timeout in callAnthropicStream
+    // covers the whole stream). Surface it the same way the non-streaming path would.
+    if ((err as Error).name === 'AbortError') {
+      console.error(`${params.logPrefix} stream timed out`);
+      return { ok: false, reason: 'timeout' };
+    }
+    console.error(`${params.logPrefix} stream read error:`, err);
+    return { ok: false, reason: 'network' };
+  }
+}
+
 export async function callAnthropic(params: {
   apiKey: string;
   model: string;

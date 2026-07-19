@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { checkFreeTextInputs, buildUserMessage, callAnthropic, ONE_HOUR_MS, checkRateLimit, parseRequestBody } from '@/lib/api-utils';
+import { checkFreeTextInputs, buildUserMessage, callAnthropicCollected, ONE_HOUR_MS, checkRateLimit, parseRequestBody } from '@/lib/api-utils';
 
 export const maxDuration = 300;
 
@@ -206,12 +206,16 @@ export async function POST(request: Request) {
   const systemPrompt = buildSystemPrompt(triggerType, integrations, complexity);
   const userMessage = buildUserMessage(taskDescription, 'Now please generate the n8n workflow.', clarificationAnswer, previousQuestion);
 
-  const ai = await callAnthropic({
+  // Streamed + accumulated — same rationale as /api/generate: a 16k-token generation can exceed a
+  // non-streaming timeout, and Anthropic warns against large max_tokens without streaming. The
+  // timeout tracks maxDuration (300s) with headroom so long workflows finish instead of failing.
+  const ai = await callAnthropicCollected({
     apiKey: process.env.ANTHROPIC_API_KEY!,
     model: 'claude-sonnet-4-6',
     maxTokens: 16384,
     system: systemPrompt,
     messages: [{ role: 'user', content: userMessage }],
+    timeoutMs: 280_000,
     logPrefix: '[workflow/generate]',
   });
 
