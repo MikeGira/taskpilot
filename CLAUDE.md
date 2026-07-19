@@ -29,7 +29,7 @@ Admin analytics + AI-powered prompt improvement at `/dashboard/analytics`.
 | Payments | Stripe Checkout (hosted) | Never touch card data → PCI SAQ A |
 | Email | Resend (+ custom SMTP in Supabase) | Custom HTML templates in src/emails/ |
 | Hosting | Vercel | Auto-deploy from GitHub main branch |
-| CI/CD | GitHub Actions | Gitleaks + CodeQL + build check + smoke test |
+| CI/CD | GitHub Actions | Gitleaks + CodeQL + build check + Playwright e2e + smoke test |
 | AI Generation | Anthropic claude-sonnet-4-6 | Direct fetch (no SDK), server-side only, 16384 max_tokens |
 | AI Chat | Anthropic claude-haiku-4-5-20251001 | Pilot assistant, 800 max_tokens, 30/hr/IP rate limit |
 
