@@ -48,6 +48,7 @@ export function TaskComposer({
       <div className="rounded-xl border border-white/12 bg-[#0D0D0D] transition-colors duration-150 focus-within:border-[rgba(62,207,142,0.5)]">
         <textarea
           ref={textareaRef}
+          data-testid="task-input"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={(e) => {

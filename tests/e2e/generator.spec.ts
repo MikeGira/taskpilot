@@ -1,5 +1,21 @@
 import { test, expect } from '@playwright/test';
 
+// The wizard flow is exercised for real; only the Anthropic call is stubbed so the
+// gate is deterministic and free. Set E2E_LIVE_AI=1 to hit the real /api/generate.
+const LIVE_AI = process.env.E2E_LIVE_AI === '1';
+
+const STUB_RESULT = {
+  needsClarification: false,
+  question: null,
+  script:
+    '<#\n.SYNOPSIS\n  Lists running services and writes a timestamped log.\n#>\n[CmdletBinding()]\nparam()\n\n$stamp = Get-Date -Format "yyyyMMdd-HHmmss"\nGet-Service | Where-Object Status -eq "Running" |\n  Select-Object Name, DisplayName, Status |\n  Out-File -FilePath "services-$stamp.log" -Encoding utf8\n',
+  filename: 'get-running-services.ps1',
+  language: 'powershell',
+  title: 'List running services to a timestamped log',
+  explanation: 'Collects running services and writes them to a timestamped log file.',
+  configNotes: ['Requires PowerShell 5.1 or later.'],
+};
+
 async function waitForReactHydration(page: import('@playwright/test').Page) {
   await page.waitForFunction(() => {
     const el = document.querySelector('button');
@@ -10,6 +26,12 @@ async function waitForReactHydration(page: import('@playwright/test').Page) {
 
 test('generator wizard produces a script end-to-end', async ({ page }) => {
   test.setTimeout(120_000);
+
+  if (!LIVE_AI) {
+    await page.route('**/api/generate', route =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(STUB_RESULT) })
+    );
+  }
 
   const jsErrors: string[] = [];
   page.on('pageerror', err => jsErrors.push(err.message));
@@ -35,12 +57,12 @@ test('generator wizard produces a script end-to-end', async ({ page }) => {
 
   // Step 4: Fill in task description, then Generate
   await expect(page.getByText('What do you want to automate?')).toBeVisible();
-  await page.locator('textarea').fill(
+  await page.getByTestId('task-input').fill(
     'List all running Windows services and their current status, then save the output to a log file with a timestamp in the filename'
   );
   await page.getByRole('button', { name: 'Generate', exact: true }).click();
 
-  // Wait for result — AI call can take up to 60s
+  // Wait for result — a live AI call can take up to 60s
   await expect(page.getByRole('button', { name: /Download/i })).toBeVisible({ timeout: 90_000 });
   await expect(page.locator('pre code')).not.toBeEmpty();
 });

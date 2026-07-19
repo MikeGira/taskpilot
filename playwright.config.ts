@@ -1,10 +1,15 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const isCI = !!process.env.CI;
+
 export default defineConfig({
   testDir: './tests/e2e',
   timeout: 30_000,
   expect: { timeout: 5_000 },
-  reporter: 'list',
+  reporter: isCI ? [['github'], ['list']] : 'list',
+  forbidOnly: isCI,
+  retries: isCI ? 1 : 0,
+  workers: isCI ? 2 : undefined,
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
@@ -16,9 +21,11 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run dev',
+    // CI serves the production build (the artifact that actually ships); locally the
+    // dev server keeps the loop fast.
+    command: isCI ? 'npm run start' : 'npm run dev',
     url: 'http://localhost:3000',
-    reuseExistingServer: true,
+    reuseExistingServer: !isCI,
     timeout: 120_000,
   },
 });
