@@ -38,16 +38,21 @@ export const PROVIDER_VERSIONS: Record<string, ProviderPin> = {
 };
 
 // ── Cloud regions ───────────────────────────────────────────────────────────────────────────
-// AWS commercial + GovCloud. Source: AWS ip-ranges.json region set (drift-checked).
+// AWS commercial + China + GovCloud. Source: AWS ip-ranges.json region set — the full authoritative
+// list (41 regions, reconciled 2026-07-19 by the drift check itself, which caught 7 the initial
+// hand-curated snapshot missed). Kept current by iac-allowlist-drift.yml.
 export const AWS_REGIONS = new Set([
-  'us-east-1', 'us-east-2', 'us-west-1', 'us-west-2',
-  'af-south-1', 'ap-east-1', 'ap-south-1', 'ap-south-2',
+  'us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'us-south-1',
+  'af-south-1', 'ap-east-1', 'ap-east-2', 'ap-south-1', 'ap-south-2',
   'ap-southeast-1', 'ap-southeast-2', 'ap-southeast-3', 'ap-southeast-4',
-  'ap-southeast-5', 'ap-southeast-7', 'ap-northeast-1', 'ap-northeast-2', 'ap-northeast-3',
+  'ap-southeast-5', 'ap-southeast-6', 'ap-southeast-7',
+  'ap-northeast-1', 'ap-northeast-2', 'ap-northeast-3',
   'ca-central-1', 'ca-west-1',
   'eu-central-1', 'eu-central-2', 'eu-west-1', 'eu-west-2', 'eu-west-3',
   'eu-north-1', 'eu-south-1', 'eu-south-2',
-  'il-central-1', 'me-central-1', 'me-south-1', 'mx-central-1', 'sa-east-1',
+  'il-central-1', 'me-central-1', 'me-south-1', 'me-west-1', 'mx-central-1',
+  'sa-east-1', 'sa-west-1',
+  'cn-north-1', 'cn-northwest-1',
   'us-gov-east-1', 'us-gov-west-1',
 ]);
 
@@ -115,7 +120,7 @@ ${providerLines}
 For any provider not listed above, use a conservative "~> MAJOR.0" pin and note in configNotes that the exact version should be confirmed against the Terraform Registry.`;
 }
 
-const AWS_REGION_TOKEN = /\b(?:us|eu|ap|sa|ca|me|af|il|mx)-(?:gov-)?[a-z]+-\d\b/g;
+const AWS_REGION_TOKEN = /\b(?:us|eu|ap|sa|ca|me|af|il|mx|cn)-(?:gov-)?[a-z]+-\d\b/g;
 const GCP_REGION_TOKEN = /\b(?:us|europe|asia|australia|northamerica|southamerica|me|africa)-[a-z]+\d\b/g;
 const EC2_INSTANCE_TOKEN = /\b([a-z]+\d[a-z-]*)\.(?:nano|micro|small|medium|large|(?:\d+)?xlarge|metal(?:-\d+xl)?)\b/g;
 const GCP_MACHINE_TOKEN = /\b([a-z]\d[a-z]?)-(?:standard|highmem|highcpu|micro|small|medium|megamem|ultramem|highgpu|hpc)-\d+\b/g;
