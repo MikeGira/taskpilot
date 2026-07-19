@@ -96,6 +96,25 @@ export const GCP_MACHINE_FAMILIES = new Set([
   't2d', 't2a', 'tau', 'm1', 'm2', 'm3', 'm4', 'a2', 'a3', 'a4', 'g2', 'h3', 'z3', 'x4',
 ]);
 
+// ── Layer 2: version grounding (retrieval-before-generation, cheap slice) ─────────────────────
+// Inject the pinned provider versions from the shared manifest into the system prompt so the model
+// is TOLD the current versions rather than free-generating them — wrong provider versions are the
+// highest-entropy IaC fabrication. Only emitted for Terraform, the tool the manifest actually
+// covers; returns '' for every other tool so the prompt stays relevant. The dated snapshot is kept
+// current by the same quarterly drift check that backs L1.
+export function buildVersionPinNote(tool: string | undefined): string {
+  if (tool !== 'terraform') return '';
+  const core = PROVIDER_VERSIONS.terraform;
+  const providerLines = Object.entries(PROVIDER_VERSIONS)
+    .filter(([name]) => name !== 'terraform')
+    .map(([name, pin]) => `- ${pin.source}: use version = "${pin.recommended}" (latest major is ${pin.latestMajor})`)
+    .join('\n');
+  return `PINNED VERSIONS (as of ${LAST_VERIFIED} — use these; do NOT invent newer major versions):
+- Terraform core: required_version = "${core.recommended}"
+${providerLines}
+For any provider not listed above, use a conservative "~> MAJOR.0" pin and note in configNotes that the exact version should be confirmed against the Terraform Registry.`;
+}
+
 const AWS_REGION_TOKEN = /\b(?:us|eu|ap|sa|ca|me|af|il|mx)-(?:gov-)?[a-z]+-\d\b/g;
 const GCP_REGION_TOKEN = /\b(?:us|europe|asia|australia|northamerica|southamerica|me|africa)-[a-z]+\d\b/g;
 const EC2_INSTANCE_TOKEN = /\b([a-z]+\d[a-z-]*)\.(?:nano|micro|small|medium|large|(?:\d+)?xlarge|metal(?:-\d+xl)?)\b/g;
