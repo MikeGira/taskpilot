@@ -11,7 +11,7 @@ describe('validatorFor', () => {
     expect(validatorFor('bash').tool).toBe('shellcheck');
     expect(validatorFor('python').tool).toBe('py_compile');
     expect(validatorFor('powershell').tool).toBe('PSScriptAnalyzer');
-    expect(validatorFor('terraform').tool).toBe('terraform validate');
+    expect(validatorFor('terraform').tool).toBe('terraform fmt');
     for (const lang of ['bash', 'python', 'powershell', 'terraform']) {
       expect(validatorFor(lang).available).toBe(true);
       expect(validatorFor(lang).ext).toMatch(/^\./);

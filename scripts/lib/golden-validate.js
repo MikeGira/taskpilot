@@ -27,7 +27,10 @@ const VALIDATORS = {
   bash: { tool: 'shellcheck', ext: '.sh', available: true },
   python: { tool: 'py_compile', ext: '.py', available: true },
   powershell: { tool: 'PSScriptAnalyzer', ext: '.ps1', available: true },
-  terraform: { tool: 'terraform validate', ext: '.tf', available: true },
+  // fmt, not validate: the generator emits main.tf alone and puts variables.tf/outputs.tf content
+  // in configNotes, so `terraform validate` would fail on intentionally-external declarations.
+  // `terraform fmt` asserts the HCL parses — the right, offline, deterministic bar for one file.
+  terraform: { tool: 'terraform fmt', ext: '.tf', available: true },
 };
 
 /**
