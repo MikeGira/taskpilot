@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   scanCostBearingLiterals,
+  buildVersionPinNote,
   AWS_REGIONS,
   GCP_REGIONS,
   EC2_INSTANCE_FAMILIES,
@@ -112,6 +113,29 @@ describe('scanCostBearingLiterals — clean input and safety', () => {
 
   it('does not treat ordinary hyphenated words as regions', () => {
     expect(scanCostBearingLiterals('this is a well-written multi-line note about state')).toEqual([]);
+  });
+});
+
+describe('buildVersionPinNote (L2 prompt grounding)', () => {
+  it('emits pinned versions for terraform', () => {
+    const note = buildVersionPinNote('terraform');
+    expect(note).toContain('PINNED VERSIONS');
+    expect(note).toContain(LAST_VERIFIED);
+    expect(note).toContain('hashicorp/aws');
+    expect(note).toContain(PROVIDER_VERSIONS.aws.recommended);
+    expect(note).toContain(PROVIDER_VERSIONS.terraform.recommended);
+  });
+
+  it('does not list terraform core as a provider line', () => {
+    const note = buildVersionPinNote('terraform');
+    expect(note).not.toContain('null:');
+  });
+
+  it('returns empty string for non-terraform tools', () => {
+    expect(buildVersionPinNote('powershell')).toBe('');
+    expect(buildVersionPinNote('bash')).toBe('');
+    expect(buildVersionPinNote(undefined)).toBe('');
+    expect(buildVersionPinNote('ansible')).toBe('');
   });
 });
 

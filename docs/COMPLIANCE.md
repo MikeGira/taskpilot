@@ -97,7 +97,7 @@ not as an answer. Layers are per `~/.claude/grounding-discipline.md`, strongest 
 | **L1** — take high-entropy values away from the model | Generated file **extension** is derived in code from the validated `language`, never from the model's chosen filename. Path components stripped, charset restricted, length capped (`src/lib/generate-validation.ts`). | **Implemented** |
 | **L1** | Request-side enums: `os`, `environment`, `tool` are zod enums (`VALID_TOOLS`), so the model cannot be steered to an unsupported target. | **Implemented** |
 | **L1** | Cost-bearing literals *inside* generated scripts — cloud regions, EC2/GCP instance families, Terraform provider majors — are checked after generation against dated per-provider allowlists (`src/lib/iac-allowlists.ts`); fabricated-looking values get an **advisory review note** appended (never a block — a false block costs the user their generation). Allowlists are date-stamped (`LAST_VERIFIED`) and re-verified quarterly against live provider sources by `iac-allowlist-drift.yml` (Terraform Registry API, AWS `ip-ranges.json`), which opens a deduped, auto-closing tracking issue on drift. Flagging logic + drift logic are unit-tested and in the coverage gate. | **Implemented (advisory)** |
-| **L2** — retrieval must precede generation | System prompt is static and authored, not grounded in fetched, pinned provider documentation. | **Open** — see below |
+| **L2** — retrieval must precede generation | Pinned provider/module **versions** from the maintained manifest (`PROVIDER_VERSIONS`, same source as L1, quarterly drift-checked) are injected into the Terraform system prompt so the model is told current versions instead of fabricating them — the highest-entropy IaC error. Full doc grounding (curated per-tool reference snippets / RAG over live docs) is deferred. | **Partial (version pins)** — see below |
 | **L3** — schema validation / constrained output | Model output is parsed then validated against `GenerateResultSchema`; unknown fields dropped, unknown `language` degraded to null, over-long payloads rejected, unusable results turned into a 502 rather than forwarded. | **Implemented** |
 | **L4** — verification loop | Post-generation credential scan flags probable hardcoded secrets and appends a review note. Tool prompts require dry-run affordances (`-WhatIf`, `terraform plan`) in generated output. | **Partial** |
 | **L4** | No server-side parse/lint of generated code (PSScriptAnalyzer, shellcheck, `terraform validate`). | **Open** — see below |
@@ -119,8 +119,13 @@ deduped, self-closing issue on drift. GCP/Azure regions and instance families ar
 manual review. This closes the L1 gap to the level that is proportionate and honest for a tool
 that never executes the code it emits.
 
-**L2 doc grounding.** Would require fetching and pinning provider documentation per tool and
-injecting it into the prompt. High value for version-accuracy, high build and upkeep cost.
+**L2 doc grounding — version-pin slice done, full grounding deferred.** The highest-value,
+lowest-cost slice is implemented: the Terraform prompt now carries the pinned provider/module
+versions from the shared manifest (`buildVersionPinNote`), so wrong-version fabrication — the
+single highest-entropy IaC error — is grounded at the source rather than only caught after the
+fact by L1. The expensive tail (fetching and pinning full provider *documentation* per tool, or
+RAG over live docs) is **deferred**; trigger to build it is real recurring usage/revenue, since it
+is a standing fetch-and-upkeep commitment disproportionate to current scale.
 
 **L4 server-side linting.** `terraform validate`, `PSScriptAnalyzer` and `shellcheck` are separate
 runtimes; a Vercel serverless function is the wrong place for them. The realistic path is a

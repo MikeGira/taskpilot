@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { parseRequestBody, checkRateLimit, checkFreeTextInputs, buildUserMessage, callAnthropic, ONE_HOUR_MS } from '@/lib/api-utils';
 import { z } from 'zod';
 import { validateGenerateResult } from '@/lib/generate-validation';
-import { scanCostBearingLiterals } from '@/lib/iac-allowlists';
+import { scanCostBearingLiterals, buildVersionPinNote } from '@/lib/iac-allowlists';
 
 export const maxDuration = 300;
 
@@ -605,7 +605,7 @@ TARGET ENVIRONMENT:
 ${cloudProviders?.length ? `- Cloud Provider(s): ${cloudProviders.join(', ')}` : ''}
 
 ${buildToolSection(tool)}
-
+${(() => { const pins = buildVersionPinNote(tool); return pins ? `\n${pins}\n` : ''; })()}
 UNIVERSAL STANDARDS — apply to every output regardless of tool:
 1. SECURITY HARDENING IS NON-NEGOTIABLE:
    - Principle of least privilege: minimal permissions, explicit scopes, no wildcards on sensitive operations
