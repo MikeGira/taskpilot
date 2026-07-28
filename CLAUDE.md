@@ -201,6 +201,25 @@ Dynamic Island spring is handled by `CardSpringProvider` in layout.tsx — it li
 - [x] Set Supabase Site URL + redirect URLs to production domain
 - [x] Configure Resend SMTP in Supabase for branded auth emails
 
+## Security Remediation Is Automated (2026-07-27)
+
+Do **not** hand-apply dependency patches or ask Mike to. The loop is closed:
+
+| Piece | What it does |
+|-------|--------------|
+| `.github/workflows/security-autofix.yml` | Daily 06:00 UTC. Plans a fix for production-reachable advisories, proves the tree type-checks/tests/builds, opens one PR with auto-merge armed. Files one grounded issue when it cannot fix something safely. |
+| `scripts/audit-gate.js` | The CI gate. Scope-aware (production findings can never be waived by a `development` exception) and expiry-aware (a lapsed waiver **fails** the build). |
+| `.github/audit-allowlist.json` | Dated, scoped, GHSA-keyed exceptions. Every entry needs a justification and an `expires`. |
+| `/security-triage` | Repo slash command. Pulls issues, PRs, runs, Dependabot + code-scanning alerts and `npm audit` itself — no links need pasting. |
+
+Rules that exist because they were broken:
+
+- **Never `npm audit fix --force`.** On 2026-07-27 its only proposal for sharp's libvips advisory was downgrading `next` 15.5.22 → 14.2.35. `detectDowngrades()` rejects any plan that lowers a version.
+- **Version numbers come from `firstPatchedVersion` on the GitHub Advisory API and the lockfile — never from a web search or recall.** Take the *highest* in-major fix: a package is usually flagged for several advisories at once (`next` carried eight), and the lowest clears only the earliest.
+- **A blanket `npm audit --audit-level=high` is a trap.** One unfixable dev-only advisory red-lines every branch, including the Dependabot security PRs that fix the real findings. That deadlock is what forced manual intervention for weeks — #93 and #94 sat green on every other check with auto-merge already armed.
+- **Verify `ai-code-quality` bot findings against the source before acting.** Every finding in #80 and all three in #92 were false. Confirmed false positives live in `.github/audit-exceptions.md`; read it before re-litigating one.
+- **A stale code-scanning configuration causes the "Code scanning configuration error".** Changing the CodeQL job (e.g. single-language → language matrix) strands the old configuration's analyses on `main`, and every PR then reports "1 configuration not found". Fix: delete the stale analyses (`DELETE /repos/{o}/{r}/code-scanning/analyses/{id}?confirm_delete=true`). 169 pre-matrix ones were cleared on 2026-07-27. It is reversible — a re-run reinstates a configuration deleted by mistake.
+
 ## CI & Workflow Gotchas (learned 2026-06-08)
 
 Diagnose with the real tools, never by eyeballing YAML. `actionlint` and `gitleaks`
