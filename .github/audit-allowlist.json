@@ -1,0 +1,14 @@
+{
+  "$comment": "Dated, scoped exceptions for the CI dependency-audit gate (scripts/audit-gate.js). Every entry MUST carry a justification and an expiry: the gate fails once `expires` passes, so a suppression is a review appointment, not a deletion. `scope: development` can never waive a finding that npm audit still reports with --omit=dev.",
+  "exceptions": [
+    {
+      "advisory": "GHSA-mh99-v99m-4gvg",
+      "package": "brace-expansion",
+      "severity": "high",
+      "scope": "development",
+      "expires": "2026-10-27",
+      "reviewed": "2026-07-27",
+      "justification": "DoS via unbounded brace expansion. Reaches TaskPilot only through eslint@8 -> eslint-plugin-import -> minimatch@3 -> brace-expansion@1.1.16, which runs on developer machines and CI runners against first-party source. It is absent from `npm audit --omit=dev` and so cannot be reached by a request to the deployed app. Not fixable without breakage: the sole patched release (5.0.8) publishes `expand` as a named export, so `require('brace-expansion')` returns an object and minimatch@3 crashes; verified empirically on 2026-07-27. Upgrading to eslint@9 does not help either, as eslint-plugin-import still resolves minimatch@3 (also verified). Re-review when eslint-plugin-import ships a minimatch@>=9 dependency, or when the flat-config migration lets the plugin be dropped."
+    }
+  ]
+}

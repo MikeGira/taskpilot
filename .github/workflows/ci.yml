@@ -30,7 +30,11 @@ jobs:
           node-version: '22'
           cache: 'npm'
       - run: npm ci
-      - run: npm audit --audit-level=high
+      # Scope- and expiry-aware gate (scripts/audit-gate.js). A plain `npm audit
+      # --audit-level=high` is one boolean over every dependency, so a lint-toolchain
+      # advisory with no compatible fix red-lines every branch — including the Dependabot
+      # security PRs that fix the genuinely reachable findings. See the module header.
+      - run: node scripts/audit-gate.js
 
   # ── 0b. Workflow validation ─────────────────────────────────────────────────
   # Catches invalid workflow YAML (bad indentation, unknown trigger events, broken
