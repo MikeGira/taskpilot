@@ -212,6 +212,21 @@ Do **not** hand-apply dependency patches or ask Mike to. The loop is closed:
 | `.github/audit-allowlist.json` | Dated, scoped, GHSA-keyed exceptions. Every entry needs a justification and an `expires`. |
 | `/security-triage` | Repo slash command. Pulls issues, PRs, runs, Dependabot + code-scanning alerts and `npm audit` itself — no links need pasting. |
 
+### Credential expiry
+
+`.github/credentials.json` + `credential-expiry.yml` (weekly) guard every time-bounded credential.
+Warns at 45 days, fails at 14, and separately probes whether each token still authenticates.
+
+- **There is no API for this.** GitHub's `GitHub-Authentication-Token-Expiration` header reports the
+  *current time* for fine-grained PATs ([go-github#3708](https://github.com/google/go-github/issues/3708)),
+  and no endpoint lists a personal account's tokens. The declared date in the manifest is the only
+  source of advance warning — so **keep `expires` accurate** when rotating.
+- **An expired PAT is revoked permanently and cannot be restored.** Renewal means a new token plus
+  updating every secret that used it.
+- **The real fix is to stop using PATs.** A GitHub App mints installation tokens per run (1-hour
+  lifetime) and its private key never expires. Migrate consumers to
+  `actions/create-github-app-token` and delete the manifest entry.
+
 Rules that exist because they were broken:
 
 - **Never `npm audit fix --force`.** On 2026-07-27 its only proposal for sharp's libvips advisory was downgrading `next` 15.5.22 → 14.2.35. `detectDowngrades()` rejects any plan that lowers a version.
