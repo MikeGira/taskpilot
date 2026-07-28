@@ -29,6 +29,7 @@ export default defineConfig({
         'scripts/lib/audit-parse.js',
         'scripts/lib/audit-gate.js',
         'scripts/lib/security-autofix.js',
+        'scripts/lib/credential-expiry.js',
         'scripts/lib/iac-drift.js',
         'scripts/lib/golden-validate.js',
       ],
