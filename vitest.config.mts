@@ -28,6 +28,7 @@ export default defineConfig({
         'src/app/api/download/session/route.ts',
         'scripts/lib/audit-parse.js',
         'scripts/lib/audit-gate.js',
+        'scripts/lib/security-autofix.js',
         'scripts/lib/iac-drift.js',
         'scripts/lib/golden-validate.js',
       ],
@@ -43,10 +44,12 @@ export default defineConfig({
       // suites; aggregate branch % climbed to 87.69, so the branch ratchet moves 86 -> 87.
       // 2026-07-27: added the dependency-audit gate decision logic (scripts/lib/audit-gate.js)
       // with a 15-case suite; aggregate branch % climbed to 88.31, so the ratchet moves 87 -> 88.
+      // 2026-07-27 (later): added the autofix planner (scripts/lib/security-autofix.js) with an
+      // 18-case suite; aggregate branch % climbed to 89.29, so the ratchet moves 88 -> 89.
       thresholds: {
         lines: 99,
         functions: 95,
-        branches: 88,
+        branches: 89,
         statements: 98,
       },
     },

@@ -32,5 +32,14 @@ Acknowledging every signature-verified event with `200` is the correct Stripe in
 ## webhook/stripe/route.ts: error handling already separates transient vs. terminal
 `handleCheckoutComplete` distinguishes the two cases correctly and logs once: a DB/product-lookup error (including network failure after retries) THROWS, is caught by the single caller-level catch, logged once, and returns `500` so Stripe retries; a genuinely-absent product row is a no-op `return` (logged, no `500`) because retrying will not make the row appear. There is no double-logging and a missing product row does NOT return `500`. Do not flag this as redundant error handling.
 
+## webhook/stripe/route.ts: `if (!customerEmail)` already rejects the empty-string fallback
+Raised as `[SECURITY]` in issue #92 on the premise that `customerEmail` is initialised to `''` and therefore "passes the check". It does not: `''` is falsy, so `!customerEmail` is `true` and the handler returns early exactly as intended. The suggested `!customerEmail?.trim()` would only add whitespace-only handling, which Stripe cannot produce for `customer_email` / `customer_details.email`. Do not re-raise.
+
+## account/delete/route.ts: `DELETE` is not reachable cross-site, so no CSRF token is required
+Raised as `[SECURITY]` in issue #92. A cross-site `DELETE` is not a CORS-simple request, so a browser must preflight it with `OPTIONS`; the route sends no permissive CORS headers, so the preflight fails and the request is never issued. HTML forms cannot emit `DELETE` at all, and Supabase auth cookies are `SameSite=Lax`, so they are not attached to a cross-site request in the first place. Three independent controls, none of which depend on a token. Do not re-raise without a concrete request that reaches the handler.
+
+## Audit-bot findings citing `/* ...long string omitted... */` are truncation artefacts
+`prepareContent()` elides the middle of large files before sending them to the model, and the marker it inserts has repeatedly been reported back as a defect in the source ("malformed template string", "incomplete catch block" — issue #92's `[SIMPLIFICATION]` item). The marker is never in the file. Verify against the real source before acting on any finding that quotes it.
+
 ## generate/route.ts: scanCostBearingLiterals() returns only safe, templated strings
 The advisory review notes appended to `explanation` are hardcoded template strings interpolating only tokens matched by fixed regexes with restricted charsets (regions/instance families/version constraints — no quotes, no HTML). The value is returned in a JSON field (escaped by `JSON.stringify`) and rendered as text by React (escaped); there are no HTML/JS execution sinks in `src/` (enforced by `tests/unit/no-xss-sinks.test.ts`). This is not an injection vector. Do not flag appending its result to `explanation`.
