@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { isAuditPass } = require('./lib/audit-parse');
+const { isAuditPass, stripTruncationArtifactFindings } = require('./lib/audit-parse');
 
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const GH_TOKEN = process.env.GH_TOKEN;
@@ -165,8 +165,18 @@ async function main() {
     .join('\n\n');
 
   console.log(`Auditing ${existing.length} API route files for code quality...`);
-  const result = await callClaude(bundle);
-  console.log('Result:', result.slice(0, 200));
+  const rawResult = await callClaude(bundle);
+  console.log('Result:', rawResult.slice(0, 200));
+
+  // Deterministic backstop: the prompt already tells the model our truncation markers are
+  // synthetic, and it flagged one anyway (#101, and #10-#12 before it). Drop those findings
+  // mechanically so a pipeline artifact can never again become a GitHub issue Mike has to
+  // read, verify, and close by hand.
+  const { kept: result, dropped } = stripTruncationArtifactFindings(rawResult);
+  if (dropped.length) {
+    console.log(`Dropped ${dropped.length} finding(s) about our own truncation markers:`);
+    for (const d of dropped) console.log(`  - ${d.slice(0, 160)}`);
+  }
 
   const openIssues = await getOpenIssues();
 
