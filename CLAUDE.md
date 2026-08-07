@@ -273,5 +273,16 @@ when the real fault is YAML indentation) wastes a cycle.
   binary on PATH (`~/bin` or `choco install gitleaks`).
 - **Prevention now in CI**: the `workflow-lint` job in `ci.yml` runs `actionlint` on every
   PR, so invalid workflow YAML is blocked before it can reach main as a startup failure.
+- **`gh run rerun` replays the ORIGINAL commit SHA — never use it on a reporting workflow.**
+  It re-executes the run exactly as it was, at the commit it was triggered on; it does not pick
+  up `main`. That is correct for a *validating* workflow (you want to know whether that commit
+  passes), and actively wrong for one that *reports current state* — the report describes history
+  as though it were the present. Caught 2026-08-06: re-running the Daily Security Monitor to
+  clear an Actions-outage cancellation replayed it against the pre-fix tree and filed issue #104
+  listing two advisories that had been fixed and merged three minutes earlier, plus a CI failure
+  that was already green. Every finding was stale; none was wrong about the SHA it ran on.
+  **Use `gh workflow run "<name>" --ref main`** for anything that opens issues, emails, or
+  publishes a status. Confirm the difference the same way it was confirmed here: a fresh dispatch
+  at `main` completed and filed nothing.
 - **Stripe webhook**: ack every verified event with 200 (prevents Stripe retries); only
   *act* on handled types and `console.log` unhandled ones — never silently drop them.
