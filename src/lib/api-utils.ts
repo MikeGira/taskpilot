@@ -116,6 +116,31 @@ export type AnthropicResult =
   | { ok: true; text: string }
   | { ok: false; reason: 'upstream' | 'timeout' | 'network'; status?: number };
 
+export type AnthropicFailure = { reason: 'upstream' | 'timeout' | 'network' };
+
+// Maps an Anthropic failure onto the response every route should give for it: 504 for a
+// timeout, which the client may retry, and 502 for anything else, since we are the failing
+// gateway. The status codes are the invariant worth centralising — wording stays per-route
+// because a chat surface and a script generator do not address the user the same way.
+export function aiFailureResponse(
+  ai: AnthropicFailure,
+  messages: { upstream: string; timeout?: string; network?: string },
+): NextResponse {
+  if (ai.reason === 'timeout') {
+    return NextResponse.json(
+      { error: messages.timeout ?? 'Generation timed out. Please try again.' },
+      { status: 504 },
+    );
+  }
+  if (ai.reason === 'network') {
+    return NextResponse.json(
+      { error: messages.network ?? 'Network error reaching AI service. Please try again.' },
+      { status: 502 },
+    );
+  }
+  return NextResponse.json({ error: messages.upstream }, { status: 502 });
+}
+
 // Single source of truth for Anthropic calls: bundles abort/timeout + retry so every
 // caller gets consistent behaviour (and so no route can forget the timeout). The
 // AbortController guarantees a hung upstream cannot block the function indefinitely.

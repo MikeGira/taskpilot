@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { parseRequestBody, checkRateLimit, containsInjection, callAnthropicStream, ONE_HOUR_MS } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, containsInjection, callAnthropicStream, aiFailureResponse, ONE_HOUR_MS } from '@/lib/api-utils';
 
 const MessageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -112,9 +112,11 @@ export async function POST(request: Request) {
   });
 
   if (!ai.ok) {
-    if (ai.reason === 'timeout') return NextResponse.json({ error: 'Request timed out. Please try again.' }, { status: 504 });
-    if (ai.reason === 'network') return NextResponse.json({ error: 'Network error. Please try again.' }, { status: 502 });
-    return NextResponse.json({ error: 'AI service error. Please try again.' }, { status: 502 });
+    return aiFailureResponse(ai, {
+      timeout: 'Request timed out. Please try again.',
+      network: 'Network error. Please try again.',
+      upstream: 'AI service error. Please try again.',
+    });
   }
 
   // Plain-text chunk stream (SSE already decoded server-side); errors before

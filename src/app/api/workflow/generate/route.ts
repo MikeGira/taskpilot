@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { checkFreeTextInputs, buildUserMessage, callAnthropicCollected, ONE_HOUR_MS, checkRateLimit, parseRequestBody } from '@/lib/api-utils';
+import { checkFreeTextInputs, buildUserMessage, callAnthropicCollected, aiFailureResponse, ONE_HOUR_MS, checkRateLimit, parseRequestBody } from '@/lib/api-utils';
 
 export const maxDuration = 300;
 
@@ -220,9 +220,7 @@ export async function POST(request: Request) {
   });
 
   if (!ai.ok) {
-    if (ai.reason === 'timeout') return NextResponse.json({ error: 'Generation timed out. Please try again.' }, { status: 504 });
-    if (ai.reason === 'network') return NextResponse.json({ error: 'Network error reaching AI service. Please try again.' }, { status: 502 });
-    return NextResponse.json({ error: 'Workflow generation failed. Please try again.' }, { status: 502 });
+    return aiFailureResponse(ai, { upstream: 'Workflow generation failed. Please try again.' });
   }
 
   let result: WorkflowResult;

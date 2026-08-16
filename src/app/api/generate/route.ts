@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { parseRequestBody, checkRateLimit, checkFreeTextInputs, buildUserMessage, callAnthropicCollected, ONE_HOUR_MS } from '@/lib/api-utils';
+import { parseRequestBody, checkRateLimit, checkFreeTextInputs, buildUserMessage, callAnthropicCollected, aiFailureResponse, ONE_HOUR_MS } from '@/lib/api-utils';
 import { z } from 'zod';
 import { validateGenerateResult } from '@/lib/generate-validation';
 import { scanCostBearingLiterals, buildVersionPinNote } from '@/lib/iac-allowlists';
@@ -676,9 +676,7 @@ export async function POST(request: Request) {
   });
 
   if (!ai.ok) {
-    if (ai.reason === 'timeout') return NextResponse.json({ error: 'Generation timed out. Please try again.' }, { status: 504 });
-    if (ai.reason === 'network') return NextResponse.json({ error: 'Network error reaching AI service. Please try again.' }, { status: 502 });
-    return NextResponse.json({ error: 'Script generation failed. Please try again.' }, { status: 502 });
+    return aiFailureResponse(ai, { upstream: 'Script generation failed. Please try again.' });
   }
 
   let result: GenerateResult;
