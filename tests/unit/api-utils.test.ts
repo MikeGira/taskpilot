@@ -10,6 +10,7 @@ import {
   callAnthropic,
   callAnthropicStream,
   callAnthropicCollected,
+  aiFailureResponse,
 } from '@/lib/api-utils';
 
 const schema = z.object({ email: z.string().email(), n: z.number().optional() });
@@ -439,5 +440,36 @@ describe('callAnthropicCollected', () => {
   it('reports timeout when the stream aborts mid-generation', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(erroringResponse('AbortError')));
     await expect(callAnthropicCollected(params)).resolves.toMatchObject({ ok: false, reason: 'timeout' });
+  });
+});
+
+describe('aiFailureResponse', () => {
+  const body = async (r: Response) => (await r.json()) as { error: string };
+
+  it('maps a timeout to 504 so the client knows a retry is worthwhile', async () => {
+    const r = aiFailureResponse({ reason: 'timeout' }, { upstream: 'x' });
+    expect(r.status).toBe(504);
+    expect((await body(r)).error).toBe('Generation timed out. Please try again.');
+  });
+
+  it('maps network and upstream failures to 502 — we are the failing gateway', async () => {
+    expect(aiFailureResponse({ reason: 'network' }, { upstream: 'x' }).status).toBe(502);
+    expect(aiFailureResponse({ reason: 'upstream' }, { upstream: 'x' }).status).toBe(502);
+  });
+
+  it('uses the per-route upstream wording', async () => {
+    const r = aiFailureResponse({ reason: 'upstream' }, { upstream: 'Workflow generation failed. Please try again.' });
+    expect((await body(r)).error).toBe('Workflow generation failed. Please try again.');
+  });
+
+  it('lets a route override every message, as the chat surface does', async () => {
+    const messages = {
+      timeout: 'Request timed out. Please try again.',
+      network: 'Network error. Please try again.',
+      upstream: 'AI service error. Please try again.',
+    };
+    expect((await body(aiFailureResponse({ reason: 'timeout' }, messages))).error).toBe(messages.timeout);
+    expect((await body(aiFailureResponse({ reason: 'network' }, messages))).error).toBe(messages.network);
+    expect((await body(aiFailureResponse({ reason: 'upstream' }, messages))).error).toBe(messages.upstream);
   });
 });
