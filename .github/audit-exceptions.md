@@ -48,3 +48,14 @@ Issue #101 claimed `handleCheckoutComplete` "logs `productErr` but does not thro
 
 ## generate/route.ts: scanCostBearingLiterals() returns only safe, templated strings
 The advisory review notes appended to `explanation` are hardcoded template strings interpolating only tokens matched by fixed regexes with restricted charsets (regions/instance families/version constraints — no quotes, no HTML). The value is returned in a JSON field (escaped by `JSON.stringify`) and rendered as text by React (escaped); there are no HTML/JS execution sinks in `src/` (enforced by `tests/unit/no-xss-sinks.test.ts`). This is not an injection vector. Do not flag appending its result to `explanation`.
+
+## webhook/stripe/route.ts: `purchaseError` IS defined (issue #110 `[SECURITY]`, false positive)
+Issue #110 claimed `purchaseError` "is never defined in the visible code", so the thrown message
+would interpolate `undefined` and lose the error context. The source defines it by renaming inside a
+destructuring pattern — `const { error: purchaseError } = await dbWithRetry(...)` at line 78 — then
+checks it at 93 and throws `purchase upsert failed: ${purchaseError.message}` at 94. Verified against
+the file on 2026-08-16. This is the third variant of the same defect: the bot reads a destructuring
+rename as a bare reference and reports the definition it did not receive as absent (see the `productErr`
+entry above for #101, and #92). Do not re-raise. If it recurs, the durable fix is to extend
+`scripts/lib/audit-parse.js` to drop findings asserting a symbol is undefined when that symbol appears
+on the left of a `:` inside a destructuring pattern in the same file.
