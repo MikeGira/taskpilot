@@ -286,3 +286,21 @@ when the real fault is YAML indentation) wastes a cycle.
   at `main` completed and filed nothing.
 - **Stripe webhook**: ack every verified event with 200 (prevents Stripe retries); only
   *act* on handled types and `console.log` unhandled ones — never silently drop them.
+- **The Node major is declared ONCE, in `engines.node`. Never hardcode `node-version:` in a
+  workflow.** `engines.node` **overrides** the Vercel dashboard setting, so the dashboard can
+  read 24.x while the project actually deploys whatever package.json pins — and Vercel's
+  one-click "upgrade all deprecated projects" button cannot reach it. Before this was
+  normalised (2026-08-16) TaskPilot had three disagreeing answers: dashboard 24.x, engines
+  22.x (what actually deployed), and 14 workflow pins split 22/24. Workflows now use
+  `node-version-file: 'package.json'`, which `actions/setup-node` resolves from `engines.node`
+  (it checks `volta.node` and `devEngines.runtime` first — do not add those). `scripts/
+  check-node-runtime.js` gates it: blocks an EOL or Vercel-dropped major, warns on a
+  maintenance major, rejects any re-hardcoded pin, rejects open ranges like `>=20.0.0`, and
+  **fails closed on a major it does not recognise** — so a new Node release forces a human to
+  update the table rather than passing silently. `vercel project ls --update-required` reads
+  only the *dashboard* value and will report "no projects affected" while a repo still pins an
+  EOL major; check `engines.node` in every linked repo, not the CLI output.
+- **Advisory version numbers come from the GitHub Advisory API, never from a CI log.** Fixing
+  shura's nanoid advisory on 2026-08-16, the CI log said `<3.3.17` but
+  `firstPatchedVersion` was already `3.3.18` — the range had been widened after that run.
+  Pinning to the logged number would have left the tree vulnerable while CI went green.
