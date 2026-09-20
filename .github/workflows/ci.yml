@@ -67,9 +67,26 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+          persist-credentials: false
+
+      # Run the gitleaks binary directly instead of gitleaks-action. The action classifies the
+      # account as user or org against gitleaks.io; when that lookup fails transiently it falls
+      # back to demanding a paid GITLEAKS_LICENSE even for a personal account and hard-fails the
+      # gate. Bio hit exactly that and switched; this brings the fleet in line. The binary needs
+      # no license and no external call beyond the pinned release download, which is checksum
+      # verified. Full history every run costs well under a second on this repo.
+      - name: Gitleaks - detect hardcoded secrets
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          set -euo pipefail
+          tarball="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/${tarball}" -o "$tarball"
+          echo "${GITLEAKS_SHA256}  ${tarball}" | sha256sum -c -
+          tar -xzf "$tarball" gitleaks
+          # --config is explicit: a security gate should never depend on file discovery.
+          ./gitleaks git --log-opts="--all" --no-banner --redact --exit-code 1 --config .gitleaks.toml .
 
   # ── 2. Static analysis ──────────────────────────────────────────────────────
   # CodeQL is free on public repos. Re-disable (add `if: false`) if/when repo goes private
