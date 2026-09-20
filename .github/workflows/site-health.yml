@@ -32,4 +32,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
           SITE: https://taskpilot-umber.vercel.app
+          AI_BUDGET_PAUSED: ${{ vars.AI_BUDGET_PAUSED }}
         run: node scripts/site-health.js
