@@ -13,10 +13,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Least privilege at the workflow level; the CodeQL job widens this for itself. Keeping
+# security-events: write here handed every job in the file the ability to write code-scanning
+# results, including the ones that run third-party tooling. (zizmor excessive-permissions.)
 permissions:
   contents: read
-  security-events: write
-  actions: read
 
 jobs:
   # ── 0. Dependency audit (runs on schedule + PRs) ────────────────────────────
@@ -25,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: 'package.json'
@@ -48,6 +51,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Run actionlint
         env:
           ACTIONLINT_VERSION: '1.7.12'
@@ -56,6 +61,27 @@ jobs:
           tar -xzf actionlint.tar.gz actionlint
           # shellcheck disabled to scope this gate to workflow syntax/schema validation.
           ./actionlint -color -shellcheck=
+
+  # actionlint checks that a workflow is VALID; zizmor checks that it is SAFE. They catch
+  # different classes and this repo had only the first: a sweep on 2026-09-20 found 21 findings
+  # here against zero in Bio, including a spoofable bot check guarding Dependabot auto-merge.
+  # Running it on every PR is what stops that gap reopening.
+  workflow-security-lint:
+    name: Workflow Security Lint (zizmor)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Hard gate: fails on any finding (unpinned actions, script injection, credential
+      # persistence, excessive permissions, spoofable bot conditions).
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        with:
+          inputs: .github/workflows/
+          advanced-security: false
+          annotations: true
 
   # ── 1. Secret detection ─────────────────────────────────────────────────────
   secret-scan:
@@ -94,6 +120,12 @@ jobs:
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
+    # The only job that uploads SARIF, so the only one that needs to write code-scanning
+    # results. actions: read lets CodeQL analyse workflow files.
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
     strategy:
       fail-fast: false
       matrix:
@@ -102,6 +134,8 @@ jobs:
         language: [javascript-typescript, actions]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: github/codeql-action/init@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
         with:
           languages: ${{ matrix.language }}
@@ -118,6 +152,8 @@ jobs:
     needs: [secret-scan]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: 'package.json'
@@ -144,6 +180,8 @@ jobs:
     needs: [secret-scan]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: 'package.json'
@@ -175,6 +213,8 @@ jobs:
       ANTHROPIC_API_KEY: sk-ant-placeholder
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: 'package.json'

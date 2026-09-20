@@ -5,7 +5,13 @@ name: Dependabot auto-merge
 # deliberate manual review. Uses pull_request_target so the job runs with a write token
 # (Dependabot PRs otherwise get a read-only token); safe because it never checks out or
 # executes PR code — it only reads metadata and enables GitHub's native auto-merge.
-on: pull_request_target
+# zizmor flags pull_request_target as fundamentally dangerous, and normally it is: it runs with
+# a write token in the context of the BASE repo. It is safe here, and only here, because this
+# workflow never checks out, builds, or executes PR code. It reads PR metadata and asks GitHub
+# to enable native auto-merge, so there is no step an attacker's branch content can reach. The
+# trigger is required: Dependabot PRs get a read-only GITHUB_TOKEN under plain `pull_request`,
+# so `gh pr merge --auto` cannot work there. This is GitHub's own documented pattern.
+on: pull_request_target # zizmor: ignore[dangerous-triggers]
 
 permissions:
   contents: write
@@ -15,7 +21,14 @@ jobs:
   auto-merge:
     name: Auto-merge safe Dependabot updates
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
+    # NOT `github.actor`: that is the LAST actor to touch the PR, so an attacker can push a
+    # branch whose head commit appears Dependabot-authored and pass the check. This reads the
+    # PR's creator instead. The second clause rejects fork PRs outright, so no external branch
+    # can ever reach this job. (zizmor bot-conditions, HIGH.) Matches Bio, which was already
+    # hardened this way; TaskPilot still carried the weaker form.
+    if: >
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.repository == github.event.pull_request.head.repo.full_name
     steps:
       - name: Fetch Dependabot metadata
         id: meta

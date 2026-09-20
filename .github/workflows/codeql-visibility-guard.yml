@@ -31,7 +31,10 @@ jobs:
         if: steps.vis.outputs.visibility == 'public'
         run: echo "Repo is public. CodeQL stays enabled."
 
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # The only checkout here that must KEEP its token: this job pushes a branch and opens a PR
+      # when the repo turns private and CodeQL has to be disabled. persist-credentials: false
+      # would break that push.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # zizmor: ignore[artipacked] v7.0.1
         if: steps.vis.outputs.visibility == 'private'
 
       - name: Check if CodeQL already disabled
