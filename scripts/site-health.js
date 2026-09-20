@@ -15,6 +15,15 @@
 const GH_TOKEN = process.env.GH_TOKEN;
 const REPO = process.env.REPO;
 const SITE = process.env.SITE || 'https://taskpilot-umber.vercel.app';
+// Set the repo variable AI_BUDGET_PAUSED=true when the Anthropic balance is deliberately
+// unfunded. Pilot being down is then an accepted state, not an incident, and this check stops
+// opening issues and failing runs about a decision already made. Everything else here keeps
+// its full severity.
+//
+// The mute cannot outlive its reason: the probe still runs, and if Pilot ANSWERS while the
+// pause is set, that is a failure, because it means the balance is funded again and real AI
+// monitoring is switched off without anyone noticing.
+const AI_BUDGET_PAUSED = String(process.env.AI_BUDGET_PAUSED || '').toLowerCase() === 'true';
 const LABEL = 'site-health';
 const SLOW_MS = 3000;
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
@@ -175,6 +184,13 @@ async function main() {
   console.log(`AI /api/assistant: HTTP ${ai.status} in ${ai.ms}ms`);
   if (ai.status === 200 && (ai.text || '').trim().length > 0) {
     console.log('Pilot AI: answering');
+    if (AI_BUDGET_PAUSED) {
+      failures.push('**AI_BUDGET_PAUSED is still set, but Pilot is answering.** The balance is '
+        + 'funded again, so AI monitoring is currently muted for no reason. Clear it with: '
+        + '`gh variable delete AI_BUDGET_PAUSED --repo MikeGira/taskpilot`');
+    }
+  } else if (AI_BUDGET_PAUSED) {
+    console.log('Pilot AI: down, and AI_BUDGET_PAUSED is set - accepted state, not reported.');
   } else if (ai.status === 403) {
     warnings.push('**Pilot inconclusive:** /api/assistant returned 403 — probe likely edge-blocked, verify manually.');
   } else if (ai.status === 429) {

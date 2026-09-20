@@ -15,8 +15,11 @@ on:
       - 'src/app/api/**'
 
 jobs:
+  # Skipped while the Anthropic balance is deliberately unfunded, so a known-empty balance does
+  # not email a failure every week about a decision already made. Semgrep needs no API key and
+  # keeps running either way.
   prompt-audit:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && vars.AI_BUDGET_PAUSED != 'true'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -38,6 +41,7 @@ jobs:
         run: node scripts/audit-pilot-prompt.js
 
   code-quality:
+    if: vars.AI_BUDGET_PAUSED != 'true'
     runs-on: ubuntu-latest
     permissions:
       issues: write

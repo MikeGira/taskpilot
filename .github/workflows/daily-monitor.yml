@@ -7,6 +7,9 @@ on:
 
 jobs:
   security-monitor:
+    # Needs the Anthropic API to write its report, so it is skipped rather than failed while
+    # the balance is deliberately unfunded. npm audit and Dependabot still run on their own.
+    if: vars.AI_BUDGET_PAUSED != 'true'
     runs-on: ubuntu-latest
     permissions:
       issues: write
