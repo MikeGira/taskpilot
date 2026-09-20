@@ -85,19 +85,31 @@ async function ghGet(endpoint) {
   return res.json();
 }
 
+// The CI query is scoped to the default branch and a two-week window on purpose. Unscoped, it
+// returned failures from every feature branch with no age bound, and the model read them as a
+// broken pipeline: issue #113 rated a six-week-old failure on a short-lived feature branch as
+// HIGH and "blocking deployment" while main had been green for weeks. A failure on a branch
+// nobody is deploying is not a deployment problem, and the branch and age now travel with each
+// row so the model cannot infer significance the data does not carry.
+const CI_LOOKBACK_DAYS = 14;
+
 async function getGitHubStatus() {
+  const since = new Date(Date.now() - CI_LOOKBACK_DAYS * 86400000).toISOString().slice(0, 10);
+  const defaultBranch = (await ghGet(''))?.default_branch || 'main';
   const [issues, pulls, runs] = await Promise.all([
     ghGet('/issues?state=open&labels=ai-code-quality&per_page=10'),
     ghGet('/pulls?state=open&per_page=10'),
-    ghGet('/actions/runs?status=failure&per_page=10'),
+    ghGet(`/actions/runs?status=failure&branch=${encodeURIComponent(defaultBranch)}`
+      + `&created=${encodeURIComponent('>=' + since)}&per_page=10`),
   ]);
   return {
     openQualityIssues: (Array.isArray(issues) ? issues : [])
       .map(i => ({ number: i.number, title: i.title, url: i.html_url })),
     openPRs: (Array.isArray(pulls) ? pulls : [])
       .map(p => ({ number: p.number, title: p.title, user: p.user?.login, url: p.html_url })),
+    ciWindow: `failures on ${defaultBranch} in the last ${CI_LOOKBACK_DAYS} days`,
     recentFailures: (runs?.workflow_runs || []).slice(0, 5)
-      .map(r => ({ workflow: r.name, conclusion: r.conclusion, url: r.html_url, createdAt: r.created_at })),
+      .map(r => ({ workflow: r.name, branch: r.head_branch, conclusion: r.conclusion, url: r.html_url, createdAt: r.created_at })),
   };
 }
 
