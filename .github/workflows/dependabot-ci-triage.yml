@@ -3,7 +3,11 @@ name: Dependabot CI triage
 # When CI fails on a Dependabot branch, comment the failing run link on the PR
 # so it is immediately actionable (e.g. from GitHub Mobile) instead of waiting
 # for the daily security sweep email. Metadata-only: never checks out PR code.
-on:
+# zizmor flags workflow_run as a dangerous trigger, and normally it is: it runs privileged in
+# the base repo off a run that may have been triggered by untrusted code. It is safe here
+# because the job never checks out or executes anything from the triggering run. It reads the
+# run's branch and URL and posts a comment, and the token is scoped to pull-requests: write.
+on: # zizmor: ignore[dangerous-triggers]
   workflow_run:
     workflows: ["CI — Security + Build + Deploy Check"]
     types: [completed]

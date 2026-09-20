@@ -28,6 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           # A PR pushed with the default GITHUB_TOKEN does not start CI, so its required checks
           # never report and auto-merge can never fire. AUTOFIX_PAT (fine-grained, contents +
           # pull-requests write on this repo only) is what makes the PR self-validating; without
