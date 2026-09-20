@@ -5,7 +5,10 @@
 // 403-blocks non-allowlisted domains like *.vercel.app), so the probes live
 // here and routines read the results via the GitHub API instead.
 //
-// Checks: homepage 200 + title, /generate 200, security headers.
+// Checks: homepage 200 + title, /generate 200, security headers, and a live round trip
+// through /api/assistant. The AI probe exists because on Sep 20 2026 the Anthropic credit
+// balance ran out and every page here stayed green throughout: a page returning 200 says
+// nothing about whether the model behind it still answers. Probe the effect, not the page.
 // On failure: deduped issue (label: site-health) + non-zero exit so the
 // scheduled-run failure email fires. On recovery: auto-closes open issues.
 
@@ -114,6 +117,25 @@ async function closeOpenIssues() {
   }
 }
 
+// Functional probe of the assistant. A 200 from /generate proves the page renders, not that
+// the model behind it responds. The route streams text/plain on success and JSON on failure,
+// so this reads the body and requires actual content back.
+async function probeAssistant() {
+  const started = Date.now();
+  try {
+    const res = await fetch(`${SITE}/api/assistant`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'User-Agent': UA },
+      body: JSON.stringify({ messages: [{ role: 'user', content: 'ping' }] }),
+      signal: AbortSignal.timeout(45000),
+    });
+    const text = await res.text();
+    return { status: res.status, ms: Date.now() - started, text };
+  } catch (err) {
+    return { status: 0, ms: Date.now() - started, error: err.message };
+  }
+}
+
 async function main() {
   const failures = [];
   const warnings = [];
@@ -147,6 +169,21 @@ async function main() {
     failures.push(`**/generate DOWN:** HTTP ${gen.status || `0 (${gen.error})`} after retry.`);
   } else if (genState === 'inconclusive') {
     warnings.push(`**/generate inconclusive:** HTTP 403 after retry — probe likely edge-blocked.`);
+  }
+
+  const ai = await probeAssistant();
+  console.log(`AI /api/assistant: HTTP ${ai.status} in ${ai.ms}ms`);
+  if (ai.status === 200 && (ai.text || '').trim().length > 0) {
+    console.log('Pilot AI: answering');
+  } else if (ai.status === 403) {
+    warnings.push('**Pilot inconclusive:** /api/assistant returned 403 — probe likely edge-blocked, verify manually.');
+  } else if (ai.status === 429) {
+    warnings.push('**Pilot rate limited:** /api/assistant returned 429 — the probe hit the per-IP ceiling, not an outage.');
+  } else if (ai.status === 200) {
+    failures.push('**Pilot returning empty answers:** /api/assistant returned 200 with an empty body.');
+  } else {
+    // 502 is what the route returns for any upstream failure, exhausted API credits included.
+    failures.push(`**Pilot DOWN:** /api/assistant returned ${ai.status || `0 (${ai.error})`}. Check the Anthropic credit balance and ANTHROPIC_API_KEY in Vercel.`);
   }
 
   if (failures.length === 0 && warnings.length === 0) {
